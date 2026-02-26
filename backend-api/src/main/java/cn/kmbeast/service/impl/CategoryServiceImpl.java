@@ -43,7 +43,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     /**
-     * save
+     * delete
      * @param ids
      * @return Result<String>
      */
@@ -54,7 +54,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     /**
-     * save
+     * searching
      * @param categoryQueryDto
      * @return Result<List<Category>>
      */

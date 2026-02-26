@@ -22,7 +22,7 @@ const routes = [
     component: () => import(`@/views/register/Register.vue`)
   },
   {
-    path: "/admin",
+    path: "/admin", // 管理员主路由
     component: () => import(`@/views/admin/Home.vue`),
     meta: {
       requireAuth: true,
@@ -30,14 +30,14 @@ const routes = [
     children: [
       {
         path: "/adminLayout",
-        name: '仪表盘',
+        name: 'Navigation',
         icon: 'el-icon-pie-chart',
         component: () => import(`@/views/admin/Main.vue`),
         meta: { requireAuth: true },
       },
       {
         path: "/userManage",
-        name: '用户管理',
+        name: 'User',
         icon: 'el-icon-user',
         component: () => import(`@/views/admin/UserManage.vue`),
         meta: { requireAuth: true },
@@ -51,9 +51,16 @@ const routes = [
       },
       {
         path: "/evaluationsManage",
-        name: '评论管理',
+        name: 'Comment',
         icon: 'el-icon-chat-dot-round',
         component: () => import(`@/views/admin/EvaluationsManage.vue`),
+        meta: { requireAuth: true },
+      },
+            {
+        path: "/gourmetManage",
+        name: 'Gourmet',
+        icon: 'el-icon-tableware',
+        component: () => import(`@/views/admin/GourmetManage.vue`),
         meta: { requireAuth: true },
       },
     ]
