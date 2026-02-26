@@ -1,0 +1,26 @@
+# server
+server:
+  port: 21090
+  servlet:
+    context-path: /api/food-share-sys/v1.0
+# API
+my-server:
+  api-context-path: /api/food-share-sys/v1.0
+#MySQL
+spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/food_share?characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true
+    username: root
+    password: xofbav-xygwaV
+#  Mybatis  Mapper XML
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+
+
+
+
