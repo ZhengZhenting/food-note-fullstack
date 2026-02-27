@@ -8,17 +8,17 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum LoginStatusEnum {
+public enum AuditEnum {
 
-    USE(false, "可登录"),
-    BANK_USE(true, "登录状态异常");
+    NO_AUDIT(false, "not audited"),
+    YES_AUDIT(true, "audited");
 
     /**
-     * 编码
+     * flag
      */
     private final Boolean flag;
     /**
-     * 名成
+     * name
      */
     private final String name;
 

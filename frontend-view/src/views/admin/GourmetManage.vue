@@ -2,22 +2,69 @@
     <el-row style="background-color: #FFFFFF;padding: 5px 0;border-radius: 5px;">
         <el-row style="padding: 10px;margin-left: 5px;">
             <el-row style="display: flex;justify-content: left;gap: 6px;">
-                <span class="edit-button" @click="add()">
-                    新增美食分享
-                </span>
-                <el-input size="small" style="width: 166px;" v-model="categoryQueryDto.name" placeholder="标签名" clearable
+                <el-select style="width: 100px;" @change="fetchFreshData" size="small" v-model="gourmetQueryDto.categoryId"
+                    placeholder="category" clearable>
+                    <el-option v-for="item in categories" :key="item.id" :label="item.name" :value="item.id">
+                    </el-option>
+                </el-select>
+                <el-input size="small" style="width: 186px;" v-model="gourmetQueryDto.title" placeholder="search for title" clearable
                     @clear="handleFilterClear">
                     <el-button slot="append" @click="handleFilter" icon="el-icon-search"></el-button>
                 </el-input>
+                <el-select style="width: 150px;" @change="fetchFreshData" size="small" v-model="gourmetQueryDto.isAudit"
+                    placeholder="Audit Status" clearable>
+                    <el-option v-for="item in auditStatuList" :key="item.value" :label="item.label" :value="item.value">
+                    </el-option>
+                </el-select>
+                <el-select style="width: 150px;" @change="fetchFreshData" size="small" v-model="gourmetQueryDto.isPublish"
+                    placeholder="Publish Status" clearable>
+                    <el-option v-for="item in publishStatuList" :key="item.value" :label="item.label" :value="item.value">
+                    </el-option>
+                </el-select>
+                <el-date-picker style="width: 216px;" @change="fetchFreshData" size="small" v-model="searchTime"
+                    type="daterange" range-separator="to" start-placeholder="Start Time" end-placeholder="End Time">
+                </el-date-picker>
             </el-row>
         </el-row>
         <el-row style="margin: 0 22px;border-top: 1px solid rgb(245,245,245);">
-            <el-table :stripe="true" :data="tableData" style="width: 100%">
-                <el-table-column prop="name" label="美食类别名"></el-table-column>
-                <el-table-column label="操作" width="110">
+            <el-table :stripe="true" :data="tableData" style="width: 100%" :fit="true">
+                <el-table-column prop="cover" label="Cover" min-width="70">
                     <template slot-scope="scope">
-                        <span class="text-button" @click="handleEdit(scope.row)">编辑</span>
-                        <span class="text-button" @click="handleDelete(scope.row)">删除</span>
+                        <img :src="scope.row.cover"  style="width: 50px; height: 50px;"/>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="title" label="Title" min-width="155"></el-table-column>
+                <el-table-column prop="categoryId" label="Category ID" :sortable ="true" min-width="118"></el-table-column>
+                <el-table-column prop="categoryName" label="Category" min-width="118"></el-table-column>
+                <el-table-column prop="userId" label="User ID" :sortable ="true" min-width="98"></el-table-column>
+                <el-table-column prop="userName" label="User" min-width="118"></el-table-column>
+                <el-table-column prop="createTime" sortable="true" label="Create Time" min-width="168"></el-table-column>
+                <el-table-column prop="isAudit" label="Audit Status" min-width="98">
+                    <template slot-scope="scope">
+                        <i v-if="!scope.row.isAudit" style="margin-right: 5px;" class="el-icon-warning"></i>
+                        <i v-else style="margin-right: 5px;color: rgb(253, 199, 50);" class="el-icon-success"></i>
+                        <el-tooltip v-if="!scope.row.isAudit" class="item" effect="dark"
+                            content="Contact Admin for free pass" placement="bottom-end">
+                            <span style="text-decoration: underline;text-decoration-style: dashed;">No</span>
+                        </el-tooltip>
+                        <span v-else>Yes</span>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="isPublish" label="Publish Status" min-width="118">
+                    <template slot-scope="scope">
+                        <i v-if="!scope.row.isPublish" style="margin-right: 5px;" class="el-icon-warning"></i>
+                        <i v-else style="margin-right: 5px;color: rgb(253, 199, 50);" class="el-icon-success"></i>
+                        <el-tooltip v-if="!scope.row.isPublish" class="item" effect="dark"
+                            content="Unpublished content is not accessible to public" placement="bottom-end">
+                            <span style="text-decoration: underline;text-decoration-style: dashed;">No</span>
+                        </el-tooltip>
+                        <span v-else>Yes</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="Operation" width="120">
+                    <template slot-scope="scope">
+                        <span class="text-button" v-if="!scope.row.isAudit" @click="handleEdit(scope.row)">Audit</span>
+                        <span class="text-button" @click="handleDelete(scope.row)">Delete</span>
                     </template>
                 </el-table-column>
             </el-table>
@@ -27,22 +74,16 @@
                 :total="totalItems"></el-pagination>
         </el-row>
         <!-- 操作面板 -->
-        <el-dialog :show-close="false" :visible.sync="dialogCategoryOperaion" width="18%">
-            <div style="padding:16px 20px;">
-                <el-row>
-                    <span class="dialog-hover">类别名</span>
-                    <input class="dialog-input" v-model="data.name" placeholder="美食类别名" />
-                </el-row>
+        <el-dialog :show-close="false" :visible.sync="dialogGourmetOperaion" width="18%">
+            <div style="padding:16px 20px;"> 
+                confirm to audit "{{ data.title }}"?
             </div>
             <span slot="footer" class="dialog-footer" style="margin-top: 10px;">
                 <span class="channel-button" @click="cannel()">
-                    取消操作
+                    cancle
                 </span>
-                <span v-if="!isOperation" class="edit-button" @click="addOperation()">
-                    确定新增
-                </span>
-                <span v-else class="edit-button" @click="updateOperation()">
-                    确定修改
+                <span  class="edit-button" @click="auditOperation()">
+                    confirm
                 </span>
             </span>
         </el-dialog>
@@ -58,111 +99,138 @@ export default {
             currentPage: 1,
             pageSize: 20,
             totalItems: 0,
-            dialogCategoryOperaion: false, // 开关
+            dialogGourmetOperaion: false, // 开关
             isOperation: false, // 默认新增
             tableData: [],
             delectedRows: [],
-            categoryQueryDto: {}, // 搜索条件
+            searchTime: [], // 搜索时间范围
+            gourmetQueryDto: {}, // 搜索条件
+            categories:[], // 分类列表
+            auditStatuList: [{ value: null, label: 'all' }, { value: 0, label: 'No' }, { value: 1, label: 'Yes' }],
+            auditStatuList: [{ value: null, label: 'all' }, { value: 0, label: 'No' }, { value: 1, label: 'Yes' }],
+            publishStatuList: [{ value: null, label: 'all' }, { value: 0, label: 'No' }, { value: 1, label: 'Yes' }]
         };
     },
     created() {
         this.fetchFreshData();
+        this.fetchFreshCategory();
     },
     methods: {
+        // 查询分类信息
+        fetchFreshCategory() {
+            this.$axios.post('/category/query', {}).then(response => {
+                if(response.data.code === 200) {
+                    this.categories = response.data.data;
+                    this.categories.unshift({id: null, name: 'All'})
+                }
+            }).catch(error => {
+                console.log('Error:', error );
+            });
+        },
         cannel() {
             this.data = {};
-            this.dialogCategoryOperaion = false;
+            this.dialogGourmetOperaion = false;
             this.isOperation = false;
         },
         // 批量删除数据
         async batchDelete() {
             if (!this.delectedRows.length) {
-                this.$message(`未选中任何数据`);
+                this.$message(`no data selected`);
                 return;
             }
             const confirmed = await this.$swalConfirm({
-                title: '删除美食类别数据',
-                text: `删除后不可恢复，是否继续？`,
+                title: 'Delete Confirmation',
+                text: `File is unrecoverable, continue？`,
                 icon: 'warning',
             });
             if (confirmed) {
                 try {
                     let ids = this.delectedRows.map(entity => entity.id);
-                    const response = await this.$axios.post(`/category/batchDelete`, ids);
+                    const response = await this.$axios.post(`/gourmet/batchDelete`, ids);
                     if (response.data.code === 200) {
                         this.$notify({
                             duration: 1000,
-                            title: '信息删除',
-                            message: '删除成功',
+                            title: 'delete operation',
+                            message: 'success',
                             type: 'success'
                         });
                         this.fetchFreshData();
                         return;
                     }
                 } catch (error) {
-                    this.$message.error("美食类别信息删除异常：", error);
-                    console.error(`美食类别信息删除异常：`, error);
+                    this.$message.error("Error：", error);
+                    console.error(`Error：`, error);
                 }
             }
         },
         // 修改信息
         async updateOperation() {
             try {
-                const response = await this.$axios.put('/category/update', this.data);
+                const response = await this.$axios.put('/gourmet/update', this.data);
                 if (response.data.code === 200) {
                     this.$notify({
                         duration: 1000,
-                        title: '信息修改',
-                        message: '修改成功',
+                        title: 'update operation',
+                        message: 'success',
                         type: 'success'
                     });
                     this.cannel();
                     this.fetchFreshData();
                 }
             } catch (error) {
-                console.error('修改出错:', error);
+                console.error('Error', error);
             }
         },
-        // 信息新增
-        async addOperation() {
+        // 审核信息
+        async auditOperation() {
             try {
-                const response = await this.$axios.post('/category/save', this.data);
+                const response = await this.$axios.put(`/gourmet/audit/${this.data.id}`, this.data);
                 if (response.data.code === 200) {
                     this.$notify({
                         duration: 1000,
-                        title: '信息新增',
-                        message: '新增成功',
+                        title: 'audit operation',
+                        message: 'success',
                         type: 'success'
                     });
                     this.cannel();
                     this.fetchFreshData();
                 }
             } catch (error) {
-                console.error('信息新增出错:', error);
-                this.$message.error('提交失败，请稍后再试！');
+                console.error('Error:', error);
+                this.$message.error('Failed, please try later！');
             }
         },
         // 信息查询
         async fetchFreshData() {
             try {
+                this.tableData = [];
+                let startTime = null;
+                let endTime = null;
+                if (this.searchTime != null && this.searchTime.length === 2) {
+                    const [startDate, endDate] = await Promise.all(this.searchTime.map(date => date.toISOString()));
+                    startTime = `${startDate.split('T')[0]}T00:00:00`;
+                    endTime = `${endDate.split('T')[0]}T23:59:59`;
+                }
                 // 请求参数
                 const params = {
                     current: this.currentPage,
                     size: this.pageSize,
                     key: this.filterText,
-                    ...this.categoryQueryDto
+                    startTime: startTime,
+                    endTime: endTime,
+                    ...this.gourmetQueryDto
                 };
-                const response = await this.$axios.post('/category/query', params);
+                const response = await this.$axios.post('/gourmet/query', params);
                 const { data } = response;
                 this.tableData = data.data;
                 this.totalItems = data.total;
             } catch (error) {
-                this.$message.error("查询美食类别信息异常:", error);
-                console.error('查询美食类别信息异常:', error);
+                this.$message.error("Error:", error);
+                console.error('Error:', error);
             }
         },
         add() {
-            this.dialogCategoryOperaion = true;
+            this.dialogGourmetOperaion = true;
         },
         handleFilter() {
             this.currentPage = 1;
@@ -181,13 +249,13 @@ export default {
             this.currentPage = val;
             this.fetchFreshData();
         },
-        // 美食类别修改按钮点击事件 
+        // 美食做法修改按钮点击事件 
         handleEdit(row) {
-            this.dialogCategoryOperaion = true;
+            this.dialogGourmetOperaion = true;
             this.isOperation = true;
             this.data = { ...row }
         },
-        // 美食类别修改按钮删除事件 
+        // 美食做法修改按钮删除事件 
         handleDelete(row) {
             this.delectedRows.push(row);
             this.batchDelete();

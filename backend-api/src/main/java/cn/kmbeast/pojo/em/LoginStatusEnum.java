@@ -14,11 +14,11 @@ public enum LoginStatusEnum {
     BANK_USE(true, "登录状态异常");
 
     /**
-     * 编码
+     * flag
      */
     private final Boolean flag;
     /**
-     * 名成
+     * name
      */
     private final String name;
 
