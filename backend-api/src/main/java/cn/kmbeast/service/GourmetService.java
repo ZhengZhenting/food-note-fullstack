@@ -22,4 +22,6 @@ public interface GourmetService {
     Result<String> batchDelete(List<Integer> ids);
 
     Result<List<GourmetVO>> query(GourmetQueryDto gourmetQueryDto);
+
+    Result<String> audit(Integer id);
 }

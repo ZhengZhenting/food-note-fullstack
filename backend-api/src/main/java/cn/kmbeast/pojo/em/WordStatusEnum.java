@@ -14,11 +14,11 @@ public enum WordStatusEnum {
     BANK_USE(true, "禁言状态");
 
     /**
-     * 状态
+     * status
      */
     private final Boolean flag;
     /**
-     * 名称
+     * name
      */
     private final String name;
 

@@ -45,7 +45,7 @@
 
         SELECT g.*, c.name AS category_name, u.user_name, u.user_avatar
         FROM gourmet g
-        LEFT JOIN category c ON g.category_id = c.name
+        LEFT JOIN category c ON g.category_id = c.id
         LEFT JOIN user u ON g.user_id = u.id
         <where>
             <if test="id != null">

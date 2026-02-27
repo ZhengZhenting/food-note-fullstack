@@ -1,15 +1,12 @@
 package cn.kmbeast.service.impl;
 
-import cn.kmbeast.mapper.CategoryMapper;
 import cn.kmbeast.mapper.GourmetMapper;
 import cn.kmbeast.pojo.api.ApiResult;
 import cn.kmbeast.pojo.api.Result;
-import cn.kmbeast.pojo.dto.query.extend.CategoryQueryDto;
 import cn.kmbeast.pojo.dto.query.extend.GourmetQueryDto;
-import cn.kmbeast.pojo.entity.Category;
+import cn.kmbeast.pojo.em.AuditEnum;
 import cn.kmbeast.pojo.entity.Gourmet;
 import cn.kmbeast.pojo.vo.GourmetVO;
-import cn.kmbeast.service.CategoryService;
 import cn.kmbeast.service.GourmetService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -71,5 +68,20 @@ public class GourmetServiceImpl implements GourmetService {
         List<GourmetVO> gourmetList = gourmetMapper.query(gourmetQueryDto);
         Integer totalCount = gourmetMapper.queryCount(gourmetQueryDto);
         return ApiResult.success(gourmetList, totalCount);
+    }
+
+    /**
+     * audit gourmet
+     *
+     * @param id ids
+     * @return Result<String> getting result
+     */
+    @Override
+    public Result<String> audit(Integer id) {
+        Gourmet gourmet = new Gourmet();
+        gourmet.setId(id);
+        gourmet.setIsAudit(AuditEnum.YES_AUDIT.getFlag());
+        gourmetMapper.update(gourmet);
+        return ApiResult.success();
     }
 }

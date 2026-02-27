@@ -44,6 +44,20 @@ public class GourmetController {
     }
 
     /**
+     * audit gourmet
+     *
+     * @param id ids
+     * @return Result<String> getting result
+     */
+    @Protector(role = "管理员") //access only for admin
+    @PutMapping(value = "/audit/{id}")
+    @ResponseBody
+    public Result<String> audit(@PathVariable Integer id) {
+        return gourmetService.audit(id);
+    }
+
+
+    /**
      * delete gourmet
      *
      * @param ids list of ids

@@ -173,9 +173,9 @@ export default {
             selectedRows: [],
             status: null,
             userQueryDto: {}, // 搜索条件
-            loginStatuList: [{ value: null, label: '全部' }, { value: 0, label: '正常' }, { value: 1, label: '封号' }],
-            wordStatuList: [{ value: null, label: '全部' }, { value: 0, label: '正常' }, { value: 1, label: '禁言' }],
-            rolesList: [{ value: null, label: '全部' }, { value: 2, label: '用户' }, { value: 1, label: '管理员' }]
+            loginStatuList: [{ value: null, label: 'All' }, { value: 0, label: 'Normal' }, { value: 1, label: 'Banned' }],
+            wordStatuList: [{ value: null, label: 'All' }, { value: 0, label: 'Normal' }, { value: 1, label: 'Muted' }],
+            rolesList: [{ value: null, label: 'All' }, { value: 2, label: 'User' }, { value: 1, label: 'Admin' }]
         };
     },
     created() {
@@ -201,15 +201,15 @@ export default {
                 if (res.data.code === 200) {
                     this.$notify({
                         duration: 1500,
-                        title: '信息修改',
-                        message: '修改成功',
+                        title: 'Update Operation',
+                        message: 'success',
                         type: 'success'
                     });
                     this.cannel();
                     this.fetchFreshData();
                 }
             }).catch(error => {
-                console.log("修改状态异常：" + error);
+                console.log("Error：" + error);
             })
         },
         // 修改用户状态
@@ -223,8 +223,8 @@ export default {
         handleAvatarSuccess(res, file) {
             this.$notify({
                 duration: 1500,
-                title: '头像上传',
-                message: res.code === 200 ? '上传成功' : '上传失败',
+                title: 'Avatar Upload',
+                message: res.code === 200 ? 'Upload Success' : 'Upload Failed',
                 type: res.code === 200 ? 'success' : 'error'
             });
             // 上传成功则更新用户头像
@@ -235,12 +235,12 @@ export default {
         // 批量删除数据
         async batchDelete() {
             if (!this.selectedRows.length) {
-                this.$message(`未选中任何数据`);
+                this.$message(`no data selected`);
                 return;
             }
             const confirmed = await this.$swalConfirm({
-                title: '删除用户数据',
-                text: `删除后不可恢复，是否继续？`,
+                title: 'delete confirmation',
+                text: `operation unrecoverable, continue？`,
                 icon: 'warning',
             });
             if (confirmed) {
@@ -250,16 +250,16 @@ export default {
                     if (response.data.code === 200) {
                         this.$notify({
                             duration: 1000,
-                            title: '信息删除',
-                            message: '删除成功',
+                            title: 'Delete Operation',
+                            message: 'success',
                             type: 'success'
                         });
                         this.fetchFreshData();
                         return;
                     }
                 } catch (error) {
-                    this.$message.error("用户信息删除异常：", error);
-                    console.error(`用户信息删除异常：`, error);
+                    this.$message.error("Error deleting user information：", error);
+                    console.error(`Error deleting user information：`, error);
                 }
             }
         },
@@ -277,15 +277,15 @@ export default {
                 if (response.data.code === 200) {
                     this.$notify({
                         duration: 1000,
-                        title: '信息修改',
-                        message: '修改成功',
+                        title: 'Update Operation',
+                        message: 'success',
                         type: 'success'
                     });
                     this.cannel();
                     this.fetchFreshData();
                 }
             } catch (error) {
-                console.error('修改出错:', error);
+                console.error('Error:', error);
             }
         },
         // 信息新增
@@ -302,16 +302,16 @@ export default {
                 if (response.data.code === 200) {
                     this.$notify({
                         duration: 1000,
-                        title: '信息新增',
-                        message: '新增成功',
+                        title: 'Add Operation',
+                        message: 'success',
                         type: 'success'
                     });
                     this.cannel();
                     this.fetchFreshData();
                 }
             } catch (error) {
-                console.error('信息新增出错:', error);
-                this.$message.error('提交失败，请稍后再试！');
+                console.error('Error:', error);
+                this.$message.error('error, please try later！');
             }
         },
         async fetchFreshData() {
