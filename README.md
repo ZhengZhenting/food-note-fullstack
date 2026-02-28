@@ -34,10 +34,10 @@ Frontend (Vue) → Controller → Service → DAO / Mapper → Database (MySQL)
 - [x] Project scaffold established for backend and frontend  
 - [x] Basic Category CRUD implemented (backend + frontend)  
 - [ ] User authentication & authorization (in progress)  
-- [ ] Food posts management (planned)  
+- [x] Food posts management (planned)  
 - [ ] Comment & like system (planned)  
 - [ ] Front-end styling and responsiveness (ongoing)  
-- [ ] Continuous daily updates
+- [x] Continuous daily updates
 
 ## Contact
 **Developer:** Zhenting Zheng  
