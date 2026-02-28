@@ -56,11 +56,18 @@ const routes = [
         component: () => import(`@/views/admin/EvaluationsManage.vue`),
         meta: { requireAuth: true },
       },
-            {
+      {
         path: "/gourmetManage",
         name: 'Gourmet',
         icon: 'el-icon-tableware',
         component: () => import(`@/views/admin/GourmetManage.vue`),
+        meta: { requireAuth: true },
+      },
+      {
+        path: "/contentNetManage",
+        name: 'Content',
+        icon: 'el-icon-document-add',
+        component: () => import(`@/views/admin/ContentNetManage.vue`),
         meta: { requireAuth: true },
       },
     ]

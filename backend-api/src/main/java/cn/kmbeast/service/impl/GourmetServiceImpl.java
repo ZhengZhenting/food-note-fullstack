@@ -1,5 +1,6 @@
 package cn.kmbeast.service.impl;
 
+import cn.kmbeast.context.LocalThreadHolder;
 import cn.kmbeast.mapper.GourmetMapper;
 import cn.kmbeast.pojo.api.ApiResult;
 import cn.kmbeast.pojo.api.Result;
@@ -32,6 +33,7 @@ public class GourmetServiceImpl implements GourmetService {
     public Result<String> save(Gourmet gourmet) {
         gourmet.setCreateTime(LocalDateTime.now());
         gourmet.setIsAudit(false);
+        gourmet.setUserId(LocalThreadHolder.getUserId());
         gourmetMapper.save(gourmet);
         return ApiResult.success();
     }

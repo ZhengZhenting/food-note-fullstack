@@ -3,7 +3,7 @@
         <el-row style="padding: 10px;margin-left: 5px;">
             <el-row style="display: flex;justify-content: left;gap: 6px;">
                 <span class="edit-button" @click="add()">
-                    新增美食类别
+                    new category
                 </span>
                 <el-input size="small" style="width: 166px;" v-model="categoryQueryDto.name" placeholder="标签名" clearable
                     @clear="handleFilterClear">
@@ -100,8 +100,8 @@ export default {
                         return;
                     }
                 } catch (error) {
-                    this.$message.error("美食类别信息删除异常：", error);
-                    console.error(`美食类别信息删除异常：`, error);
+                    this.$message.error("Error：", error);
+                    console.error(`Error：`, error);
                 }
             }
         },
@@ -138,7 +138,7 @@ export default {
                     this.fetchFreshData();
                 }
             } catch (error) {
-                console.error('信息新增出错:', error);
+                console.error('Error:', error);
                 this.$message.error('提交失败，请稍后再试！');
             }
         },
@@ -157,8 +157,8 @@ export default {
                 this.tableData = data.data;
                 this.totalItems = data.total;
             } catch (error) {
-                this.$message.error("查询美食类别信息异常:", error);
-                console.error('查询美食类别信息异常:', error);
+                this.$message.error("Error:", error);
+                console.error('Error:', error);
             }
         },
         add() {
