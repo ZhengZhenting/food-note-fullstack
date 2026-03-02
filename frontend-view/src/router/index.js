@@ -70,6 +70,13 @@ const routes = [
         component: () => import(`@/views/admin/ContentNetManage.vue`),
         meta: { requireAuth: true },
       },
+      {
+        path: "/cookbookNetManage",
+        name: 'CookBook',
+        icon: 'el-icon-tickets',
+        component: () => import(`@/views/admin/CookbookManage.vue`),
+        meta: { requireAuth: true },
+      },
     ]
   },
   {
