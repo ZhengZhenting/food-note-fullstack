@@ -77,6 +77,13 @@ const routes = [
         component: () => import(`@/views/admin/CookbookManage.vue`),
         meta: { requireAuth: true },
       },
+      {
+        path: "/nutrimentManage",
+        name: 'Nutriment',
+        icon: 'el-icon-suitcase-1',
+        component: () => import(`@/views/admin/NutrimentManage.vue`),
+        meta: { requireAuth: true },
+      },
     ]
   },
   {
