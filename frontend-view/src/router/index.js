@@ -87,7 +87,7 @@ const routes = [
     ]
   },
   {
-    path: "/user",
+    path: "/user", // 用户路由
     component: () => import(`@/views/user/Main.vue`),
     meta: {
       requireAuth: true,
@@ -139,6 +139,12 @@ const routes = [
         path: "/save",
         name: '我的收藏',
         component: () => import(`@/views/user/Save.vue`),
+        meta: { requireAuth: true },
+      },
+            {
+        path: "/createGourmet",
+        name: 'Create',
+        component: () => import(`@/views/user/CreateGourmet.vue`),
         meta: { requireAuth: true },
       },
     ]

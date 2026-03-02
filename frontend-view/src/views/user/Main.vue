@@ -29,6 +29,16 @@
                             </el-dropdown-menu>
                         </el-dropdown>
                     </li>
+                    <li>
+                        <el-dropdown type="success" size="mini" :hide-on-click="false">
+                            <span class="el-dropdown-link">
+                                Create<i class="el-icon-arrow-down el-icon--right"></i>
+                            </span>
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item @click.native="route('/createGourmet')">add Gourmet</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                    </li>
                 </ul>
                 <el-button type="primary" style="margin-right: 15px;" size="mini" @click="route('/service')" round>内容中心</el-button>
                 <el-dropdown type="success" size="mini" class="user-dropdown">
@@ -67,7 +77,7 @@ export default {
     created() {
         this.auth();
         // 默认加载景点页
-        this.route(this.defaultPath);
+        //this.route(this.defaultPath);
     },
     methods: {
         // 路由跳转
@@ -95,6 +105,8 @@ export default {
                 this.$router.push('/');
             } else {
                 this.userInfo = data.data;
+                // 将用户信息存储在 sessionStorage 中，供其他组件使用
+                sessionStorage.setItem('userInfo', JSON.stringify(this.userInfo));
             }
         },
     }
