@@ -8,16 +8,16 @@ import cn.kmbeast.pojo.vo.CookbookVO;
 import java.util.List;
 
 /**
- * food category interface
+ * food cookbook interface
  */
 
 public interface CookbookService {
 
-    Result<String> save(Cookbook category);
+    Result<String> save(Cookbook cookbook);
 
-    Result<String> update(Cookbook category);
+    Result<String> update(Cookbook cookbook);
 
     Result<String> batchDelete(List<Integer> ids);
 
-    Result<List<CookbookVO>> query(CookbookQueryDto categoryQueryDto);
+    Result<List<CookbookVO>> query(CookbookQueryDto cookbookQueryDto);
 }
