@@ -33,6 +33,7 @@ public class ContentNetServiceImpl implements ContentNetService {
      */
     @Override
     public Result<ContentNet> save(ContentNet contentNet) {
+
         // set up user info
         contentNet.setUserId(LocalThreadHolder.getUserId());
         // set up access code, unique

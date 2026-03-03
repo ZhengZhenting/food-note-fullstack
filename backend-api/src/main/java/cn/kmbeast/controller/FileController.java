@@ -45,7 +45,7 @@ public class FileController {
         // 生成链接
         String ipAddr = RootUtils.getIpAddr();
         // 生成前缀链接
-        String perUrl = "http://" + ipAddr + ":" + serverPort + "/";
+        String perUrl = "http://" + ipAddr + ":" + serverPort;
         try {
             if (uploadFile(multipartFile, fileName)) {
                 rep.put("code", 200);
