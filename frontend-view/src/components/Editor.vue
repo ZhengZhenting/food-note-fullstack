@@ -28,16 +28,16 @@ export default Vue.extend({
             content: '<p>创作内容</p>',
             toolbarConfig: {},
             editorConfig: {
-                placeholder: '请输入内容...',
+                placeholder: 'please enter content...',
                 MENU_CONF: {
                     uploadImage: {
-                        server: '/api/food-share-sys/v1.0/file/upload',
+                        server: 'http://localhost:21090/api/food-share-sys/v1.0/file/upload',
                         fieldName: 'file',
                         maxFileSize: 10 * 1024 * 1024,
                         maxNumberOfFiles: 10,
                         // allowedFileTypes: ['image/*'],
                         metaWithUrl: false,
-                        withCredentials: true,
+                        withCredentials: false,
                         timeout: 10 * 1000,
                         headers: {
                             'token': sessionStorage.getItem('token')
@@ -46,18 +46,6 @@ export default Vue.extend({
                             insertFn(res.data, res.data, res.data);
                         },
                     },
-                    uploadVideo: {
-                        server: '/api/food-share-sys/v1.0/file/upload',
-                        fieldName: 'file',
-                        maxFileSize: 100 * 1024 * 1024,
-                        headers: {
-                            'token': sessionStorage.getItem('token')
-                        },
-                        timeout: 60 * 1000,
-                        customInsert(res, insertFn) {
-                            insertFn(res.data, res.data);
-                        },
-                    }
                 }
             },
             mode: 'default',
