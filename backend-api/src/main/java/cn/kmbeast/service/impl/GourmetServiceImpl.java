@@ -6,14 +6,18 @@ import cn.kmbeast.pojo.api.ApiResult;
 import cn.kmbeast.pojo.api.Result;
 import cn.kmbeast.pojo.dto.query.extend.GourmetQueryDto;
 import cn.kmbeast.pojo.em.AuditEnum;
+import cn.kmbeast.pojo.em.PublishEnum;
 import cn.kmbeast.pojo.entity.Gourmet;
+import cn.kmbeast.pojo.vo.GourmetListVO;
 import cn.kmbeast.pojo.vo.GourmetVO;
 import cn.kmbeast.service.GourmetService;
+import cn.kmbeast.utils.TextUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * gourmet service interface implementation
@@ -67,9 +71,9 @@ public class GourmetServiceImpl implements GourmetService {
      */
     @Override
     public Result<List<GourmetVO>> query(GourmetQueryDto gourmetQueryDto) {
-        List<GourmetVO> gourmetList = gourmetMapper.query(gourmetQueryDto);
+        List<GourmetVO> categoryList = gourmetMapper.query(gourmetQueryDto);
         Integer totalCount = gourmetMapper.queryCount(gourmetQueryDto);
-        return ApiResult.success(gourmetList, totalCount);
+        return ApiResult.success(categoryList, totalCount);
     }
 
     /**
@@ -82,8 +86,34 @@ public class GourmetServiceImpl implements GourmetService {
     public Result<String> audit(Integer id) {
         Gourmet gourmet = new Gourmet();
         gourmet.setId(id);
-        gourmet.setIsAudit(AuditEnum.YES_AUDIT.getFlag());
+        gourmet.setIsAudit(AuditEnum.OK_AUDIT.getFlag());
         gourmetMapper.update(gourmet);
         return ApiResult.success();
+    }
+
+    /**
+     * searching gourmet list
+     *
+     * @param gourmetQueryDto 查询参数
+     * @return Result<List <GourmetListVO>> 响应结果
+     */
+    @Override
+    public Result<List<GourmetListVO>> queryList(GourmetQueryDto gourmetQueryDto) {
+        gourmetQueryDto.setIsPublish(PublishEnum.OK_AUDIT.getFlag());
+        gourmetQueryDto.setIsAudit(AuditEnum.OK_AUDIT.getFlag());
+        List<GourmetVO> categoryList = gourmetMapper.query(gourmetQueryDto);
+        Integer totalCount = gourmetMapper.queryCount(gourmetQueryDto);
+        List<GourmetListVO> gourmetListVOS= categoryList.stream()
+                .map(gourmetVO -> new GourmetListVO(
+                        gourmetVO.getId(),
+                        gourmetVO.getTitle(),
+                        gourmetVO.getCover(),
+                        TextUtil.parseText(gourmetVO.getContent(), 200),
+                        gourmetVO.getUserName(),
+                        gourmetVO.getUserAvatar(),
+                        gourmetVO.getCreateTime()
+                )).collect(Collectors.toList());
+
+        return ApiResult.success(gourmetListVOS, totalCount);
     }
 }

@@ -4,14 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 登录状态枚举
+ * publish status enum
  */
 @Getter
 @AllArgsConstructor
-public enum AuditEnum {
+public enum PublishEnum {
 
-    NO_AUDIT(false, "not audited"),
-    OK_AUDIT(true, "audited");
+    NO_AUDIT(false, "private"),
+    OK_AUDIT(true, "public");
 
     /**
      * flag

@@ -4,7 +4,10 @@ import cn.kmbeast.aop.Pager;
 import cn.kmbeast.aop.Protector;
 import cn.kmbeast.pojo.api.Result;
 import cn.kmbeast.pojo.dto.query.extend.GourmetQueryDto;
+import cn.kmbeast.pojo.em.AuditEnum;
+import cn.kmbeast.pojo.em.PublishEnum;
 import cn.kmbeast.pojo.entity.Gourmet;
+import cn.kmbeast.pojo.vo.GourmetListVO;
 import cn.kmbeast.pojo.vo.GourmetVO;
 import cn.kmbeast.service.GourmetService;
 import jakarta.annotation.Resource;
@@ -69,17 +72,32 @@ public class GourmetController {
         return gourmetService.batchDelete(ids);
     }
 
+
     /**
-     * searching gourmet
+     * 查询美食做法
      *
      * @param gourmetQueryDto 查询参数
-     * @return Result<List <GourmetVO>> 响应结果
+     * @return Result<List < GourmetVO>> 响应结果
      */
-    @Pager //分页查询
+    @Pager
+    @Protector(role = "管理员")
     @PostMapping(value = "/query")
     @ResponseBody
     public Result<List<GourmetVO>> query(@RequestBody GourmetQueryDto gourmetQueryDto) {
         return gourmetService.query(gourmetQueryDto);
+    }
+
+    /**
+     * searching gourmet
+     *
+     * @param gourmetQueryDto 查询参数
+     * @return Result<List <GourmetListVO>> 响应结果
+     */
+    @Pager //分页查询
+    @PostMapping(value = "/queryList")
+    @ResponseBody
+    public Result<List<GourmetListVO>> queryList(@RequestBody GourmetQueryDto gourmetQueryDto) {
+        return gourmetService.queryList(gourmetQueryDto);
     }
 
 }
