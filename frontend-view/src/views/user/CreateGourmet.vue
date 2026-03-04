@@ -49,6 +49,8 @@
 
     </div>
 </template>
+
+
 <script>
 import Editor from "@/components/Editor"
 export default {
@@ -116,6 +118,8 @@ export default {
     }
 };
 </script>
+
+
 <style scoped lang="scss">
 .container {
     background-color: rgb(248, 248, 248);
