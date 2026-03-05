@@ -1,7 +1,7 @@
 <template>
     <div style="width: 100%;">
         <el-row style="margin: 5px 0;">
-            <h2 class="commentHeader">评论&nbsp;{{ evaluationsCount }}</h2>
+            <h2 class="commentHeader">Comment&nbsp;{{ evaluationsCount }}</h2>
             <el-row style="margin: 15px 0;">
                 <el-col :span="2">
                     <el-avatar :src="userData.userAvatar"></el-avatar>
@@ -9,13 +9,13 @@
                 <el-col :span="22">
                     <div class="parent-comment"
                         :style="{ backgroundColor: bgColor, height: isFocused ? '120px' : '70px', borderColor: isFocused ? '#007bff' : 'transparent' }">
-                        <textarea class="comment-parent-input" v-model="content" placeholder="请友好交流" @focus="onFocus"
+                        <textarea class="comment-parent-input" v-model="content" placeholder="add comment..." @focus="onFocus"
                             @blur="onBlur"></textarea>
                         <div>
                             <span class="comment-input-number">{{ content.length }} / 300</span>
                             <el-button
                                 :style="{ backgroundColor: isFocused ? '#007bff' : '#666', borderColor: isFocused ? '#007bff' : '#666' }"
-                                @click="commentClick" class="comment-clike" size="mini" type="primary">评论</el-button>
+                                @click="commentClick" class="comment-clike" size="mini" type="primary">Comment</el-button>
                         </div>
                     </div>
                 </el-col>
@@ -30,7 +30,7 @@
                     <el-col :span="22">
                         <span style="height: 40px;line-height: 40px;font-size: 16px;color: #515767;">{{
                             comment.userName }}</span>
-                        <span v-if="comment.userId == userId" class="my-body-tag">我自己</span>
+                        <span v-if="comment.userId == userId" class="my-body-tag">my self</span>
                     </el-col>
                 </el-row>
                 <el-row style="padding: 8px 0;">
@@ -41,23 +41,23 @@
                 <el-row style="padding: 8px 0;">
                     <el-col :span="22" :offset="2">
                         <span style="font-size: 14px;color: #8A919F;">{{ comment.time }}</span>
-                        <el-popconfirm confirm-button-text='好的' cancel-button-text='不删了' icon="el-icon-info"
-                            icon-color="red" title="删除该条评论？" v-if="comment.userId == userId"
+                        <el-popconfirm confirm-button-text='ok' cancel-button-text='no' icon="el-icon-info"
+                            icon-color="red" title="delete this comment？" v-if="comment.userId == userId"
                             @confirm="deleteComment(comment)">
                             <span slot="reference"
                                 style="cursor: pointer;margin-left: 15px;font-size: 14px;color: #8A919F;user-select: none;">
                                 <i class="el-icon-delete"></i>
-                                删除
+                                delete
                             </span>
                         </el-popconfirm>
                         <span @click="toggleReplyInput(comment)"
                             style="cursor: pointer;margin-left: 15px;font-size: 14px;color: #8A919F;user-select: none;">
                             <i class="el-icon-chat-dot-round"></i>
-                            回复<span v-if="comment.childTotal != 0">({{ comment.childTotal }})</span>
+                            reply<span v-if="comment.childTotal != 0">({{ comment.childTotal }})</span>
                         </span>
                         <span @click="upvote(comment)"
                             style="cursor: pointer;margin-left: 15px;font-size: 14px;color: #8A919F;user-select: none;">
-                            <i class="el-icon-discount" v-if="!comment.upvoteFlag">点赞</i>
+                            <i class="el-icon-discount" v-if="!comment.upvoteFlag">like</i>
                             <i class="el-icon-discount" v-else style="color: #1E80FF;">&nbsp;{{ comment.upvoteCount
                                 }}</i>
                         </span>
@@ -74,7 +74,7 @@
                                 <span class="comment-input-number">{{ replyContent.length }} / 300</span>
                                 <el-button style="background-color: #007bff;user-select: none;"
                                     @click="submitReply(comment)" class="comment-clike" size="mini"
-                                    type="primary">评论</el-button>
+                                    type="primary">comment</el-button>
                             </div>
                         </div>
                     </el-col>
@@ -88,16 +88,16 @@
                                 <el-avatar size="small" :src="commentChild.userAvatar"
                                     style="margin-right: 5px;"></el-avatar>
                                 <span style="color: #515767; padding: 0 5px;">{{ commentChild.userName }}</span>
-                                <span v-if="commentChild.userId == userId" class="my-body-tag">我自己</span>
+                                <span v-if="commentChild.userId == userId" class="my-body-tag">myself</span>
                                 <span v-if="commentChild.replierName != null"
                                     style="margin:0 15px;color: #1c1c1c;user-select: none;font-size: 12px;">
-                                    回复
+                                    reply
                                 </span>
                                 <el-avatar v-if="commentChild.replierName != null" size="small"
                                     :src="commentChild.replierAvatar" style="margin-right: 5px;"></el-avatar>
                                 <span v-if="commentChild.replierName != null" style="color: #515767;padding: 0 5px;">{{
                                     commentChild.replierName }}</span>
-                                <span v-if="commentChild.replierId == userId" class="my-body-tag">我自己</span>
+                                <span v-if="commentChild.replierId == userId" class="my-body-tag">myself</span>
                                 <span
                                     style="letter-spacing: 1px;font-size: 16px; color: #252933; white-space: normal; margin-left: 5px;padding: 6px 0;">
                                     : {{ commentChild.content }}
@@ -111,17 +111,17 @@
                                     <span slot="reference"
                                         style="cursor: pointer;margin-left: 15px;font-size: 14px;color: #8A919F;user-select: none;">
                                         <i class="el-icon-delete"></i>
-                                        删除
+                                        delete
                                     </span>
                                 </el-popconfirm>
                                 <span @click="toggleReplyInput1(commentChild)"
                                     style="cursor: pointer;margin-left: 15px;font-size: 14px;color: #8A919F;user-select: none;">
                                     <i class="el-icon-chat-dot-round"></i>
-                                    回复
+                                    reply
                                 </span>
                                 <span @click="upvote(commentChild)"
                                     style="cursor: pointer;margin-left: 15px;font-size: 14px;color: #8A919F;user-select: none;">
-                                    <i class="el-icon-discount" v-if="!commentChild.upvoteFlag">点赞</i>
+                                    <i class="el-icon-discount" v-if="!commentChild.upvoteFlag">like</i>
                                     <i class="el-icon-discount" v-else style="color: #1E80FF;">&nbsp;{{
                                         commentChild.upvoteCount }}</i>
                                 </span>
@@ -258,7 +258,7 @@ export default {
                     comment.upvoteCount += 1;
                 }
             }).catch(err => {
-                console.error(`点赞状态设置异常 -> `, err);
+                console.error(`Error -> `, err);
             })
         },
         // 确定举报
@@ -271,22 +271,22 @@ export default {
                 }
             });
             if (!reportItem.length) {
-                this.$message(`请选中举报项`);
+                this.$message(`please select report item`);
                 return;
             }
             this.$axios.get(`evaluations-reports/report/${this.comment.id}/${reportItem[0].name}`).then(res => {
                 this.dialogVisibleReport = false;
                 if (res.data.code == 200) {
                     this.$swal.fire({
-                        title: '举报操作',
-                        text: '举报成功',
+                        title: 'Report Operation',
+                        text: 'Report successful',
                         icon: 'success',
                         showConfirmButton: false,
                         timer: 1100
                     });
                 } else {
                     this.$swal.fire({
-                        title: '举报操作',
+                        title: 'Report Operation',
                         text: res.data.msg,
                         icon: 'error',
                         showConfirmButton: false,
@@ -294,7 +294,7 @@ export default {
                     });
                 }
             }).catch(err => {
-                console.error(`评论举报异常 -> `, err);
+                console.error(`Error -> `, err);
             })
         },
         // 选中举报项
@@ -324,7 +324,7 @@ export default {
                     })
                 }
             }).catch(err => {
-                console.error(`举报项加载失败 -> `, err);
+                console.error(`Error -> `, err);
             })
         },
         reportComment(comment) {
@@ -339,7 +339,7 @@ export default {
                     this.loadCommentList();
                 }
             }).catch(err => {
-                console.error(`评论异常 -> `, err);
+                console.error(`Error -> `, err);
             })
         },
         onFocus() {
@@ -356,8 +356,8 @@ export default {
         commentClick() {
             if (this.content == '') {
                 this.$swal.fire({
-                    title: '内容提示',
-                    text: '评论内容为空',
+                    title: 'Content',
+                    text: 'Comment content cannot be empty',
                     icon: 'success',
                     showConfirmButton: false,
                     timer: 800
@@ -373,8 +373,8 @@ export default {
                 if (res.data.code == 200) {
                     this.content = '';
                     this.$swal.fire({
-                        title: '评论操作',
-                        text: '评论成功',
+                        title: 'Comment Operation',
+                        text: 'Comment successful',
                         icon: 'success',
                         showConfirmButton: false,
                         timer: 1100
@@ -384,7 +384,7 @@ export default {
                     }, 1100)
                 }else{
                     this.$swal.fire({
-                        title: '评论异常',
+                        title: 'Error',
                         text: res.data.msg,
                         icon: 'error',
                         showConfirmButton: false,
@@ -392,12 +392,12 @@ export default {
                     });
                 }
             }).catch(err => {
-                console.error(`评论异常 -> `, err);
+                console.error(`Error -> `, err);
             })
         },
         // 父级评论回复点击
         toggleReplyInput(comment) {
-            this.replyText = `回复${comment.userName}...`;
+            this.replyText = `Reply to ${comment.userName}...`;
             if (comment.showReplyInput == null) {
                 comment.showReplyInput = false;
             }
@@ -413,7 +413,7 @@ export default {
         // 父级评论回复提交
         submitReply(comment) {
             if (this.replyContent == '') {
-                this.$message(`评论内容不能为空`);
+                this.$message(`Comment content cannot be empty`);
                 return;
             }
             const evaluationsDTO = {
@@ -427,8 +427,8 @@ export default {
                     this.replyContent = '';
                     comment.showReplyInput = false;
                     this.$swal.fire({
-                        title: '回复操作',
-                        text: '回复成功',
+                        title: 'Reply Operation',
+                        text: 'Reply successful',
                         icon: 'success',
                         showConfirmButton: false,
                         timer: 1300
@@ -439,7 +439,7 @@ export default {
                     }, 1300)
                 }else{
                     this.$swal.fire({
-                        title: '评论异常',
+                        title: 'Error',
                         text: res.data.msg,
                         icon: 'error',
                         showConfirmButton: false,
@@ -447,13 +447,13 @@ export default {
                     });
                 }
             }).catch(err => {
-                console.error(`评论异常 -> `, err);
+                console.error(`Error -> `, err);
             })
         },
         // 子级评论回复提交
         submitReply1(comment) {
             if (this.replyChildContent == '') {
-                this.$message(`评论内容不能为空`);
+                this.$message(`Comment content cannot be empty`);
                 return;
             }
             const evaluationsDTO = {
@@ -468,8 +468,8 @@ export default {
                     this.content = '';
                     comment.replyInputStatus = false;
                     this.$swal.fire({
-                        title: '回复操作',
-                        text: '回复成功',
+                        title: 'Reply Operation',
+                        text: 'Reply successful',
                         icon: 'success',
                         showConfirmButton: false,
                         timer: 1300
@@ -480,7 +480,7 @@ export default {
                     }, 1300)
                 }else{
                     this.$swal.fire({
-                        title: '评论异常',
+                        title: 'Error',
                         text: res.data.msg,
                         icon: 'error',
                         showConfirmButton: false,
@@ -488,7 +488,7 @@ export default {
                     });
                 }
             }).catch(err => {
-                console.error(`评论异常 -> `, err);
+                console.error(`Error -> `, err);
             })
         },
         goBack() {
@@ -510,7 +510,7 @@ export default {
                     });
                 }
             }).catch(err => {
-                console.error(`评论查询异常异常 -> `, err);
+                console.error(`Error -> `, err);
             })
         },
     }

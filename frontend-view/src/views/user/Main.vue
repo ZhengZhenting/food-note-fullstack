@@ -159,13 +159,13 @@ export default {
 }
 
 .router-view {
-    padding: 60px 30px;
+    padding: 10px 30px;
     box-sizing: border-box;
-    background-color: rgb(253, 253, 253);
+    background-color: rgb(245, 245, 245);
     min-height: calc(100vh - 66px);
 
     .item {
-        width: 60%;
+        width: 70%;
         margin: 0 auto;
     }
 }
