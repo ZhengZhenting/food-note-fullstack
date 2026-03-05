@@ -31,4 +31,24 @@ public class GourmetVO extends Gourmet {
      * user avatar
      */
     private String userAvatar;
+
+    /**
+     * viewer counts
+     */
+    private Integer viewCount;
+
+    /**
+     * upvote counts
+     */
+    private Integer upvoteCount;
+
+    /**
+     * save counts
+     */
+    private Integer saveCount;
+
+    /**
+     * rating
+     */
+    private Double rating;
 }

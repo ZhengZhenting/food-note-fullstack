@@ -111,6 +111,10 @@ public class GourmetServiceImpl implements GourmetService {
                         TextUtil.parseText(gourmetVO.getContent(), 200),
                         gourmetVO.getUserName(),
                         gourmetVO.getUserAvatar(),
+                        gourmetVO.getViewCount(),
+                        gourmetVO.getUpvoteCount(),
+                        gourmetVO.getSaveCount(),
+                        gourmetVO.getRating(),
                         gourmetVO.getCreateTime()
                 )).collect(Collectors.toList());
 

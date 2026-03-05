@@ -48,6 +48,26 @@ public class GourmetListVO {
     private String userAvatar;
 
     /**
+     * viewer counts
+     */
+    private Integer viewCount;
+
+    /**
+     * upvote counts
+     */
+    private Integer upvoteCount;
+
+    /**
+     * save counts
+     */
+    private Integer saveCount;
+
+    /**
+     * rating
+     */
+    private Double rating;
+
+    /**
      * create time
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")

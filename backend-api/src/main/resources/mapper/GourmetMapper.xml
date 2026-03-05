@@ -43,7 +43,14 @@
     <!--search-->
     <select id="query" resultMap="BaseResultMap" >
 
-        SELECT g.*, c.name AS category_name, u.user_name, u.user_avatar
+        SELECT g.*,
+               c.name AS category_name,
+               u.user_name,
+               u.user_avatar,
+               (SELECT COUNT(i1.id) FROM interaction i1 WHERE g.id=i1.content_id AND i1.type=3) AS view_count,
+               (SELECT COUNT(i2.id) FROM interaction i2 WHERE g.id=i2.content_id AND i2.type=1) AS upvote_count,
+               (SELECT COUNT(i3.id) FROM interaction i3 WHERE g.id=i3.content_id AND i3.type=2) AS save_count,
+               (SELECT AVG(i4.score) FROM interaction i4 WHERE g.id=i4.content_id AND i4.type=4) AS rating
         FROM gourmet g
         LEFT JOIN category c ON g.category_id = c.id
         LEFT JOIN user u ON g.user_id = u.id
@@ -119,6 +126,10 @@
         <result column="category_name" property="categoryName"/>
         <result column="user_name" property="userName"/>
         <result column="user_avatar" property="userAvatar"/>
+        <result column="view_count" property="viewCount"/>
+        <result column="upvote_count" property="upvoteCount"/>
+        <result column="save_count" property="saveCount"/>
+        <result column="rating" property="rating"/>
     </resultMap>
 
 
