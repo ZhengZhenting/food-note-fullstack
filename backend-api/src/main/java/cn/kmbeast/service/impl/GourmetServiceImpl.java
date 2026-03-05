@@ -120,4 +120,20 @@ public class GourmetServiceImpl implements GourmetService {
 
         return ApiResult.success(gourmetListVOS, totalCount);
     }
+
+    /**
+     * searching gourmet by ID
+     *
+     * @param id id
+     * @return Result<List <GourmetListVO>> 响应结果
+     */
+    @Override
+    public Result<List<GourmetVO>> queryById(Integer id) {
+        GourmetQueryDto gourmetQueryDto = new GourmetQueryDto();
+        gourmetQueryDto.setId(id);
+        gourmetQueryDto.setIsPublish(PublishEnum.OK_AUDIT.getFlag());
+        gourmetQueryDto.setIsAudit(AuditEnum.OK_AUDIT.getFlag());
+        List<GourmetVO> categoryList = gourmetMapper.query(gourmetQueryDto);
+        return ApiResult.success(categoryList);
+    }
 }

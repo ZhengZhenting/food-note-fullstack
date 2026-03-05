@@ -100,5 +100,20 @@ public class GourmetController {
         return gourmetService.queryList(gourmetQueryDto);
     }
 
+    /**
+     * searching gourmet by ID
+     *
+     * @param id id
+     * @return Result<List <GourmetVO>> 响应结果
+     */
+    @Pager //分页查询
+    @GetMapping(value = "/{id}")
+    @ResponseBody
+    public Result<List<GourmetVO>> queryById(@PathVariable Integer id) {
+        return gourmetService.queryById(id);
+    }
+
+
+
 }
 

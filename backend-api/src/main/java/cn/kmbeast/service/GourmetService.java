@@ -27,4 +27,6 @@ public interface GourmetService {
     Result<String> audit(Integer id);
 
     Result<List<GourmetListVO>> queryList(GourmetQueryDto gourmetQueryDto);
+
+    Result<List<GourmetVO>> queryById(Integer id);
 }

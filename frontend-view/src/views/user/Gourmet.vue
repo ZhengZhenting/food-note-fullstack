@@ -23,7 +23,7 @@
             <div v-if="gourmetList.length === 0">
                 <el-empty description="No data"></el-empty>
             </div>
-            <div>
+            <div v-else>
                 <div class="item-gourmet" v-for="(gourmet, index) in gourmetList" :key="index">
                     <div class="left">
                         <img :src="gourmet.cover">
@@ -33,7 +33,7 @@
                             <img style="width: 25px; height: 25px; border-radius: 50%;" :src="gourmet.userAvatar">
                             <span>{{ gourmet.userName }}</span>
                         </div>
-                        <div class="title">
+                        <div class="title" @click="readGourmet(gourmet)">
                             {{ gourmet.title }}
                         </div>
                         <div class="detail">
@@ -78,6 +78,10 @@ export default {
         this.fetchGourmetData();
     },
     methods: {
+        readGourmet(gourmet){
+            sessionStorage.setItem('gourmetId',gourmet.id);
+            this.$router.push('/gourmetDetail'); // 跳转到美食做法详情页
+        },
         handleFilterClear() {
             this.filterText = '';
             this.fetchGourmetData();
