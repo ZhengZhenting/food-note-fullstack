@@ -177,7 +177,7 @@ export default {
     props: {
         contentId: {
             type: Number,
-            default: ''
+            default: 0
         },
         contentType: {
             type: String,

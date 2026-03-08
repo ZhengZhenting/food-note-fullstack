@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 登录状态枚举
+ * audit status
  */
 @Getter
 @AllArgsConstructor

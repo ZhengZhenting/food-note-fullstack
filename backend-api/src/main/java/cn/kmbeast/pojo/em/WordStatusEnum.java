@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 禁言状态枚举
+ * word status
  */
 @Getter
 @AllArgsConstructor

@@ -58,7 +58,7 @@ const routes = [
       },
       {
         path: "/gourmetManage",
-        name: 'Gourmet',
+        name: 'GourmetManage',
         icon: 'el-icon-tableware',
         component: () => import(`@/views/admin/GourmetManage.vue`),
         meta: { requireAuth: true },
@@ -72,14 +72,14 @@ const routes = [
       },
       {
         path: "/cookbookNetManage",
-        name: 'CookBook',
+        name: 'CookBookManage',
         icon: 'el-icon-tickets',
         component: () => import(`@/views/admin/CookbookManage.vue`),
         meta: { requireAuth: true },
       },
       {
         path: "/nutrimentManage",
-        name: 'Nutriment',
+        name: 'NutrimentManage',
         icon: 'el-icon-suitcase-1',
         component: () => import(`@/views/admin/NutrimentManage.vue`),
         meta: { requireAuth: true },
