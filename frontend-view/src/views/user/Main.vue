@@ -2,30 +2,30 @@
     <div>
         <div class="top">
             <div class="top-left">
-                <Logo sysName="美食天下" />
+                <Logo sysName="Food Note" />
             </div>
             <div class="top-right">
                 <ul>
                     <li @click="route('/gourmet')">
                         <i class="el-icon-food" style="margin-right: 4px;"></i>
-                        天下美食
+                        Courmet
                     </li>
                     <li @click="route('/cookbook')">
                         <i class="el-icon-notebook-2" style="margin-right: 4px;"></i>
-                        食谱大全
+                        Cookbook
                     </li>
                     <li @click="route('/Save')">
                         <i class="el-icon-star-off" style="margin-right: 4px;"></i>
-                        我的收藏
+                        My Favorites
                     </li>
                     <li>
                         <el-dropdown type="success" size="mini" :hide-on-click="false">
                             <span class="el-dropdown-link">
-                                我的饮食<i class="el-icon-arrow-down el-icon--right"></i>
+                                My Diet<i class="el-icon-arrow-down el-icon--right"></i>
                             </span>
                             <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item @click.native="route('/dietHistory')">饮食历史</el-dropdown-item>
-                                <el-dropdown-item @click.native="route('/nutriment')">营养摄入</el-dropdown-item>
+                                <el-dropdown-item @click.native="route('/dietHistory')">History</el-dropdown-item>
+                                <el-dropdown-item @click.native="route('/nutriment')">Nutriment</el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
                     </li>
@@ -40,7 +40,7 @@
                         </el-dropdown>
                     </li>
                 </ul>
-                <el-button type="primary" style="margin-right: 15px;" size="mini" @click="route('/service')" round>内容中心</el-button>
+                <el-button type="primary" style="margin-right: 15px;" size="mini" @click="route('/service')" round>Dashboard</el-button>
                 <el-dropdown type="success" size="mini" class="user-dropdown">
                     <span class="el-dropdown-link" style="display: flex; align-items: center;cursor: pointer;">
                         <el-avatar :size="30" :src="userInfo.userAvatar" style="margin-top: 0;"></el-avatar>
@@ -48,9 +48,9 @@
                         <i class="el-icon-arrow-down el-icon--right" style="margin-left: 5px;"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item @click.native="route('/self')">个人资料</el-dropdown-item>
-                        <el-dropdown-item @click.native="route('/resetPwd')">修改密码</el-dropdown-item>
-                        <el-dropdown-item @click.native="loginOut">退出登录</el-dropdown-item>
+                        <el-dropdown-item @click.native="route('/self')"> My Profile</el-dropdown-item>
+                        <el-dropdown-item @click.native="route('/resetPwd')">Change Password</el-dropdown-item>
+                        <el-dropdown-item @click.native="loginOut">Log Out</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
             </div>
@@ -138,7 +138,7 @@ export default {
                 padding: 5px 10px;
 
                 min-width: 50px;
-                max-width: 100px;
+                max-width: 150px;
                 color: rgb(111, 53, 71);
                 font-size: 14px;
                 box-sizing: border-box;
