@@ -59,6 +59,8 @@
     </div>
 </template>
 <script>
+import FontSize from 'wangeditor/dist/menus/font-size';
+
 export default {
     name: "Gourmet",
     data() {
