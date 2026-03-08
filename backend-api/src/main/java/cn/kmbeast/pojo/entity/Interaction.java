@@ -24,6 +24,7 @@ public class Interaction {
 
     /**
      * type
+     * 1: likes, 2:saves, 3:views, 4:rating
      */
     private Integer type;
 

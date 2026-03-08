@@ -5,6 +5,8 @@
             <div style="position: sticky; top: 0px; background-color: white; z-index: 10; padding: 10px 0;">
                 <div class="title"> {{ gourmet.title }}</div>
                 <div class="info">
+                    <img style="width: 20px; height: 20px; border-radius: 50%;" :src="gourmet.userAvatar">
+                    <span>{{ gourmet.userName }}</span>
                     <span> {{ gourmet.createTime }}</span>
                     <span> Views({{ gourmet.viewCount }})</span>
                     <span> Likes({{ gourmet.upvoteCount }})</span>
@@ -13,10 +15,36 @@
                 </div>
             </div>
             <div style="border-top: 2px solid rgb(235, 235, 235);">
-                <div v-html="gourmet.content" ></div>
+                <div v-html="gourmet.content"></div>
             </div>
+            <div style="margin: 40px 0; display: flex; justify-content: center; align-items: center;">
+                <span class="upvote-operation">
+                    <el-tooltip class="item" effect="dark" :content="upvoteStatus ? 'cancle' : 'upvote'"
+                        placement="bottom">
+                        <span @click="operationSave()">
+                            <i style="font-size: 30px" class="el-icon-medal-1"></i>
+                            <span>
+                                {{ gourmet.upvoteCount }} likes
+                            </span>
+                        </span>
+                    </el-tooltip>
+                </span>
+                <span class="upvote-operation">
+                    <el-tooltip class="item" effect="dark" :content="saveStatus ? 'cancle' : 'upvote'"
+                        placement="bottom">
+                        <span @click="operationSave()">
+                            <i style="font-size: 30px" class="el-icon-star-off"></i>
+                            <span>
+                                {{ gourmet.saveCount }} saves
+                            </span>
+                        </span>
+                    </el-tooltip>
+                </span>
+
+            </div>
+
             <div>
-                <Evaluations :contentId="gourmet.id" contentType="GOURMET"/>
+                <Evaluations v-if="gourmet.id" :contentId="gourmet.id" contentType="GOURMET" />
             </div>
         </el-col>
 
@@ -60,7 +88,9 @@ export default {
         return {
             gourmetId: null,
             gourmet: {},
-            recommendGourmet: []
+            recommendGourmet: [],
+            upvoteStatus: false, // deault: not upvoted
+            saveStatus: false // default: not saved
         }
     },
     created() {
@@ -68,12 +98,73 @@ export default {
         this.fetchTopGourmet();
     },
     methods: {
+        // 获取点赞状态
+        fetchUpvoteOperation(contentId) {
+            this.$axios.get(`/interaction/upvoteStatus/${contentId}`).then(res => {
+                const { data } = res;
+                if (data.code === 200) {
+                    this.upvoteStatus = data.data > 0;
+                }
+            }).catch(error => {
+                console.log("Error", error);
+            });
+        },
+        // 获取收藏状态
+        fetchSaveOperation(contentId) {
+            this.$axios.get(`/interaction/saveStatus/${contentId}`).then(res => {
+                const { data } = res;
+                if (data.code === 200) {
+                    this.saveStatus = data.data > 0;
+                }
+            }).catch(error => {
+                console.log("Error", error);
+            });
+        },
+        // 收藏操作
+        operationSave() {
+            this.$axios.post(`/interaction/saveOperation/${this.gourmetId}`).then(res => {
+                const { data } = res;
+                if (data.code === 200) {
+                    if (data.data > 0) {
+                        this.gourmet.saveCount += 1;
+                    } else {
+                        this.gourmet.saveCount -= 1;
+                    }
+                    this.saveStatus = data.data > 0;
+                }
+            }).catch(error => {
+                console.log("Error", error);
+            });
+        },
+        // 点赞操作
+        operationUpvote() {
+            this.$axios.post(`/interaction/upvoteOperation/${this.gourmetId}`).then(res => {
+                const { data } = res;
+                if (data.code === 200) {
+                    if (data.data > 0) {
+                        this.gourmet.upvoteCount += 1;
+                    } else {
+                        this.gourmet.upvoteCount -= 1;
+                    }
+                    this.upvoteStatus = data.data > 0;
+                }
+            }).catch(error => {
+                console.log("Error", error);
+            });
+        },
         readGourmet(gourmet) {
             this.fetchGourmetById(gourmet.id);
         },
         loadGourmetId() {
             this.gourmetId = sessionStorage.getItem('gourmetId');
+            // 根据ID获取美食做法详情
             this.fetchGourmetById(this.gourmetId);
+            // 浏览操作
+            this.viewOeration(this.gourmetId);
+            // 获取点赞状态
+            this.fetchUpvoteOperation(this.gourmetId);
+            // 获取收藏状态
+            this.fetchSaveOperation(this.gourmetId);
         },
         // 根据ID获取美食做法详情
         fetchGourmetById(gourmetId) {
@@ -81,6 +172,17 @@ export default {
                 const { data } = res;
                 if (data.code === 200) {
                     this.gourmet = data.data[0];
+                }
+            }).catch(error => {
+                console.log("Error", error);
+            });
+        },
+        //浏览操作
+        viewOeration(contentId) {
+            this.$axios.post(`/interaction/viewOperation/${contentId}`).then(res => {
+                const { data } = res;
+                if (data.code === 200) {
+                    console.log("View operation recorded successfully");
                 }
             }).catch(error => {
                 console.log("Error", error);
@@ -101,6 +203,18 @@ export default {
 };
 </script>
 <style scoped lang="scss">
+.upvote-operation {
+    font-weight: 800;
+    cursor: pointer;
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.upvote-operation:hover {
+    background-color: #f1f1f1;
+}
+
 .title {
     font-size: 30px;
     font-weight: bold;
