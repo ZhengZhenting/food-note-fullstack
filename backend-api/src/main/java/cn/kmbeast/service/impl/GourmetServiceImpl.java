@@ -136,4 +136,32 @@ public class GourmetServiceImpl implements GourmetService {
         List<GourmetVO> categoryList = gourmetMapper.query(gourmetQueryDto);
         return ApiResult.success(categoryList);
     }
+
+    /**
+     * searching gourmet of a user
+     *
+     * @return Result<List <GourmetListVO>> 响应结果
+     */
+    @Override
+    public Result<List<GourmetListVO>> queryUser() {
+        GourmetQueryDto gourmetQueryDto = new GourmetQueryDto();
+        gourmetQueryDto.setUserId(LocalThreadHolder.getUserId());
+        List<GourmetVO> categoryList = gourmetMapper.query(gourmetQueryDto);
+        List<GourmetListVO> gourmetListVOS= categoryList.stream()
+                .map(gourmetVO -> new GourmetListVO(
+                        gourmetVO.getId(),
+                        gourmetVO.getTitle(),
+                        gourmetVO.getCover(),
+                        TextUtil.parseText(gourmetVO.getContent(), 200),
+                        gourmetVO.getUserName(),
+                        gourmetVO.getUserAvatar(),
+                        gourmetVO.getViewCount(),
+                        gourmetVO.getUpvoteCount(),
+                        gourmetVO.getSaveCount(),
+                        gourmetVO.getRating(),
+                        gourmetVO.getCreateTime()
+                )).collect(Collectors.toList());
+
+        return ApiResult.success(gourmetListVOS);
+    }
 }

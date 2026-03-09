@@ -14,6 +14,7 @@ import cn.kmbeast.pojo.em.LoginStatusEnum;
 import cn.kmbeast.pojo.em.RoleEnum;
 import cn.kmbeast.pojo.em.WordStatusEnum;
 import cn.kmbeast.pojo.entity.User;
+import cn.kmbeast.pojo.vo.CenterVO;
 import cn.kmbeast.pojo.vo.ChartVO;
 import cn.kmbeast.pojo.vo.UserVO;
 import cn.kmbeast.service.UserService;
@@ -231,5 +232,15 @@ public class UserServiceImpl implements UserService {
         List<LocalDateTime> localDateTimes = userList.stream().map(User::getCreateTime).collect(Collectors.toList());
         List<ChartVO> chartVOS = DateUtil.countDatesWithinRange(day, localDateTimes);
         return ApiResult.success(chartVOS);
+    }
+
+    /**
+     * user info for Dashboard
+     * @return Result<CenterVO>
+     */
+    @Override
+    public Result<CenterVO> center() {
+        CenterVO centerVOS = userMapper.queryCenterInfo(LocalThreadHolder.getUserId());
+        return ApiResult.success(centerVOS);
     }
 }

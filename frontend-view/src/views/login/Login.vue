@@ -1,7 +1,7 @@
 <template>
     <div class="login-container">
         <div style="display: flex;justify-content: left;margin: 20px 0;">
-            <Logo :bag="colorLogo" bag="rgb(51,51,51)" sysName="食百味" />
+            <Logo :bag="colorLogo"  sysName="Food Note" />
         </div>
         <div class="login-panel">
             <div style="width: 300px;padding: 40px;display: flex;justify-content: center;align-items: center;">
@@ -9,19 +9,19 @@
             </div>
             <div class="right-login">
                 <div>
-                    <h2>用户登录</h2>
+                    <h2>Log In</h2>
                 </div>
                 <div class="text">
-                    <input v-model="act" class="act" placeholder="输入账号" />
+                    <input v-model="act" class="act" placeholder="Input username" />
                 </div>
                 <div class="text">
                     <input v-model="pwd" class="pwd" type="password" placeholder="输入密码" />
                 </div>
                 <div>
-                    <span class="login-btn" @click="login">立即登录</span>
+                    <span class="login-btn" @click="login">log in</span>
                 </div>
                 <div class="tip">
-                    <p>没有账号？<span class="no-act" @click="toDoRegister">点此注册</span></p>
+                    <p>No Account？<span class="no-act" @click="toDoRegister">Register</span></p>
                 </div>
             </div>
         </div>

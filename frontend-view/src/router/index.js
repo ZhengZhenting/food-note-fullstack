@@ -147,10 +147,16 @@ const routes = [
         component: () => import(`@/views/user/Save.vue`),
         meta: { requireAuth: true },
       },
-            {
+      {
         path: "/createGourmet",
         name: 'Create',
         component: () => import(`@/views/user/CreateGourmet.vue`),
+        meta: { requireAuth: true },
+      },
+      {
+        path: "/editGourmet",
+        name: 'Edit',
+        component: () => import(`@/views/user/EditGourmet.vue`),
         meta: { requireAuth: true },
       },
     ]
@@ -181,7 +187,7 @@ router.beforeEach((to, from, next) => {
     // 已登录时的权限检查
     try {
       const role = parseInt(sessionStorage.getItem('role'));
-      
+
       // 管理员路径检查
       if (to.matched[0].path === '/admin' && role !== 1) {
         clearToken();

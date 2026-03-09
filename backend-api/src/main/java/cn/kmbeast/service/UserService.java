@@ -6,6 +6,7 @@ import cn.kmbeast.pojo.dto.update.UserRegisterDTO;
 import cn.kmbeast.pojo.dto.update.UserUpdateDTO;
 import cn.kmbeast.pojo.dto.query.extend.UserQueryDto;
 import cn.kmbeast.pojo.entity.User;
+import cn.kmbeast.pojo.vo.CenterVO;
 import cn.kmbeast.pojo.vo.ChartVO;
 import cn.kmbeast.pojo.vo.UserVO;
 
@@ -37,5 +38,7 @@ public interface UserService {
     Result<String> backUpdate(User user);
 
     Result<List<ChartVO>> daysQuery(Integer day);
+
+    Result<CenterVO> center();
 
 }

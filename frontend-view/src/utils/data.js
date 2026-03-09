@@ -11,9 +11,9 @@ export function timeAgo(dateString) {
     } else {
         const daysPast = Math.floor(secondsPast / 86400);
         if (daysPast === 1) {
-            return '1 天前';
+            return '1 day ago';
         } else {
-            return `${daysPast} 天前`;
+            return `${daysPast} days ago`;
         }
     }
 }
