@@ -2,21 +2,25 @@
     <el-row style="background-color: #FFFFFF;padding: 5px 0;border-radius: 5px;">
         <el-row style="padding: 10px;margin-left: 5px;">
             <el-row style="display: flex;justify-content: left;gap: 6px;">
-                <el-select style="width: 100px;" @change="fetchFreshData" size="small" v-model="cookbookQueryDto.categoryId"
-                    placeholder="category" clearable>
+                <span class="edit-button" @click="add()">
+                    New Cookbook
+                </span>
+                <el-select style="width: 100px;" @change="fetchFreshData" size="small"
+                    v-model="cookbookQueryDto.categoryId" placeholder="category" clearable>
                     <el-option v-for="item in categories" :key="item.id" :label="item.name" :value="item.id">
                     </el-option>
                 </el-select>
-                <el-select style="width: 100px;" @change="fetchFreshData" size="small" v-model="cookbookQueryDto.isPublish"
-                    placeholder="publish Status" clearable>
-                    <el-option v-for="item in publishStatuList" :key="item.value" :label="item.label" :value="item.value">
+                <el-select style="width: 100px;" @change="fetchFreshData" size="small"
+                    v-model="cookbookQueryDto.isPublish" placeholder="publish Status" clearable>
+                    <el-option v-for="item in publishStatuList" :key="item.value" :label="item.label"
+                        :value="item.value">
                     </el-option>
                 </el-select>
                 <el-date-picker style="width: 216px;" @change="fetchFreshData" size="small" v-model="searchTime"
                     type="daterange" range-separator="to" start-placeholder="Start Time" end-placeholder="End Time">
                 </el-date-picker>
-                 <el-input size="small" style="width: 226px;" v-model="cookbookQueryDto.title" placeholder="title" clearable
-                    @clear="handleFilterClear">
+                <el-input size="small" style="width: 226px;" v-model="cookbookQueryDto.title" placeholder="title"
+                    clearable @clear="handleFilterClear">
                     <el-button slot="append" @click="handleFilter" icon="el-icon-search"></el-button>
                 </el-input>
             </el-row>
@@ -38,9 +42,11 @@
                         <span>{{ scope.row.isPublish ? 'Public' : 'Private' }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="createTime" label="Create Time" :sortable="true"  min-width="128"></el-table-column>
+                <el-table-column prop="createTime" label="Create Time" :sortable="true"
+                    min-width="128"></el-table-column>
                 <el-table-column label="Operation" width="110">
                     <template slot-scope="scope">
+                        <span class="text-button" @click="handleEdit(scope.row)">Edit</span>
                         <span class="text-button" @click="handleDelete(scope.row)">Delete</span>
                     </template>
                 </el-table-column>
@@ -50,11 +56,44 @@
                 :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
                 :total="totalItems"></el-pagination>
         </el-row>
+        <el-dialog :show-close="false" :visible.sync="dialogCookbookOperaion" width="25%">
+            <div style="padding:16px 20px;">
+                <p> {{ isOperation ? 'edit cookbook' : 'add cookbook' }}</p>
+                <div>
+                    <input class="dialog-input" v-model="data.title" placeholder="Title" />
+                </div>
+                <div>
+                    <Editor :receiveContent="data.content" @on-receive="onReceive" />
+                </div>
+                <div style="margin-block: 10px">
+                    <span class="dialog-hober">Category</span>
+                    <el-select style="width: 100px;" @change="fetchFreshData" size="small" v-model="data.categoryId"
+                        placeholder="category" clearable>
+                        <el-option v-for="item in categories" :key="item.id" :label="item.name" :value="item.id">
+                        </el-option>
+                    </el-select>
+                </div>
+
+            </div>
+            <span slot="footer" class="dialog-footer" style="margin-top: 10px;">
+                <span class="channel-button" @click="cannel()">
+                    cancle
+                </span>
+                <span v-if="!isOperation" class="edit-button" @click="addOperation()">
+                    yes
+                </span>
+                <span v-else class="edit-button" @click="updateOperation()">
+                    confirm
+                </span>
+            </span>
+        </el-dialog>
     </el-row>
 </template>
 
 <script>
+import Editor from "@/components/Editor"
 export default {
+    components: { Editor },
     data() {
         return {
             data: {},
@@ -66,6 +105,8 @@ export default {
             delectedRows: [],
             searchTime: [], // 搜索时间范围
             categories: [], // 分类列表
+            dialogCookbookOperaion: false, // 弹窗
+            isOperation: false, // 默认新增
             cookbookQueryDto: {}, // 搜索条件
             publishStatuList: [{ value: null, label: 'All' }, { value: 0, label: 'Private' }, { value: 1, label: 'Public' }],
         };
@@ -75,14 +116,58 @@ export default {
         this.fetchFreshCategories();
     },
     methods: {
-                fetchFreshCategories() {
-            this.$axios.post('/category/query', {}).then(response => {
-                if(response.data.code === 200) {
-                    this.categories = response.data.data;
-                    this.categories.unshift({id: null, name: 'All'})
+        cannel() {
+            this.data = {};
+            this.dialogCookbookOperaion = false;
+            this.isOperation = false;
+        },
+        addOperation() {
+            this.$axios.post('/cookbook/backSave', this.data).then(response => {
+                if (response.data.code === 200) {
+                    this.$notify({
+                        duration: 1000,
+                        title: 'add new cookbook',
+                        message: 'successful',
+                        type: 'success'
+                    });
+                    this.cannel();
+                    this.fetchFreshData();
                 }
             }).catch(error => {
-                console.log('Error:', error );
+                console.log('Error:', error);
+            });
+        },
+        updateOperation() {
+            this.$axios.put('/cookbook/update', this.data).then(response => {
+                if (response.data.code === 200) {
+                    this.$notify({
+                        duration: 1000,
+                        title: 'add new cookbook',
+                        message: 'successful',
+                        type: 'success'
+                    });
+                    this.cannel();
+                    this.fetchFreshData();
+                }
+            }).catch(error => {
+                console.log('Error:', error);
+            });
+        },
+        onReceive(content) {
+            // 接收 Editor 组件传递的内容
+            this.data.content = content;
+        },
+        add() {
+            this.dialogCookbookOperaion = true;
+        },
+        fetchFreshCategories() {
+            this.$axios.post('/category/query', {}).then(response => {
+                if (response.data.code === 200) {
+                    this.categories = response.data.data;
+                    this.categories.unshift({ id: null, name: 'All' })
+                }
+            }).catch(error => {
+                console.log('Error:', error);
             });
         },
         // 批量删除数据
@@ -162,6 +247,11 @@ export default {
         handleCurrentChange(val) {
             this.currentPage = val;
             this.fetchFreshData();
+        },
+        handleEdit(row) {
+            this.data = row;
+            this.dialogCookbookOperaion = true;
+            this.isOperation = true;
         },
         // 修改按钮删除事件 
         handleDelete(row) {
