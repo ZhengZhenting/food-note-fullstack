@@ -4,6 +4,7 @@ import cn.kmbeast.aop.Pager;
 import cn.kmbeast.aop.Protector;
 import cn.kmbeast.pojo.api.Result;
 import cn.kmbeast.pojo.dto.query.extend.CookbookQueryDto;
+import cn.kmbeast.pojo.em.PublishEnum;
 import cn.kmbeast.pojo.entity.Cookbook;
 import cn.kmbeast.pojo.vo.CookbookVO;
 import cn.kmbeast.service.CookbookService;
@@ -18,6 +19,34 @@ public class CookbookController {
 
     @Resource
     private CookbookService cookbookService;
+
+    /**
+     * 用户新增
+     *
+     * @param cookbook 新增实体
+     * @return Result<String> 响应结果
+     */
+    @PostMapping(value = "/userSave")
+    @ResponseBody
+    public Result<String> userSave(@RequestBody Cookbook cookbook) {
+        cookbook.setIsPublish(PublishEnum.NO_AUDIT.getFlag());
+        return cookbookService.save(cookbook);
+    }
+
+    /**
+     * 管理员新增食谱
+     *
+     * @param cookbook 新增实体
+     * @return Result<String> 响应结果
+     */
+    @Protector(role = "管理员")
+    @PostMapping(value = "/backSave")
+    @ResponseBody
+    public Result<String> backSave(@RequestBody Cookbook cookbook) {
+        cookbook.setIsPublish(PublishEnum.OK_AUDIT.getFlag());
+        return cookbookService.save(cookbook);
+    }
+
 
     /**
      * add new cookbook

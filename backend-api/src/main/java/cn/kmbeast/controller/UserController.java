@@ -8,6 +8,7 @@ import cn.kmbeast.pojo.dto.update.UserLoginDTO;
 import cn.kmbeast.pojo.dto.update.UserRegisterDTO;
 import cn.kmbeast.pojo.dto.update.UserUpdateDTO;
 import cn.kmbeast.pojo.entity.User;
+import cn.kmbeast.pojo.vo.CenterVO;
 import cn.kmbeast.pojo.vo.ChartVO;
 import cn.kmbeast.pojo.vo.UserVO;
 import cn.kmbeast.service.UserService;
@@ -45,6 +46,16 @@ public class UserController {
     @ResponseBody
     public Result<UserVO> auth() {
         return userService.auth();
+    }
+
+    /**
+     * user Info at Dashboard page
+     */
+    @Protector
+    @GetMapping(value = "/center")
+    @ResponseBody
+    public Result<CenterVO> center() {
+        return userService.center();
     }
 
 

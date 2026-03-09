@@ -101,6 +101,18 @@ public class GourmetController {
     }
 
     /**
+     * searching gourmet of a user
+     *
+     * @return Result<List <GourmetListVO>> 响应结果
+     */
+    @Pager //分页查询
+    @GetMapping(value = "/queryUser")
+    @ResponseBody
+    public Result<List<GourmetListVO>> queryUser() {
+        return gourmetService.queryUser();
+    }
+
+    /**
      * searching gourmet by ID
      *
      * @param id id

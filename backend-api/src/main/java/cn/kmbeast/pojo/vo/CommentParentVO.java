@@ -7,29 +7,29 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * 父级评论
+ * comment parentclass
  */
 @Data
 public class CommentParentVO {
 
     /**
-     * 评论ID
+     * comment ID
      */
     private Integer id;
     /**
-     * 用户ID
+     * user ID
      */
     private Integer userId;
     /**
-     * 用户名
+     * user name
      */
     private String userName;
     /**
-     * 用户头像
+     * user avatar
      */
     private String userAvatar;
     /**
-     * 评论内容
+     * comment content
      */
     private String content;
     /**
@@ -41,7 +41,7 @@ public class CommentParentVO {
      */
     private Integer childTotal;
     /**
-     * 用户是否已经点赞
+     * user是否已经点赞
      */
     private Boolean upvoteFlag;
     /**

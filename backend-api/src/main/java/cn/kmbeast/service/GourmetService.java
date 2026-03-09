@@ -29,4 +29,6 @@ public interface GourmetService {
     Result<List<GourmetListVO>> queryList(GourmetQueryDto gourmetQueryDto);
 
     Result<List<GourmetVO>> queryById(Integer id);
+
+    Result<List<GourmetListVO>> queryUser();
 }

@@ -2,6 +2,7 @@ package cn.kmbeast.mapper;
 
 import cn.kmbeast.pojo.dto.query.extend.UserQueryDto;
 import cn.kmbeast.pojo.entity.User;
+import cn.kmbeast.pojo.vo.CenterVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -59,4 +60,10 @@ public interface UserMapper {
      */
     User getByActive(User user);
 
+    /**
+     * searching for user info for dashboard
+     * @param userId
+     * @return CenterVO
+     */
+    CenterVO queryCenterInfo(@Param(value="userId") Integer userId);
 }

@@ -21,7 +21,7 @@
                 <span class="upvote-operation">
                     <el-tooltip class="item" effect="dark" :content="upvoteStatus ? 'cancle' : 'upvote'"
                         placement="bottom">
-                        <span @click="operationSave()">
+                        <span @click="operationUpvote()">
                             <i style="font-size: 30px" class="el-icon-medal-1"></i>
                             <span>
                                 {{ gourmet.upvoteCount }} likes
