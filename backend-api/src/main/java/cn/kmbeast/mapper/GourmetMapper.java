@@ -22,4 +22,6 @@ public interface GourmetMapper {
 
 //    searching for the amount of data (paging)
     Integer queryCount(GourmetQueryDto gourmetQueryDto);
+
+    List<GourmetVO> queryByIds(@Param(value="ids") List<Integer> ids);
 }

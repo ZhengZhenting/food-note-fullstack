@@ -6,6 +6,7 @@ import cn.kmbeast.pojo.api.Result;
 import cn.kmbeast.pojo.dto.query.extend.NutrimentQueryDto;
 import cn.kmbeast.pojo.entity.Nutriment;
 import cn.kmbeast.pojo.vo.NutrimentVO;
+import cn.kmbeast.pojo.vo.SelectedVO;
 import cn.kmbeast.service.NutrimentService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
@@ -71,6 +72,17 @@ public class NutrimentController {
         return nutrimentService.query(nutrimentQueryDto);
     }
 
+    /**
+     * searching nutriment list
+     *
+     * @return Result<List < SelectedVO>> 响应结果
+     */
+    @GetMapping(value = "/querySelectedItems")
+    @ResponseBody
+    public Result<List<SelectedVO>> querySelectedItems() {
+
+        return nutrimentService.querySelectedItems();
+    }
 
 
 }

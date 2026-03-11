@@ -1,20 +1,25 @@
 package cn.kmbeast.service.impl;
 
 import cn.kmbeast.context.LocalThreadHolder;
+import cn.kmbeast.mapper.GourmetMapper;
 import cn.kmbeast.mapper.InteractionMapper;
 import cn.kmbeast.pojo.api.ApiResult;
 import cn.kmbeast.pojo.api.Result;
 import cn.kmbeast.pojo.dto.query.extend.InteractionQueryDto;
 import cn.kmbeast.pojo.em.InteractionTypeEnum;
 import cn.kmbeast.pojo.entity.Interaction;
+import cn.kmbeast.pojo.vo.GourmetListVO;
+import cn.kmbeast.pojo.vo.GourmetVO;
 import cn.kmbeast.pojo.vo.InteractionVO;
 import cn.kmbeast.service.InteractionService;
+import cn.kmbeast.utils.TextUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * interactionservice interface implementation
@@ -24,6 +29,8 @@ public class InteractionServiceImpl implements InteractionService {
 
     @Resource
     private InteractionMapper interactionMapper;
+    @Resource
+    private GourmetMapper gourmetMapper;
 
 
     /**
@@ -146,5 +153,51 @@ public class InteractionServiceImpl implements InteractionService {
     public Result<Integer> saveStatus(Integer contentId) {
         Integer operationCount = getOperationCount(contentId, InteractionTypeEnum.COLLECTION.getType());
         return ApiResult.success(operationCount);
+    }
+
+    /**
+     * searching for collection list
+     *
+     * @param interactionQueryDto 查询参数
+     * @return Result<List < GourmetListVO>> 响应结果
+     */
+    @Override
+    public Result<List<GourmetListVO>> queryCollectionList(InteractionQueryDto interactionQueryDto) {
+        //search for my collections
+        interactionQueryDto.setUserId(LocalThreadHolder.getUserId()); //get user id
+        interactionQueryDto.setType(InteractionTypeEnum.COLLECTION.getType()); //get interaction type
+        List<InteractionVO> interactionVOS = interactionMapper.query(interactionQueryDto);
+        //get content id list
+        List<Integer> gourmetIds = interactionVOS.stream()
+                .map(InteractionVO::getContentId)
+                .collect(Collectors.toList());
+        //get corresponding content according to the gourmet ids
+        List<GourmetVO> gourmetVOS = gourmetMapper.queryByIds(gourmetIds);
+        //convert to listVO
+        return getListResult(gourmetVOS);
+    }
+
+    /**
+     * searching for collection list
+     *
+     * @param gourmetVOS 查询参数
+     * @return Result<List < GourmetListVO>> 响应结果
+     */
+    private static Result<List<GourmetListVO>> getListResult(List<GourmetVO> gourmetVOS) {
+        List<GourmetListVO> gourmetListVOS= gourmetVOS.stream()
+                .map(gourmetVO -> new GourmetListVO(
+                        gourmetVO.getId(),
+                        gourmetVO.getTitle(),
+                        gourmetVO.getCover(),
+                        TextUtil.parseText(gourmetVO.getContent(), 200),
+                        gourmetVO.getUserName(),
+                        gourmetVO.getUserAvatar(),
+                        gourmetVO.getViewCount(),
+                        gourmetVO.getUpvoteCount(),
+                        gourmetVO.getSaveCount(),
+                        gourmetVO.getRating(),
+                        gourmetVO.getCreateTime()
+                )).collect(Collectors.toList());
+        return ApiResult.success(gourmetListVOS);
     }
 }

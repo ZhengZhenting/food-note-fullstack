@@ -8,7 +8,7 @@
                 <ul>
                     <li @click="route('/gourmet')">
                         <i class="el-icon-food" style="margin-right: 4px;"></i>
-                        Courmet
+                        Gourmet
                     </li>
                     <li @click="route('/cookbook')">
                         <i class="el-icon-notebook-2" style="margin-right: 4px;"></i>
@@ -36,6 +36,7 @@
                             </span>
                             <el-dropdown-menu slot="dropdown">
                                 <el-dropdown-item @click.native="route('/createGourmet')">add Gourmet</el-dropdown-item>
+                                <el-dropdown-item @click.native="route('/myCookbook')">add Cookbook</el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
                     </li>

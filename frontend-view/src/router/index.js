@@ -58,7 +58,7 @@ const routes = [
       },
       {
         path: "/gourmetManage",
-        name: 'GourmetManage',
+        name: 'Gourmet Manage',
         icon: 'el-icon-tableware',
         component: () => import(`@/views/admin/GourmetManage.vue`),
         meta: { requireAuth: true },
@@ -71,15 +71,22 @@ const routes = [
         meta: { requireAuth: true },
       },
       {
-        path: "/cookbookNetManage",
-        name: 'CookBookManage',
+        path: "/cookbookManage",
+        name: 'CookBook Manage',
         icon: 'el-icon-tickets',
         component: () => import(`@/views/admin/CookbookManage.vue`),
         meta: { requireAuth: true },
       },
       {
+        path: "/cookbookNutrimentManage",
+        name: 'CookBook Nutriment',
+        icon: 'el-icon-takeaway-box',
+        component: () => import(`@/views/admin/CookbookNutrimentManage.vue`),
+        meta: { requireAuth: true },
+      },
+      {
         path: "/nutrimentManage",
-        name: 'NutrimentManage',
+        name: 'Nutriment Manage',
         icon: 'el-icon-suitcase-1',
         component: () => import(`@/views/admin/NutrimentManage.vue`),
         meta: { requireAuth: true },
@@ -118,6 +125,12 @@ const routes = [
         meta: { requireAuth: true },
       },
       {
+        path: "/cookbookDetail",
+        name: 'Cookbook Detail',
+        component: () => import(`@/views/user/CookbookDetail.vue`),
+        meta: { requireAuth: true },
+      },
+      {
         path: "/nutriment",
         name: 'Nutriment',
         component: () => import(`@/views/user/Nutriment.vue`),
@@ -151,6 +164,12 @@ const routes = [
         path: "/createGourmet",
         name: 'Create',
         component: () => import(`@/views/user/CreateGourmet.vue`),
+        meta: { requireAuth: true },
+      },
+      {
+        path: "/myCookbook",
+        name: 'Cookbook Operation',
+        component: () => import(`@/views/user/CookbookOperation.vue`),
         meta: { requireAuth: true },
       },
       {

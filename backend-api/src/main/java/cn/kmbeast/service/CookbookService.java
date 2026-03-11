@@ -4,6 +4,7 @@ import cn.kmbeast.pojo.api.Result;
 import cn.kmbeast.pojo.dto.query.extend.CookbookQueryDto;
 import cn.kmbeast.pojo.entity.Cookbook;
 import cn.kmbeast.pojo.vo.CookbookVO;
+import cn.kmbeast.pojo.vo.SelectedVO;
 
 import java.util.List;
 
@@ -20,4 +21,8 @@ public interface CookbookService {
     Result<String> batchDelete(List<Integer> ids);
 
     Result<List<CookbookVO>> query(CookbookQueryDto cookbookQueryDto);
+
+    Result<List<SelectedVO>> querySelectedItems();
+
+    Result<List<SelectedVO>> querySelectedItemsUser();
 }

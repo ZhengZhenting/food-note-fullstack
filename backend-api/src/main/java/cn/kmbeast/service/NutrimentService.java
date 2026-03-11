@@ -4,6 +4,7 @@ import cn.kmbeast.pojo.api.Result;
 import cn.kmbeast.pojo.dto.query.extend.NutrimentQueryDto;
 import cn.kmbeast.pojo.entity.Nutriment;
 import cn.kmbeast.pojo.vo.NutrimentVO;
+import cn.kmbeast.pojo.vo.SelectedVO;
 
 import java.util.List;
 
@@ -20,4 +21,6 @@ public interface NutrimentService {
     Result<String> batchDelete(List<Integer> ids);
 
     Result<List<NutrimentVO>> query(NutrimentQueryDto nutrimentQueryDto);
+
+    Result<List<SelectedVO>> querySelectedItems();
 }
