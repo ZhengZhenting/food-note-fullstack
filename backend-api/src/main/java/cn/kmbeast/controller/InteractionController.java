@@ -7,6 +7,7 @@ import cn.kmbeast.pojo.api.Result;
 import cn.kmbeast.pojo.dto.query.extend.InteractionQueryDto;
 import cn.kmbeast.pojo.em.InteractionTypeEnum;
 import cn.kmbeast.pojo.entity.Interaction;
+import cn.kmbeast.pojo.vo.GourmetListVO;
 import cn.kmbeast.pojo.vo.InteractionVO;
 import cn.kmbeast.service.InteractionService;
 import jakarta.annotation.Resource;
@@ -91,6 +92,19 @@ public class InteractionController {
     @ResponseBody
     public Result<List<InteractionVO>> query(@RequestBody InteractionQueryDto interactionQueryDto) {
         return interactionService.query(interactionQueryDto);
+    }
+
+    /**
+     * searching for collection list
+     *
+     * @param interactionQueryDto 查询参数
+     * @return Result<List < GourmetListVO>> 响应结果
+     */
+    @Pager
+    @PostMapping(value = "/queryCollectionList")
+    @ResponseBody
+    public Result<List<GourmetListVO>> queryCollectionList(@RequestBody InteractionQueryDto interactionQueryDto) {
+        return interactionService.queryCollectionList(interactionQueryDto);
     }
 }
 

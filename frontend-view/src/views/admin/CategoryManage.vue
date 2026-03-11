@@ -3,9 +3,9 @@
         <el-row style="padding: 10px;margin-left: 5px;">
             <el-row style="display: flex;justify-content: left;gap: 6px;">
                 <span class="edit-button" @click="add()">
-                    new category
+                    New Category
                 </span>
-                <el-input size="small" style="width: 166px;" v-model="categoryQueryDto.name" placeholder="标签名" clearable
+                <el-input size="small" style="width: 166px;" v-model="categoryQueryDto.name" placeholder="search..." clearable
                     @clear="handleFilterClear">
                     <el-button slot="append" @click="handleFilter" icon="el-icon-search"></el-button>
                 </el-input>
@@ -13,11 +13,11 @@
         </el-row>
         <el-row style="margin: 0 22px;border-top: 1px solid rgb(245,245,245);">
             <el-table :stripe="true" :data="tableData" style="width: 100%">
-                <el-table-column prop="name" label="美食类别名"></el-table-column>
-                <el-table-column label="操作" width="110">
+                <el-table-column prop="Name" label="Category Name"></el-table-column>
+                <el-table-column label="Operation" width="110">
                     <template slot-scope="scope">
-                        <span class="text-button" @click="handleEdit(scope.row)">编辑</span>
-                        <span class="text-button" @click="handleDelete(scope.row)">删除</span>
+                        <span class="text-button" @click="handleEdit(scope.row)">Edit</span>
+                        <span class="text-button" @click="handleDelete(scope.row)">Delete</span>
                     </template>
                 </el-table-column>
             </el-table>
@@ -30,19 +30,19 @@
         <el-dialog :show-close="false" :visible.sync="dialogCategoryOperaion" width="18%">
             <div style="padding:16px 20px;">
                 <el-row>
-                    <span class="dialog-hover">类别名</span>
-                    <input class="dialog-input" v-model="data.name" placeholder="美食类别名" />
+                    <span class="dialog-hover">category name</span>
+                    <input class="dialog-input" v-model="data.name" placeholder="category name" />
                 </el-row>
             </div>
             <span slot="footer" class="dialog-footer" style="margin-top: 10px;">
                 <span class="channel-button" @click="cannel()">
-                    取消操作
+                    cancle
                 </span>
                 <span v-if="!isOperation" class="edit-button" @click="addOperation()">
-                    确定新增
+                    add
                 </span>
                 <span v-else class="edit-button" @click="updateOperation()">
-                    确定修改
+                    update
                 </span>
             </span>
         </el-dialog>
@@ -77,12 +77,12 @@ export default {
         // 批量删除数据
         async batchDelete() {
             if (!this.delectedRows.length) {
-                this.$message(`未选中任何数据`);
+                this.$message(`no data selected`);
                 return;
             }
             const confirmed = await this.$swalConfirm({
-                title: '删除美食类别数据',
-                text: `删除后不可恢复，是否继续？`,
+                title: 'delete',
+                text: `unrecoverble continue？`,
                 icon: 'warning',
             });
             if (confirmed) {
@@ -92,8 +92,8 @@ export default {
                     if (response.data.code === 200) {
                         this.$notify({
                             duration: 1000,
-                            title: '信息删除',
-                            message: '删除成功',
+                            title: 'delete',
+                            message: 'deleted successully',
                             type: 'success'
                         });
                         this.fetchFreshData();
@@ -112,15 +112,15 @@ export default {
                 if (response.data.code === 200) {
                     this.$notify({
                         duration: 1000,
-                        title: '信息修改',
-                        message: '修改成功',
+                        title: 'edit',
+                        message: 'edited successfully',
                         type: 'success'
                     });
                     this.cannel();
                     this.fetchFreshData();
                 }
             } catch (error) {
-                console.error('修改出错:', error);
+                console.error('Error:', error);
             }
         },
         // 信息新增
@@ -130,8 +130,8 @@ export default {
                 if (response.data.code === 200) {
                     this.$notify({
                         duration: 1000,
-                        title: '信息新增',
-                        message: '新增成功',
+                        title: 'add',
+                        message: 'added successfully',
                         type: 'success'
                     });
                     this.cannel();
@@ -139,7 +139,7 @@ export default {
                 }
             } catch (error) {
                 console.error('Error:', error);
-                this.$message.error('提交失败，请稍后再试！');
+                this.$message.error('error, please try later！');
             }
         },
         // 信息查询

@@ -7,12 +7,14 @@ import cn.kmbeast.pojo.api.Result;
 import cn.kmbeast.pojo.dto.query.extend.CookbookQueryDto;
 import cn.kmbeast.pojo.entity.Cookbook;
 import cn.kmbeast.pojo.vo.CookbookVO;
+import cn.kmbeast.pojo.vo.SelectedVO;
 import cn.kmbeast.service.CookbookService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * cookbook service interface implementation
@@ -68,5 +70,36 @@ public class CookbookServiceImpl implements CookbookService {
         List<CookbookVO> cookbookList = cookbookMapper.query(cookbookQueryDto);
         Integer totalCount = cookbookMapper.queryCount(cookbookQueryDto);
         return ApiResult.success(cookbookList, totalCount);
+    }
+
+    /**
+     * searching selected items
+     * @return Result<List<SelectedVO>>
+     */
+    @Override
+    public Result<List<SelectedVO>> querySelectedItems() {
+        CookbookQueryDto cookbookQueryDto = new CookbookQueryDto();
+        List<CookbookVO> cookbookList = cookbookMapper.query(cookbookQueryDto);
+        List<SelectedVO> selectedVOS = cookbookList.stream().map(cookbookVO -> new SelectedVO(
+                cookbookVO.getId(),
+                cookbookVO.getTitle()
+        )).collect(Collectors.toList());
+        return ApiResult.success(selectedVOS);
+    }
+
+    /**
+     * searching selected items for user
+     * @return Result<List<SelectedVO>>
+     */
+    @Override
+    public Result<List<SelectedVO>> querySelectedItemsUser() {
+        CookbookQueryDto cookbookQueryDto = new CookbookQueryDto();
+        cookbookQueryDto.setUserId(LocalThreadHolder.getUserId());
+        List<CookbookVO> cookbookList = cookbookMapper.query(cookbookQueryDto);
+        List<SelectedVO> selectedVOS = cookbookList.stream().map(cookbookVO -> new SelectedVO(
+                cookbookVO.getId(),
+                cookbookVO.getTitle()
+        )).collect(Collectors.toList());
+        return ApiResult.success(selectedVOS);
     }
 }

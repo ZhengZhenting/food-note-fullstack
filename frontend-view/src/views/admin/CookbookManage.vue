@@ -56,9 +56,18 @@
                 :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
                 :total="totalItems"></el-pagination>
         </el-row>
-        <el-dialog :show-close="false" :visible.sync="dialogCookbookOperaion" width="25%">
-            <div style="padding:16px 20px;">
+        <el-dialog :show-close="false" :visible.sync="dialogCookbookOperaion" width="50%">
+            <div style="padding:16px 20px;  max-height: 550px; overflow-y: auto;">
                 <p> {{ isOperation ? 'edit cookbook' : 'add cookbook' }}</p>
+                <el-row>
+                    <p>cover</p>
+                    <el-upload class="avatar-uploader"
+                        action="http://localhost:21090/api/food-share-sys/v1.0/file/upload" :show-file-list="false"
+                        :on-success="handleCoverSuccess">
+                        <img v-if="cover" :src="cover" class="dialog-avatar">
+                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                    </el-upload>
+                </el-row>
                 <div>
                     <input class="dialog-input" v-model="data.title" placeholder="Title" />
                 </div>
@@ -109,6 +118,7 @@ export default {
             isOperation: false, // 默认新增
             cookbookQueryDto: {}, // 搜索条件
             publishStatuList: [{ value: null, label: 'All' }, { value: 0, label: 'Private' }, { value: 1, label: 'Public' }],
+            cover: null,
         };
     },
     created() {
@@ -116,12 +126,26 @@ export default {
         this.fetchFreshCategories();
     },
     methods: {
+        handleCoverSuccess(res, file) {
+            this.$notify({
+                duration: 1500,
+                title: 'Cover Upload',
+                message: res.code === 200 ? 'Upload Success' : 'Upload Failed',
+                type: res.code === 200 ? 'success' : 'error'
+            });
+            // 上传成功则更新封面
+            if (res.code === 200) {
+                this.cover = res.data;
+            }
+        },
         cannel() {
             this.data = {};
+            this.cover=this.cover;
             this.dialogCookbookOperaion = false;
             this.isOperation = false;
         },
         addOperation() {
+            this.data.cover=this.cover;
             this.$axios.post('/cookbook/backSave', this.data).then(response => {
                 if (response.data.code === 200) {
                     this.$notify({
@@ -138,6 +162,7 @@ export default {
             });
         },
         updateOperation() {
+            this.data.cover=this.cover;
             this.$axios.put('/cookbook/update', this.data).then(response => {
                 if (response.data.code === 200) {
                     this.$notify({
@@ -250,6 +275,7 @@ export default {
         },
         handleEdit(row) {
             this.data = row;
+            this.cover=row.cover;
             this.dialogCookbookOperaion = true;
             this.isOperation = true;
         },

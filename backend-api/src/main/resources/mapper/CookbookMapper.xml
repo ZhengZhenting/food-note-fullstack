@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.kmbeast.mapper.CookbookMapper">
     <insert id="save">
-        INSERT INTO cookbook(user_id, title, category_id, content, is_publish, create_time )
-        VALUES(#{userId},#{title}, #{categoryId}, #{content}, #{isPublish}, #{createTime})
+        INSERT INTO cookbook(user_id, title, category_id, content, is_publish, create_time,cover )
+        VALUES(#{userId},#{title}, #{categoryId}, #{content}, #{isPublish}, #{createTime}, #{cover})
     </insert>
     <update id="update">
         UPDATE cookbook
@@ -19,6 +19,9 @@
             </if>
             <if test="isPublish != null">
                 is_publish = #{isPublish},
+            </if>
+            <if test="cover != null and cover != ''">
+                cover = #{cover},
             </if>
         </set>
         WHERE id = #{id}
@@ -102,6 +105,7 @@
         <result column="content" property="content"/>
         <result column="is_publish" property="isPublish"/>
         <result column="create_time" property="createTime"/>
+        <result column="cover" property="cover"/>
 
     </resultMap>
 
