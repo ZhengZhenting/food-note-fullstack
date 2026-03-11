@@ -74,8 +74,8 @@
                 :total="totalItems"></el-pagination>
         </el-row>
         <!-- 操作面板 -->
-        <el-dialog :show-close="false" :visible.sync="dialogGourmetOperaion" width="18%">
-            <div style="padding:16px 20px;"> 
+        <el-dialog :show-close="false" :visible.sync="dialogGourmetOperaion" width="50%">
+            <div style="padding:16px 20px; max-height: 550px; overflow-y: auto;"> 
                 confirm to audit "{{ data.title }}"?
             </div>
             <span slot="footer" class="dialog-footer" style="margin-top: 10px;">
