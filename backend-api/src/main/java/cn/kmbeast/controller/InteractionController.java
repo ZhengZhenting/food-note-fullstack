@@ -8,6 +8,7 @@ import cn.kmbeast.pojo.dto.query.extend.InteractionQueryDto;
 import cn.kmbeast.pojo.em.InteractionTypeEnum;
 import cn.kmbeast.pojo.entity.Interaction;
 import cn.kmbeast.pojo.vo.GourmetListVO;
+import cn.kmbeast.pojo.vo.GourmetVO;
 import cn.kmbeast.pojo.vo.InteractionVO;
 import cn.kmbeast.service.InteractionService;
 import jakarta.annotation.Resource;
@@ -23,7 +24,7 @@ public class InteractionController {
     private InteractionService interactionService;
 
     /**
-     * save  operation (save, cancle)
+     * save operation (save, cancle)
      *
      * @return Result<Integer> 响应结果
      */
@@ -32,6 +33,20 @@ public class InteractionController {
     public Result<Integer> saveOperation(@PathVariable Integer contentId) {
         return interactionService.saveOperation(contentId);
     }
+
+    /**
+     * rating operation
+     *
+     * @param contentId
+     * @return Result<List<GourmetVO>> 响应结果
+     */
+    @PostMapping(value = "/ratingOperation/{contentId}/{score}")
+    @ResponseBody
+    public Result<List<GourmetVO>> ratingOperation(@PathVariable Integer contentId,
+                                                   @PathVariable Integer score) {
+        return interactionService.ratingOperation(contentId,score);
+    }
+
 
     /**
      * like operation (like, unlike)
@@ -79,6 +94,19 @@ public class InteractionController {
     @ResponseBody
     public Result<Integer> saveStatus(@PathVariable Integer contentId) {
         return interactionService.saveStatus(contentId);
+    }
+
+    /**
+     * rating status
+     *
+     * @param contentId 查询参数
+     * @return Result<Integer> 响应结果
+     */
+    @Pager
+    @GetMapping(value = "/ratingStatus/{contentId}")
+    @ResponseBody
+    public Result<Integer> ratingStatus(@PathVariable Integer contentId) {
+        return interactionService.ratingStatus(contentId);
     }
 
     /**

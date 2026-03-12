@@ -5,8 +5,10 @@ import cn.kmbeast.pojo.dto.query.extend.CategoryQueryDto;
 import cn.kmbeast.pojo.dto.query.extend.InteractionQueryDto;
 import cn.kmbeast.pojo.entity.Category;
 import cn.kmbeast.pojo.vo.GourmetListVO;
+import cn.kmbeast.pojo.vo.GourmetVO;
 import cn.kmbeast.pojo.vo.InteractionVO;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
@@ -31,4 +33,8 @@ public interface InteractionService {
     Result<Integer> saveStatus(Integer contentId);
 
     Result<List<GourmetListVO>> queryCollectionList(InteractionQueryDto interactionQueryDto);
+
+    Result<Integer> ratingStatus(Integer contentId);
+
+    Result<List<GourmetVO>> ratingOperation(Integer contentId, Integer score);
 }
