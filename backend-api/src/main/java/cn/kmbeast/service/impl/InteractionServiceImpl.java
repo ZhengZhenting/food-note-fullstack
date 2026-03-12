@@ -5,8 +5,11 @@ import cn.kmbeast.mapper.GourmetMapper;
 import cn.kmbeast.mapper.InteractionMapper;
 import cn.kmbeast.pojo.api.ApiResult;
 import cn.kmbeast.pojo.api.Result;
+import cn.kmbeast.pojo.dto.query.extend.GourmetQueryDto;
 import cn.kmbeast.pojo.dto.query.extend.InteractionQueryDto;
+import cn.kmbeast.pojo.em.AuditEnum;
 import cn.kmbeast.pojo.em.InteractionTypeEnum;
+import cn.kmbeast.pojo.em.PublishEnum;
 import cn.kmbeast.pojo.entity.Interaction;
 import cn.kmbeast.pojo.vo.GourmetListVO;
 import cn.kmbeast.pojo.vo.GourmetVO;
@@ -199,5 +202,47 @@ public class InteractionServiceImpl implements InteractionService {
                         gourmetVO.getCreateTime()
                 )).collect(Collectors.toList());
         return ApiResult.success(gourmetListVOS);
+    }
+
+    /**
+     * rating status
+     *
+     * @param contentId 查询参数
+     * @return Result<Integer> 响应结果
+     */
+    @Override
+    public Result<Integer> ratingStatus(Integer contentId) {
+        Integer operationCount = getOperationCount(contentId, InteractionTypeEnum.RATING.getType());
+        return ApiResult.success(operationCount);
+    }
+
+    /**
+     * rating operation
+     *
+     * @param contentId
+     * @param score
+     * @return Result<List<GourmetVO>> 响应结果
+     */
+    @Override
+    public Result<List<GourmetVO>> ratingOperation(Integer contentId,Integer score) {
+        Integer operationCount = getOperationCount(contentId, InteractionTypeEnum.RATING.getType());
+        if(operationCount != 0) {
+            return ApiResult.error("you have already rated this article");
+        }
+        Interaction interaction = new Interaction();
+        interaction.setType(InteractionTypeEnum.RATING.getType());
+        interaction.setContentId(contentId);
+        interaction.setContentType("RATING");
+        interaction.setUserId(LocalThreadHolder.getUserId());
+        interaction.setScore(score);
+        interaction.setCreateTime(LocalDateTime.now());
+        interactionMapper.save(interaction);
+
+        GourmetQueryDto gourmetQueryDto = new GourmetQueryDto();
+        gourmetQueryDto.setId(contentId);
+        gourmetQueryDto.setIsPublish(PublishEnum.OK_AUDIT.getFlag());
+        gourmetQueryDto.setIsAudit(AuditEnum.OK_AUDIT.getFlag());
+        List<GourmetVO> gourmetVOList = gourmetMapper.query(gourmetQueryDto);
+        return ApiResult.success(gourmetVOList);
     }
 }
