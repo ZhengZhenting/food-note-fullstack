@@ -5,7 +5,7 @@
                 <el-empty description="No data"></el-empty>
             </div>
             <div v-else>
-                <h2>My Collection: {{ collectionList.length }} Articles</h2>
+                <h2>My Favorates: {{ collectionList.length }} Articles</h2>
                 <div class="item-gourmet" v-for="(gourmet, index) in collectionList" :key="index">
                     <div class="left">
                         <img :src="gourmet.cover">

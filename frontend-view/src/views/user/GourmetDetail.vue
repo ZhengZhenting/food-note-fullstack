@@ -33,16 +33,36 @@
                     <el-tooltip class="item" effect="dark" :content="saveStatus ? 'cancle' : 'upvote'"
                         placement="bottom">
                         <span @click="operationSave()">
-                            <i style="font-size: 30px" class="el-icon-star-off"></i>
+                            <i style="font-size: 30px" class="el-icon-trophy"></i>
                             <span>
                                 {{ gourmet.saveCount }} saves
                             </span>
                         </span>
                     </el-tooltip>
                 </span>
-
+                <span class="upvote-operation">
+                    <span>
+                        <i style="font-size: 30px" class="el-icon-star-off"></i>
+                        <span>
+                            {{ gourmet.rating }} points
+                        </span>
+                    </span>
+                </span>
             </div>
-
+            <div>
+                <div style="text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    
+                    <div v-if="!ratingStatus">
+                        <h4 style="margin: 0;">Your Rating: </h4>
+                        <el-rate @change="ratingEvent" v-model="ratingScore"
+                            :texts="['oops', 'disappointed', 'normal', 'good', 'great']" show-text>
+                        </el-rate>
+                    </div>
+                    <div v-else>
+        <h4 style="margin: 0;">You have already rated this article </h4>
+    </div>
+                </div>
+            </div>
             <div>
                 <Evaluations v-if="gourmet.id" :contentId="gourmet.id" contentType="GOURMET" />
             </div>
@@ -70,7 +90,6 @@
                             <span> Rating({{ gourmet.rating }})</span>
                         </div>
                     </div>
-
                 </div>
             </h4>
         </el-col>
@@ -88,9 +107,11 @@ export default {
         return {
             gourmetId: null,
             gourmet: {},
+            ratingScore: 0,
             recommendGourmet: [],
             upvoteStatus: false, // deault: not upvoted
-            saveStatus: false // default: not saved
+            saveStatus: false, // default: not saved
+            ratingStatus: false
         }
     },
     created() {
@@ -98,6 +119,38 @@ export default {
         this.fetchTopGourmet();
     },
     methods: {
+        //用户评分时触发，给与评分
+        ratingEvent() {
+            this.$axios.post(`/interaction/ratingOperation/${this.gourmetId}/${this.ratingScore}`).then(res => {
+                const { data } = res;
+                if (data.code === 200) {
+                    this.gourmet = data.data[0];
+                    this.dealRating(this.gourmet);
+                    this.$notify({
+                        duration: 1000,
+                        title:'rating',
+                        message:'rated successfully',
+                        type:'success'
+                    });
+                    this.ratingStatus=true;
+                }else{
+                    this.$message(data.msg);
+                }
+            }).catch(error => {
+                console.log("Error", error);
+            });
+        },
+        // 查询评分状态（是否已经评过分）
+        fetchRatingOperation(contentId) {
+            this.$axios.get(`/interaction/ratingStatus/${contentId}`).then(res => {
+                const { data } = res;
+                if (data.code === 200) {
+                    this.ratingStatus = data.data > 0;
+                }
+            }).catch(error => {
+                console.log("Error", error);
+            });
+        },
         // 获取点赞状态
         fetchUpvoteOperation(contentId) {
             this.$axios.get(`/interaction/upvoteStatus/${contentId}`).then(res => {
@@ -165,6 +218,8 @@ export default {
             this.fetchUpvoteOperation(this.gourmetId);
             // 获取收藏状态
             this.fetchSaveOperation(this.gourmetId);
+            // 获取评分状态
+            this.fetchRatingOperation(this.gourmetId);
         },
         // 根据ID获取美食做法详情
         fetchGourmetById(gourmetId) {
@@ -172,10 +227,14 @@ export default {
                 const { data } = res;
                 if (data.code === 200) {
                     this.gourmet = data.data[0];
+                    this.dealRating(this.gourmet);
                 }
             }).catch(error => {
                 console.log("Error", error);
             });
+        },
+        dealRating(gourmet) {
+            this.gourmet.rating = gourmet.rating === null ? 0 : gourmet.rating;
         },
         //浏览操作
         viewOeration(contentId) {
