@@ -139,6 +139,19 @@ public class CookbookController {
     }
 
     /**
+     * searching cookbook list (for the user and public ones)
+     *
+     * @return Result<List < SelectedVO>> 响应结果
+     */
+    @GetMapping(value = "/querySelectedItemsAll")
+    @ResponseBody
+    public Result<List<SelectedVO>> querySelectedItemsAll() {
+
+        return cookbookService.querySelectedItemsAll();
+    }
+
+
+    /**
      * searching for public cookbook
      *
      * @return Result<List < SelectedVO>> 响应结果

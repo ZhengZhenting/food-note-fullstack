@@ -25,4 +25,6 @@ public interface CookbookService {
     Result<List<SelectedVO>> querySelectedItems();
 
     Result<List<SelectedVO>> querySelectedItemsUser();
+
+    Result<List<SelectedVO>> querySelectedItemsAll();
 }

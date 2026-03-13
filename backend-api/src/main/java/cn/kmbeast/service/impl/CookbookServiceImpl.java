@@ -5,6 +5,7 @@ import cn.kmbeast.mapper.CookbookMapper;
 import cn.kmbeast.pojo.api.ApiResult;
 import cn.kmbeast.pojo.api.Result;
 import cn.kmbeast.pojo.dto.query.extend.CookbookQueryDto;
+import cn.kmbeast.pojo.em.PublishEnum;
 import cn.kmbeast.pojo.entity.Cookbook;
 import cn.kmbeast.pojo.vo.CookbookVO;
 import cn.kmbeast.pojo.vo.SelectedVO;
@@ -13,6 +14,7 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -101,5 +103,35 @@ public class CookbookServiceImpl implements CookbookService {
                 cookbookVO.getTitle()
         )).collect(Collectors.toList());
         return ApiResult.success(selectedVOS);
+    }
+
+    @Override
+    public Result<List<SelectedVO>> querySelectedItemsAll() {
+        CookbookQueryDto cookbookQueryDto = new CookbookQueryDto();
+        cookbookQueryDto.setUserId(LocalThreadHolder.getUserId());
+        List<CookbookVO> cookbookList = cookbookMapper.query(cookbookQueryDto);
+
+        //get my own cookbook
+        List<SelectedVO> selectedVOS = cookbookList.stream().map(cookbookVO -> new SelectedVO(
+                cookbookVO.getId(),
+                "Private Cookbook: "+cookbookVO.getTitle()
+        )).collect(Collectors.toList());
+
+        //get public cookbook
+        cookbookQueryDto.setUserId(null);
+        cookbookQueryDto.setIsPublish(PublishEnum.OK_AUDIT.getFlag());
+        List<CookbookVO> publishCookbookList = cookbookMapper.query(cookbookQueryDto);
+        List<SelectedVO> publishAll = publishCookbookList.stream().map(cookbookVO -> new SelectedVO(
+                cookbookVO.getId(),
+                "Public Cookbook: "+cookbookVO.getTitle()
+        )).collect(Collectors.toList());
+
+
+        //add two list together
+        List<SelectedVO> selectedVOList = new ArrayList<>();
+        selectedVOList.addAll(selectedVOS);
+        selectedVOList.addAll(publishAll);
+
+        return ApiResult.success(selectedVOList);
     }
 }
