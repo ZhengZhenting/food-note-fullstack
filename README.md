@@ -23,6 +23,7 @@ The project demonstrates hands-on experience with Java backend development, REST
 ## Architecture Overview
 
 The project follows a **layered architecture**:
+
 Frontend (Vue) → Controller → Service → DAO / Mapper → Database (MySQL)
 
 - **Controller**: Handles incoming HTTP requests and maps them to services  
@@ -30,14 +31,6 @@ Frontend (Vue) → Controller → Service → DAO / Mapper → Database (MySQL)
 - **DAO / Mapper**: Performs database operations with MyBatis (CRUD operations, custom queries)  
 - **DTO / Query Objects**: Used to transfer data between layers and avoid exposing database entities directly
 
-## Project Status
-- [x] Project scaffold established for backend and frontend  
-- [x] Basic Category CRUD implemented (backend + frontend)  
-- [ ] User authentication & authorization (in progress)  
-- [x] Food posts management (planned)  
-- [ ] Comment & like system (planned)  
-- [ ] Front-end styling and responsiveness (ongoing)  
-- [x] Continuous daily updates
 
 ## Contact
 **Developer:** Zhenting Zheng  
