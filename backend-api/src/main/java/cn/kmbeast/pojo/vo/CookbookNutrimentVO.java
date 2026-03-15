@@ -26,5 +26,4 @@ public class CookbookNutrimentVO extends CookbookNutriment {
      */
     private String nutrimentUnit;
 
-
 }

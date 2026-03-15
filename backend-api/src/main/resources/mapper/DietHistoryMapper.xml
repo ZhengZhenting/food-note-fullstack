@@ -31,13 +31,19 @@
     <!--search-->
     <select id="query" resultMap="BaseResultMap" >
 
-        SELECT dh.*,
+        SELECT DISTINCT dh.*,
                u.user_name,
                c.title AS cookbook_title,
-               c.cover AS cookbook_cover
+               c.cover AS cookbook_cover,
+               n.id AS nutriment_id,
+               n.name AS nutriment_name,
+               n.unit AS nutriment_unit,
+               cn.100g_value AS g100_value
         FROM diet_history dh
         LEFT JOIN user u ON dh.user_id = u.id
         LEFT JOIN cookbook c ON dh.cookbook_id = c.id
+        LEFT JOIN cookbook_nutriment cn ON dh.cookbook_id=cn.cookbook_id
+        LEFT JOIN nutriment n ON n.id=cn.nutriment_id
         <where>
             <if test="id != null">
                 AND dh.id = #{id}
@@ -47,6 +53,12 @@
             </if>
             <if test="cookbookId != null">
                 AND dh.cookbook_id = #{cookbookId}
+            </if>
+            <if test="startTime != null">
+                AND dh.create_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND dh.create_time &lt;= #{endTime}
             </if>
         </where>
         ORDER BY dh.id DESC
@@ -69,6 +81,12 @@
             <if test="cookbookId != null">
                 AND dh.cookbook_id = #{cookbookId}
             </if>
+            <if test="startTime != null">
+                AND dh.create_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND dh.create_time &lt;= #{endTime}
+            </if>
         </where>
     </select>
 
@@ -83,6 +101,10 @@
         <result column="user_name" property="userName"/>
         <result column="cookbook_cover" property="cookbookCover"/>
         <result column="cookbook_title" property="cookbookTitle"/>
+        <result column="nutriment_id" property="nutrimentId"/>
+        <result column="nutriment_name" property="nutrimentName"/>
+        <result column="g100_value" property="g100Value"/>
+        <result column="nutriment_unit" property="nutrimentUnit"/>
     </resultMap>
 
 

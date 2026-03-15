@@ -69,6 +69,7 @@ public class NutrimentServiceImpl implements NutrimentService {
      */
     @Override
     public Result<List<NutrimentVO>> query(NutrimentQueryDto nutrimentQueryDto) {
+        nutrimentQueryDto.setUserId(LocalThreadHolder.getUserId());
         List<NutrimentVO> nutrimentList = nutrimentMapper.query(nutrimentQueryDto);
         Integer totalCount = nutrimentMapper.queryCount(nutrimentQueryDto);
         return ApiResult.success(nutrimentList, totalCount);
@@ -89,4 +90,5 @@ public class NutrimentServiceImpl implements NutrimentService {
         )).collect(Collectors.toList());
         return ApiResult.success(selectedVOS);
     }
+
 }
