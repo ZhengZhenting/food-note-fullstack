@@ -67,7 +67,7 @@ export default {
             });
         },
         fetchDietHistoryList() {
-            this.$axios.post(`/dietHistory/query`, {}).then(res => {
+            this.$axios.post(`/dietHistory/queryUser`, {}).then(res => {
                 const { data } = res;
                 if (data.code === 200) {
                     this.dietHistoryList = data.data;
@@ -119,7 +119,6 @@ export default {
     align-items: left;
     cursor: pointer;
 }
-
 .record:hover {
     background-color: rgb(200, 200, 200);
 }

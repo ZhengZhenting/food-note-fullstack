@@ -25,7 +25,7 @@
                             </span>
                             <el-dropdown-menu slot="dropdown">
                                 <el-dropdown-item @click.native="route('/dietHistory')">History</el-dropdown-item>
-                                <el-dropdown-item @click.native="route('/nutriment')">My Diet</el-dropdown-item>
+                                <el-dropdown-item @click.native="route('/nutriment')">Nutriment</el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
                     </li>
