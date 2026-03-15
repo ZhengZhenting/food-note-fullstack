@@ -4,8 +4,10 @@ import cn.kmbeast.aop.Pager;
 import cn.kmbeast.aop.Protector;
 import cn.kmbeast.pojo.api.Result;
 import cn.kmbeast.pojo.dto.query.extend.DietHistoryQueryDto;
+import cn.kmbeast.pojo.dto.query.extend.DietQueryDto;
 import cn.kmbeast.pojo.entity.DietHistory;
 import cn.kmbeast.pojo.vo.DietHistoryVO;
+import cn.kmbeast.pojo.vo.DietNutrimentVO;
 import cn.kmbeast.service.DietHistoryService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
@@ -66,6 +68,31 @@ public class DietHistoryController {
     @ResponseBody
     public Result<List<DietHistoryVO>> query(@RequestBody DietHistoryQueryDto dietHistoryQueryDto) {
         return dietHistoryService.query(dietHistoryQueryDto);
+    }
+
+    /**
+     * searching dietHistory for user
+     *
+     * @param dietHistoryQueryDto 查询参数
+     * @return Result<List < DietHistoryVO>> 响应结果
+     */
+    @Pager
+    @PostMapping(value = "/queryUser")
+    @ResponseBody
+    public Result<List<DietHistoryVO>> queryUser(@RequestBody DietHistoryQueryDto dietHistoryQueryDto) {
+        return dietHistoryService.queryUser(dietHistoryQueryDto);
+    }
+
+    /**
+     * searching nutriment
+     *
+     * @param dietQueryDto 查询参数
+     * @return Result<List < DietNutrimentVO>> 响应结果
+     */
+    @PostMapping(value = "/queryDietNutrimentInfo")
+    @ResponseBody
+    public Result<List<DietNutrimentVO>> queryDietNutrimentInfo(@RequestBody DietQueryDto dietQueryDto) {
+        return dietHistoryService.queryDietNutrimentInfo(dietQueryDto);
     }
 
 }

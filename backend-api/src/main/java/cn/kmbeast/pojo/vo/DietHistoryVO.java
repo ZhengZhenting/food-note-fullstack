@@ -25,4 +25,24 @@ public class DietHistoryVO extends DietHistory {
      * cookbook title
      */
     private String cookbookTitle;
+
+    /**
+     * nutriment ID
+     */
+    private Integer nutrimentId;
+
+    /**
+     * nutriment per 100g
+     */
+    private String g100Value;
+
+    /**
+     * nutriment name
+     */
+    private String nutrimentName;
+
+    /**
+     * nutriment unit
+     */
+    private String nutrimentUnit;
 }
