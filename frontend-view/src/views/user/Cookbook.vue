@@ -128,6 +128,8 @@ export default {
     }
 };
 </script>
+
+
 <style scoped lang="scss">
 .cookbook-item:hover {
     background-color: rgb(248, 248, 248);
