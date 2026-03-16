@@ -13,7 +13,8 @@
         </el-row>
         <el-row style="margin: 0 22px;border-top: 1px solid rgb(245,245,245);">
             <el-table :stripe="true" :data="tableData" style="width: 100%">
-                <el-table-column prop="Name" label="Category Name"></el-table-column>
+                <el-table-column prop="id" label="Category ID"></el-table-column>
+                <el-table-column prop="name" label="Category Name"></el-table-column> 
                 <el-table-column label="Operation" width="110">
                     <template slot-scope="scope">
                         <span class="text-button" @click="handleEdit(scope.row)">Edit</span>

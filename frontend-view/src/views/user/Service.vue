@@ -1,6 +1,6 @@
 <template>
     <!-- Dashboard Page -->
-    <div class="text">
+    <div>
         <el-row style="background-color: rgb(255,255,255); padding: 20px">
             <el-col :span="24">
                 <div class="info">
@@ -41,7 +41,8 @@
                                         <span> Likes({{ gourmet.upvoteCount }})</span>
                                         <span> Saves({{ gourmet.saveCount }})</span>
                                         <span> Rating({{ gourmet.rating }})</span>
-                                        <span style="color: rgb(0,95,200)" @click="edit(gourmet)"> Modify </span>
+                                        <span style="color: rgb(0,200,95)" @click="share(gourmet)"> Share </span>
+                                        <span style="color: rgb(0,95,200)" @click="edit(gourmet)"> Edit </span>
                                         <span style="color: rgb(250,95,0)" @click="del(gourmet)"> Delete </span>
                                     </div>
                                 </div>
@@ -51,6 +52,52 @@
                     </el-tabs>
                 </div>
             </el-col>
+            <!-- 操作面板 -->
+            <el-dialog :visible.sync="dialogShareOperaion" width="25%">
+                <div style="padding:16px 20px; text-align:left;">
+                    <div v-if="url !== ''">
+                        <el-result icon="success" title="success">
+                            <template slot="extra">
+                                <span>{{ url }}</span>
+                            </template>
+                        </el-result>
+                    </div>
+                    <div v-else>
+                        <div>
+                            <p>Valid Days:</p>
+                            <el-radio-group size="mini" v-model="contentNet.validDay">
+                                <el-radio-button label="3 Days"></el-radio-button>
+                                <el-radio-button label="7 Days"></el-radio-button>
+                                <el-radio-button label="30 Days"></el-radio-button>
+                                <el-radio-button label="Always"></el-radio-button>
+                            </el-radio-group>
+                        </div>
+                        <div>
+                            <p>Password Authtification:</p>
+                            <el-switch v-model="contentNet.passwordAuth" active-color="#13ce66"
+                                inactive-color="#ff4949"></el-switch>
+                        </div>
+                        <div v-if="contentNet.passwordAuth">
+                            <p>Set Password:</p>
+                            <input class="dialog-input" type="password" v-model="contentNet.accessPassword"
+                                placeholder="password" />
+                        </div>
+                    </div>
+
+                </div>
+                <span slot="footer" class="dialog-footer" style="margin-top: 10px;">
+                    <div> 
+                        <span class="channel-button" @click="cannel()">
+                            cancle
+                        </span>
+                    </div>
+                    <div v-if="url === ''">
+                        <span class="edit-button" @click="shareOperation()">
+                            confirm
+                        </span>
+                    </div>
+                </span>
+            </el-dialog>
         </el-row>
     </div>
 </template>
@@ -59,9 +106,14 @@ export default {
     name: "Service",
     data() {
         return {
+            contentNet: {},
+            gourmet: {},
             info: {},
             activeName: 'first',
-            gourmetList: {}
+            gourmetList: {},
+            dialogShareOperaion: false,
+            resultContentNet: {},
+            url: '',//return sharing link
         }
     },
     created() {
@@ -69,9 +121,47 @@ export default {
         this.fetchMyGourmet();
     },
     methods: {
+        cannel() {
+             this.dialogShareOperaion = false;
+            this.url = '';
+            this.contentNet = {};
+        },
+        shareOperation() {
+            const dayList = [this.contentNet.validDay];
+            const validDayList = dayList.map(text => {
+                const match = text.match(/\d+/g);
+                return match ? match : [];
+            });
+            const saveEntity = {
+                gourmetId: this.gourmet.id,
+                validDay: validDayList[0].length === 0 ? -1 : validDayList[0][0],
+                passwordAuth: this.contentNet.passwordAuth,
+                accessPassword: this.$md5(this.contentNet.accessPassword)
+            }
+            this.$axios.post("/contentNet/save", saveEntity).then(res => {
+                const { data } = res;
+                if (data.code === 200) {
+
+                    this.$notify({
+                        duration: 1000,
+                        title: 'Share Operation',
+                        message: 'success',
+                        type: 'success'
+                    });
+                    this.url = data.msg;
+                }
+            }).catch(error => {
+                console.log("Error", error);
+            });
+        },
+        // 分享gourmet
+        share(gourmet) {
+            this.gourmet = gourmet;
+            this.dialogShareOperaion = true;
+        },
         // 修改gourmet
         edit(gourmet) {
-            sessionStorage.setItem('gourmetId',gourmet.id);
+            sessionStorage.setItem('gourmetId', gourmet.id);
             this.$router.push('/editGourmet');
         },
         // 删除gourmet
