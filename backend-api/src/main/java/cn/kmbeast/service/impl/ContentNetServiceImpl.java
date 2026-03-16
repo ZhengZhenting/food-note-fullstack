@@ -32,16 +32,18 @@ public class ContentNetServiceImpl implements ContentNetService {
      * @return Result<String>
      */
     @Override
-    public Result<ContentNet> save(ContentNet contentNet) {
-
+    public Result<String> save(ContentNet contentNet) {
         // set up user info
         contentNet.setUserId(LocalThreadHolder.getUserId());
         // set up access code, unique
-        contentNet.setAccessCode(UUID.randomUUID().toString().toUpperCase(Locale.ROOT));
+        String accessCode = UUID.randomUUID().toString().toUpperCase(Locale.ROOT);
+        contentNet.setAccessCode(accessCode);
         // set up time
         contentNet.setCreateTime(LocalDateTime.now());
         contentNetMapper.save(contentNet);
-        return ApiResult.success(contentNet);
+        //return link
+        String url="http://localhost:21091/shareDetail?accessCode=" + accessCode;
+        return ApiResult.success(url);
     }
 
     /**

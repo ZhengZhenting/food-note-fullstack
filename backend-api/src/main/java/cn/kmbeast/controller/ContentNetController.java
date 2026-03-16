@@ -25,10 +25,9 @@ public class ContentNetController {
      * @param contentNet new entity
      * @return Result<String> getting result
      */
-    @Protector(role = "管理员") //access only for admin
     @PostMapping(value = "/save")
     @ResponseBody
-    public Result<ContentNet> save(@RequestBody ContentNet contentNet) {
+    public Result<String> save(@RequestBody ContentNet contentNet) {
         return contentNetService.save(contentNet);
     }
 

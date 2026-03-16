@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface ContentNetService {
 
-    Result<ContentNet> save(ContentNet contentNet);
+    Result<String> save(ContentNet contentNet);
 
     Result<String> update(ContentNet contentNet);
 
