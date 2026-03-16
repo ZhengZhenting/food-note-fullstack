@@ -91,6 +91,13 @@ const routes = [
         component: () => import(`@/views/admin/NutrimentManage.vue`),
         meta: { requireAuth: true },
       },
+      {
+        path: "/dietHistoryManage",
+        name: 'Diet History Manage',
+        icon: 'el-icon-chicken',
+        component: () => import(`@/views/admin/DietHistoryManage.vue`),
+        meta: { requireAuth: true },
+      },
     ]
   },
   {
@@ -100,6 +107,12 @@ const routes = [
       requireAuth: true,
     },
     children: [
+      {
+        path: "/shareDetail",
+        name: 'Share Detail',
+        component: () => import(`@/views/user/ShareDetail.vue`),
+        meta: { requireAuth: true },
+      },
       {
         path: "/gourmet",
         name: 'Gourmet',
