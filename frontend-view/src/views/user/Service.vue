@@ -48,7 +48,32 @@
                                 </div>
                             </div>
                         </el-tab-pane>
-                        <el-tab-pane label="Cookbook" name="second">Cookbook</el-tab-pane>
+                        <el-tab-pane label="Cookbook" name="second">
+                            <div v-if="cookbookList.length === 0">
+                                <el-empty description="No data"></el-empty>
+                            </div>
+                            <div v-else>
+                                <el-row>
+                                    <el-col class="cookbook-item" style="margin-bottom: 10px" :span="6"
+                                        v-for="(cookbook, index) in cookbookList" :key="index">
+                                        <div style="padding: 10px">
+                                            <div>
+                                                <img style="width: 100%; height: 150px; border-radius: 5px;"
+                                                    :src="cookbook.cover" alt="">
+                                            </div>
+                                            <div @click="readCookbookDetail(cookbook)"
+                                                style="cursor: pointer; font-size: 20px; font-weight: 900;">
+                                                {{ cookbook.title }}
+                                            </div>
+                                            <div style="font-size: 16px;">{{ cookbook.createTime }}</div>
+                                        </div>
+                                    </el-col>
+                                </el-row>
+                            </div>
+                        </el-tab-pane>
+                         <el-tab-pane label="Content" name="third">
+                            <MyContentNet/>
+                         </el-tab-pane>
                     </el-tabs>
                 </div>
             </el-col>
@@ -86,7 +111,7 @@
 
                 </div>
                 <span slot="footer" class="dialog-footer" style="margin-top: 10px;">
-                    <div> 
+                    <div>
                         <span class="channel-button" @click="cannel()">
                             cancle
                         </span>
@@ -102,10 +127,14 @@
     </div>
 </template>
 <script>
+import MyContentNet from "@/views/user/MyContentNet.vue";
+
 export default {
+    components: {MyContentNet},
     name: "Service",
     data() {
         return {
+            cookbookList: [],
             contentNet: {},
             gourmet: {},
             info: {},
@@ -119,10 +148,28 @@ export default {
     created() {
         this.fetchCenter();
         this.fetchMyGourmet();
+        this.fetchMyCookbook();
     },
     methods: {
+        readCookbookDetail(cookbook) {
+            sessionStorage.setItem('cookbookInfo', JSON.stringify(cookbook));
+            this.$router.push('/cookbookDetail');
+        },
+        fetchMyCookbook() {
+            this.$axios.post("/cookbook/queryUser", {
+                current: 1,
+                size: 100
+            }).then(res => {
+                const { data } = res;
+                if (data.code === 200) {
+                    this.cookbookList = data.data;
+                }
+            }).catch(error => {
+                console.log("Error", error);
+            });
+        },
         cannel() {
-             this.dialogShareOperaion = false;
+            this.dialogShareOperaion = false;
             this.url = '';
             this.contentNet = {};
         },
@@ -132,11 +179,14 @@ export default {
                 const match = text.match(/\d+/g);
                 return match ? match : [];
             });
+            if (this.contentNet.passwordAuth) {
+                this.contentNet.accessPassword = this.$md5(this.contentNet.accessPassword);
+            }
             const saveEntity = {
                 gourmetId: this.gourmet.id,
                 validDay: validDayList[0].length === 0 ? -1 : validDayList[0][0],
                 passwordAuth: this.contentNet.passwordAuth,
-                accessPassword: this.$md5(this.contentNet.accessPassword)
+                accessPassword: this.contentNet.accessPassword
             }
             this.$axios.post("/contentNet/save", saveEntity).then(res => {
                 const { data } = res;
@@ -227,6 +277,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.cookbook-item:hover {
+    background-color: rgb(248, 248, 248);
+}
+
 .info {
     display: flex;
     justify-content: left;
