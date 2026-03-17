@@ -26,4 +26,9 @@ public class ContentNetQueryDto extends QueryDto {
      * gourmet id
      */
     private Integer gourmetId;
+
+    /**
+     * password
+     */
+    private String accessPassword;
 }

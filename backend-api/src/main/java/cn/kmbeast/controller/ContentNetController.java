@@ -2,6 +2,7 @@ package cn.kmbeast.controller;
 
 import cn.kmbeast.aop.Pager;
 import cn.kmbeast.aop.Protector;
+import cn.kmbeast.context.LocalThreadHolder;
 import cn.kmbeast.pojo.api.Result;
 import cn.kmbeast.pojo.dto.query.extend.ContentNetQueryDto;
 import cn.kmbeast.pojo.entity.ContentNet;
@@ -18,6 +19,30 @@ public class ContentNetController {
 
     @Resource
     private ContentNetService contentNetService;
+
+    /**
+     * get data through access password
+     *
+     * @param contentNetQueryDto new entity
+     * @return Result<Object> getting result
+     */
+    @PostMapping(value = "/findContent")
+    @ResponseBody
+    public Result<Object> findContent(@RequestBody ContentNetQueryDto contentNetQueryDto) {
+        return contentNetService.findContent(contentNetQueryDto);
+    }
+
+    /**
+     * if authentification necessary
+     *
+     * @param contentNetQueryDto new entity
+     * @return Result<Boolean> getting result
+     */
+    @PostMapping(value = "/authStatus")
+    @ResponseBody
+    public Result<Boolean> authStatus(@RequestBody ContentNetQueryDto contentNetQueryDto) {
+        return contentNetService.authStatus(contentNetQueryDto);
+    }
 
     /**
      * add new contentNet
@@ -37,7 +62,6 @@ public class ContentNetController {
      * @param contentNet new entity
      * @return Result<String> getting result
      */
-    @Protector(role = "管理员") //access only for admin
     @PutMapping(value = "/update")
     @ResponseBody
     public Result<String> update(@RequestBody ContentNet contentNet) {
@@ -50,7 +74,6 @@ public class ContentNetController {
      * @param ids list of ids
      * @return Result<String> getting result
      */
-    @Protector(role = "管理员") //access only for admin
     @PostMapping(value = "/batchDelete")
     @ResponseBody
     public Result<String> batchDelete(@RequestBody List<Integer> ids) {
@@ -70,7 +93,19 @@ public class ContentNetController {
         return contentNetService.query(contentNetQueryDto);
     }
 
-
+    /**
+     * searching contentNet of user
+     *
+     * @param contentNetQueryDto 查询参数
+     * @return Result<List < ContentNet>> 响应结果
+     */
+    @Pager
+    @PostMapping(value = "/queryUser")
+    @ResponseBody
+    public Result<List<ContentNetVO>> queryUser(@RequestBody ContentNetQueryDto contentNetQueryDto) {
+        contentNetQueryDto.setUserId(LocalThreadHolder.getUserId());
+        return contentNetService.query(contentNetQueryDto);
+    }
 
 }
 
