@@ -73,6 +73,18 @@
         </where>
     </select>
 
+    <select id="queryDays" resultMap="BaseResultMap">
+        SELECT i.*
+        FROM interaction i WHERE content_id IN
+        <foreach collection="gourmetIds" item="gourmetId" open="(" separator="," close=")">
+            #{gourmetId}
+        </foreach>
+        <if test="interactionQueryDto.type != null">
+            AND i.type = #{interactionQueryDto.type}
+        </if>
+        AND i.create_time BETWEEN #{interactionQueryDto.startTime} AND #{interactionQueryDto.endTime}
+    </select>
+
     <!-- mapping result of searching -->
     <resultMap id="BaseResultMap" type="cn.kmbeast.pojo.vo.InteractionVO">
         <id column="id" property="id"/>

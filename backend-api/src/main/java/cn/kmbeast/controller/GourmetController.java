@@ -3,10 +3,12 @@ package cn.kmbeast.controller;
 import cn.kmbeast.aop.Pager;
 import cn.kmbeast.aop.Protector;
 import cn.kmbeast.pojo.api.Result;
+import cn.kmbeast.pojo.dto.query.extend.ContentNetQueryDto;
 import cn.kmbeast.pojo.dto.query.extend.GourmetQueryDto;
 import cn.kmbeast.pojo.em.AuditEnum;
 import cn.kmbeast.pojo.em.PublishEnum;
 import cn.kmbeast.pojo.entity.Gourmet;
+import cn.kmbeast.pojo.vo.ChartVO;
 import cn.kmbeast.pojo.vo.GourmetListVO;
 import cn.kmbeast.pojo.vo.GourmetVO;
 import cn.kmbeast.service.GourmetService;
@@ -88,6 +90,20 @@ public class GourmetController {
     }
 
     /**
+     * search for amount of view count
+     *
+     * @param gourmetQueryDto 查询参数
+     * @return Result<List < GourmetVO>> 响应结果
+     */
+    @Pager
+    @Protector(role = "管理员")
+    @PostMapping(value = "/queryByView")
+    @ResponseBody
+    public Result<List<GourmetVO>> queryByView(@RequestBody GourmetQueryDto gourmetQueryDto) {
+        return gourmetService.queryByView(gourmetQueryDto);
+    }
+
+    /**
      * searching gourmet
      *
      * @param gourmetQueryDto 查询参数
@@ -126,6 +142,17 @@ public class GourmetController {
     }
 
 
+    /**
+     * statistics
+     *
+     * @return Result<List < ChartVO>> 响应结果
+     */
+    @Protector(role="管理员")
+    @GetMapping(value = "/daysQuery/{day}")
+    @ResponseBody
+    public Result<List<ChartVO>> daysQuery(@PathVariable Integer day) {
+        return gourmetService.daysQuery(day);
+    }
 
 }
 

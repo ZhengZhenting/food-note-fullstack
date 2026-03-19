@@ -1,12 +1,14 @@
 package cn.kmbeast.mapper;
 
 import cn.kmbeast.pojo.dto.query.extend.InteractionQueryDto;
+import cn.kmbeast.pojo.dto.query.extend.InteractionStaticQueryDto;
 import cn.kmbeast.pojo.entity.Interaction;
 import cn.kmbeast.pojo.vo.InteractionVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * food interaction mapper
@@ -26,4 +28,6 @@ public interface InteractionMapper {
 
 //    searching for the amount of data (paging)
     Integer queryCount(InteractionQueryDto interactionQueryDto);
+
+    List<InteractionVO> queryDays(InteractionStaticQueryDto interactionStaticQueryDto);
 }

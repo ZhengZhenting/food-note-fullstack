@@ -44,4 +44,9 @@ public class GourmetQueryDto extends QueryDto {
      * is published
      */
     private Boolean isPublish;
+
+    /**
+     * day
+     */
+    private Integer day;
 }
