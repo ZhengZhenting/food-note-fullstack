@@ -31,4 +31,9 @@ public class ContentNetQueryDto extends QueryDto {
      * password
      */
     private String accessPassword;
+
+    /**
+     * password
+     */
+    private Integer day;
 }

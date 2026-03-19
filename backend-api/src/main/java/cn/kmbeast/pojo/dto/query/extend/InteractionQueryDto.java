@@ -21,6 +21,11 @@ public class InteractionQueryDto extends QueryDto {
     private Integer contentId;
 
     /**
+     * query days
+     */
+    private Integer day;
+
+    /**
      * interaction type
      */
     private Integer type;

@@ -3,17 +3,17 @@ package cn.kmbeast.controller;
 import cn.kmbeast.aop.Pager;
 import cn.kmbeast.aop.Protector;
 import cn.kmbeast.context.LocalThreadHolder;
+import cn.kmbeast.pojo.api.ApiResult;
 import cn.kmbeast.pojo.api.Result;
 import cn.kmbeast.pojo.dto.query.extend.InteractionQueryDto;
 import cn.kmbeast.pojo.em.InteractionTypeEnum;
 import cn.kmbeast.pojo.entity.Interaction;
-import cn.kmbeast.pojo.vo.GourmetListVO;
-import cn.kmbeast.pojo.vo.GourmetVO;
-import cn.kmbeast.pojo.vo.InteractionVO;
+import cn.kmbeast.pojo.vo.*;
 import cn.kmbeast.service.InteractionService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -22,6 +22,19 @@ public class InteractionController {
 
     @Resource
     private InteractionService interactionService;
+
+    /**
+     * delete interaction
+     *
+     * @param ids list of ids
+     * @return Result<String> getting result
+     */
+    @Protector(role="管理员")
+    @PostMapping(value = "/batchDelete")
+    @ResponseBody
+    public Result<String> batchDelete(@RequestBody List<Integer> ids) {
+        return interactionService.batchDelete(ids);
+    }
 
     /**
      * save operation (save, cancle)
@@ -133,6 +146,37 @@ public class InteractionController {
     @ResponseBody
     public Result<List<GourmetListVO>> queryCollectionList(@RequestBody InteractionQueryDto interactionQueryDto) {
         return interactionService.queryCollectionList(interactionQueryDto);
+    }
+
+    /**
+     * statistics
+     *
+     * @return Result<List < ChartVO>> 响应结果
+     */
+    @PostMapping(value = "/daysQuery")
+    @ResponseBody
+    public Result<List<ChartVO>> daysQuery(@RequestBody InteractionQueryDto interactionQueryDto) {
+        return interactionService.daysQuery(interactionQueryDto);
+    }
+
+    /**
+     * searching for inteaction types
+     *
+     * @return Result<List < ChartVO>> 响应结果
+     */
+    @GetMapping(value = "/types")
+    @ResponseBody
+    public Result<List<SelectedVO>> types() {
+        InteractionTypeEnum[] interactionTypeEnums = InteractionTypeEnum.values();
+        List<SelectedVO> selectedVOList = new ArrayList<>();
+        for(InteractionTypeEnum interactionTypeEnum: interactionTypeEnums) {
+            SelectedVO selectedVO = new SelectedVO(
+                    interactionTypeEnum.getType(),
+                    interactionTypeEnum.getDetail()
+            );
+            selectedVOList.add(selectedVO);
+        }
+        return ApiResult.success(selectedVOList);
     }
 }
 

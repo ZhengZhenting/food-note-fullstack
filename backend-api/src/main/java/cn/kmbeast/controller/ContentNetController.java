@@ -5,7 +5,9 @@ import cn.kmbeast.aop.Protector;
 import cn.kmbeast.context.LocalThreadHolder;
 import cn.kmbeast.pojo.api.Result;
 import cn.kmbeast.pojo.dto.query.extend.ContentNetQueryDto;
+import cn.kmbeast.pojo.dto.query.extend.InteractionQueryDto;
 import cn.kmbeast.pojo.entity.ContentNet;
+import cn.kmbeast.pojo.vo.ChartVO;
 import cn.kmbeast.pojo.vo.ContentNetVO;
 import cn.kmbeast.service.ContentNetService;
 import jakarta.annotation.Resource;
@@ -105,6 +107,17 @@ public class ContentNetController {
     public Result<List<ContentNetVO>> queryUser(@RequestBody ContentNetQueryDto contentNetQueryDto) {
         contentNetQueryDto.setUserId(LocalThreadHolder.getUserId());
         return contentNetService.query(contentNetQueryDto);
+    }
+
+    /**
+     * statistics
+     *
+     * @return Result<List < ChartVO>> 响应结果
+     */
+    @PostMapping(value = "/daysQuery")
+    @ResponseBody
+    public Result<List<ChartVO>> daysQuery(@RequestBody ContentNetQueryDto contentNetQueryDto) {
+        return contentNetService.daysQuery(contentNetQueryDto);
     }
 
 }

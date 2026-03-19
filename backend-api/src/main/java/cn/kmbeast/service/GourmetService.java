@@ -5,8 +5,10 @@ import cn.kmbeast.pojo.dto.query.extend.CategoryQueryDto;
 import cn.kmbeast.pojo.dto.query.extend.GourmetQueryDto;
 import cn.kmbeast.pojo.entity.Category;
 import cn.kmbeast.pojo.entity.Gourmet;
+import cn.kmbeast.pojo.vo.ChartVO;
 import cn.kmbeast.pojo.vo.GourmetListVO;
 import cn.kmbeast.pojo.vo.GourmetVO;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -31,4 +33,8 @@ public interface GourmetService {
     Result<List<GourmetVO>> queryById(Integer id);
 
     Result<List<GourmetListVO>> queryUser();
+
+    Result<List<ChartVO>> daysQuery(Integer day);
+
+    Result<List<GourmetVO>> queryByView(GourmetQueryDto gourmetQueryDto);
 }

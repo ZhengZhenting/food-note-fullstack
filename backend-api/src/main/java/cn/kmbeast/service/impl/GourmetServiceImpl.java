@@ -4,13 +4,17 @@ import cn.kmbeast.context.LocalThreadHolder;
 import cn.kmbeast.mapper.GourmetMapper;
 import cn.kmbeast.pojo.api.ApiResult;
 import cn.kmbeast.pojo.api.Result;
+import cn.kmbeast.pojo.dto.query.base.QueryDto;
 import cn.kmbeast.pojo.dto.query.extend.GourmetQueryDto;
 import cn.kmbeast.pojo.em.AuditEnum;
 import cn.kmbeast.pojo.em.PublishEnum;
 import cn.kmbeast.pojo.entity.Gourmet;
+import cn.kmbeast.pojo.vo.ChartVO;
+import cn.kmbeast.pojo.vo.ContentNetVO;
 import cn.kmbeast.pojo.vo.GourmetListVO;
 import cn.kmbeast.pojo.vo.GourmetVO;
 import cn.kmbeast.service.GourmetService;
+import cn.kmbeast.utils.DateUtil;
 import cn.kmbeast.utils.TextUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -163,5 +167,37 @@ public class GourmetServiceImpl implements GourmetService {
                 )).collect(Collectors.toList());
 
         return ApiResult.success(gourmetListVOS);
+    }
+
+    /**
+     * statistics
+     *
+     * @return Result<List < ChartVO>> 响应结果
+     */
+    @Override
+    public Result<List<ChartVO>> daysQuery(Integer day) {
+        QueryDto queryDto = DateUtil.startAndEndTime(day);
+        GourmetQueryDto gourmetQueryDto = new GourmetQueryDto();
+        gourmetQueryDto.setStartTime(queryDto.getStartTime());
+        gourmetQueryDto.setEndTime(queryDto.getEndTime());
+
+        List<GourmetVO> gourmetVOList = gourmetMapper.query(gourmetQueryDto);
+        List<LocalDateTime> localDateTimes = gourmetVOList.stream()
+                .map(GourmetVO::getCreateTime)
+                .collect(Collectors.toList());
+        List<ChartVO> chartVOS = DateUtil.countDatesWithinRange(day, localDateTimes);
+        return ApiResult.success(chartVOS);
+    }
+
+    /**
+     * search for amount of view count
+     *
+     * @param gourmetQueryDto 查询参数
+     * @return Result<List < GourmetVO>> 响应结果
+     */
+    @Override
+    public Result<List<GourmetVO>> queryByView(GourmetQueryDto gourmetQueryDto) {
+        List<GourmetVO> gourmetVOS = gourmetMapper.queryByView(gourmetQueryDto);
+        return ApiResult.success(gourmetVOS);
     }
 }

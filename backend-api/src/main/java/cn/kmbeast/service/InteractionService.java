@@ -4,6 +4,7 @@ import cn.kmbeast.pojo.api.Result;
 import cn.kmbeast.pojo.dto.query.extend.CategoryQueryDto;
 import cn.kmbeast.pojo.dto.query.extend.InteractionQueryDto;
 import cn.kmbeast.pojo.entity.Category;
+import cn.kmbeast.pojo.vo.ChartVO;
 import cn.kmbeast.pojo.vo.GourmetListVO;
 import cn.kmbeast.pojo.vo.GourmetVO;
 import cn.kmbeast.pojo.vo.InteractionVO;
@@ -37,4 +38,8 @@ public interface InteractionService {
     Result<Integer> ratingStatus(Integer contentId);
 
     Result<List<GourmetVO>> ratingOperation(Integer contentId, Integer score);
+
+    Result<List<ChartVO>> daysQuery(InteractionQueryDto interactionQueryDto);
+
+    Result<String> batchDelete(List<Integer> ids);
 }

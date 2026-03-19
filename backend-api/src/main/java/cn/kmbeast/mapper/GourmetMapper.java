@@ -24,4 +24,7 @@ public interface GourmetMapper {
     Integer queryCount(GourmetQueryDto gourmetQueryDto);
 
     List<GourmetVO> queryByIds(@Param(value="ids") List<Integer> ids);
+
+    List<GourmetVO> queryByView(GourmetQueryDto gourmetQueryDto);
+
 }

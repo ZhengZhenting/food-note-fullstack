@@ -5,16 +5,22 @@ import cn.kmbeast.mapper.GourmetMapper;
 import cn.kmbeast.mapper.InteractionMapper;
 import cn.kmbeast.pojo.api.ApiResult;
 import cn.kmbeast.pojo.api.Result;
+import cn.kmbeast.pojo.dto.query.base.QueryDto;
 import cn.kmbeast.pojo.dto.query.extend.GourmetQueryDto;
 import cn.kmbeast.pojo.dto.query.extend.InteractionQueryDto;
+import cn.kmbeast.pojo.dto.query.extend.InteractionStaticQueryDto;
+import cn.kmbeast.pojo.dto.query.extend.UserQueryDto;
 import cn.kmbeast.pojo.em.AuditEnum;
 import cn.kmbeast.pojo.em.InteractionTypeEnum;
 import cn.kmbeast.pojo.em.PublishEnum;
 import cn.kmbeast.pojo.entity.Interaction;
+import cn.kmbeast.pojo.entity.User;
+import cn.kmbeast.pojo.vo.ChartVO;
 import cn.kmbeast.pojo.vo.GourmetListVO;
 import cn.kmbeast.pojo.vo.GourmetVO;
 import cn.kmbeast.pojo.vo.InteractionVO;
 import cn.kmbeast.service.InteractionService;
+import cn.kmbeast.utils.DateUtil;
 import cn.kmbeast.utils.TextUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -244,5 +250,49 @@ public class InteractionServiceImpl implements InteractionService {
         gourmetQueryDto.setIsAudit(AuditEnum.OK_AUDIT.getFlag());
         List<GourmetVO> gourmetVOList = gourmetMapper.query(gourmetQueryDto);
         return ApiResult.success(gourmetVOList);
+    }
+
+    /**
+     * statistics
+     *
+     * @return Result<List < ChartVO>> 响应结果
+     */
+    @Override
+    public Result<List<ChartVO>> daysQuery(InteractionQueryDto interactionQueryDto) {
+        //find teh gourmet of a specific user's id
+        GourmetQueryDto gourmetQueryDto = new GourmetQueryDto();
+        gourmetQueryDto.setUserId(LocalThreadHolder.getUserId());
+        List<GourmetVO> gourmetVOS = gourmetMapper.query(gourmetQueryDto);
+        List<Integer> gourmetIds = gourmetVOS.stream().map(GourmetVO::getId).collect(Collectors.toList());
+
+        if (gourmetIds.isEmpty()) {
+            List<ChartVO> chartVOS = DateUtil.countDatesWithinRange(
+                    interactionQueryDto.getDay(), List.of());
+            return ApiResult.success(chartVOS);
+        }
+        QueryDto queryDto = DateUtil.startAndEndTime(interactionQueryDto.getDay());
+        interactionQueryDto.setStartTime(queryDto.getStartTime());
+        interactionQueryDto.setEndTime(queryDto.getEndTime());
+
+        InteractionStaticQueryDto interactionStaticQueryDto = new InteractionStaticQueryDto();
+        interactionStaticQueryDto.setInteractionQueryDto(interactionQueryDto);
+        interactionStaticQueryDto.setGourmetIds(gourmetIds);
+
+        List<InteractionVO> interactionVOList = interactionMapper.queryDays(interactionStaticQueryDto);
+        List<LocalDateTime> localDateTimes = interactionVOList.stream().map(InteractionVO::getCreateTime).collect(Collectors.toList());
+        List<ChartVO> chartVOS = DateUtil.countDatesWithinRange(interactionQueryDto.getDay(), localDateTimes);
+        return ApiResult.success(chartVOS);
+    }
+
+    /**
+     * delete interaction
+     *
+     * @param ids list of ids
+     * @return Result<String> getting result
+     */
+    @Override
+    public Result<String> batchDelete(List<Integer> ids) {
+        interactionMapper.batchDelete(ids);
+        return ApiResult.success();
     }
 }
