@@ -10,7 +10,7 @@
         </el-select>
       </span>
     </div>
-    <div ref="chart" :style="{ width: '100%', height: height }"></div>
+    <div ref="chart" :style="{ width: width, height: height }"></div>
   </div>
 </template>
 <script>
@@ -34,6 +34,10 @@ export default {
     height: {
       type: String,
       default: '220px'
+    },
+    width: {
+      type: String,
+      default: "650px"
     },
   },
   watch: {

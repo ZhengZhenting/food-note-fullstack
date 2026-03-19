@@ -44,14 +44,14 @@ const routes = [
       },
       {
         path: "/categoryManage",
-        name: 'Category',
+        name: 'Category Manage',
         icon: 'el-icon-paperclip',
         component: () => import(`@/views/admin/CategoryManage.vue`),
         meta: { requireAuth: true },
       },
       {
         path: "/evaluationsManage",
-        name: 'Comment',
+        name: 'Comment Manage',
         icon: 'el-icon-chat-dot-round',
         component: () => import(`@/views/admin/EvaluationsManage.vue`),
         meta: { requireAuth: true },
@@ -65,9 +65,16 @@ const routes = [
       },
       {
         path: "/contentNetManage",
-        name: 'Content',
+        name: 'Content Manage',
         icon: 'el-icon-document-add',
         component: () => import(`@/views/admin/ContentNetManage.vue`),
+        meta: { requireAuth: true },
+      },
+      {
+        path: "/interactionManage",
+        name: 'Interaction Manage',
+        icon: 'el-icon-sort',
+        component: () => import(`@/views/admin/InteractionManage.vue`),
         meta: { requireAuth: true },
       },
       {

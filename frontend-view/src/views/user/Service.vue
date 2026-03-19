@@ -71,8 +71,11 @@
                                 </el-row>
                             </div>
                         </el-tab-pane>
-                         <el-tab-pane label="Content" name="third">
+                         <el-tab-pane label="Content Sharring" name="third">
                             <MyContentNet/>
+                         </el-tab-pane>
+                         <el-tab-pane label="Statistics" name="fourth">
+                            <Statistics/>
                          </el-tab-pane>
                     </el-tabs>
                 </div>
@@ -128,9 +131,10 @@
 </template>
 <script>
 import MyContentNet from "@/views/user/MyContentNet.vue";
+import Statistics from "@/views/user/Statistics.vue";
 
 export default {
-    components: {MyContentNet},
+    components: {MyContentNet,Statistics},
     name: "Service",
     data() {
         return {
