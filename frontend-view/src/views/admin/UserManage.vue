@@ -84,7 +84,7 @@
         <el-dialog :show-close="false" :visible.sync="dialogUserOperaion" width="25%">
             <div style="padding:16px 20px;">
                 <el-row>
-                    <p>用户头像</p>
+                    <p>Profile Picture</p>
                     <el-upload class="avatar-uploader"
                         action="http://localhost:21090/api/food-share-sys/v1.0/file/upload" :show-file-list="false"
                         :on-success="handleAvatarSuccess">

@@ -2,7 +2,7 @@
     <div class="menu-container">
         <div class="menu-side" :class="{ 'menu-side-narrow': flag }">
             <div style="display: flex;align-items: center;">
-                <Logo sysName="美食后台" style="padding: 0 40px;margin: 10px 0;" :flag="flag" :bag="colorLogo" />
+                <Logo sysName="Administration" style="padding: 0 40px;margin: 10px 0;" :flag="flag" :bag="colorLogo" />
             </div>
             <div style="margin-top: 12px;">
                 <AdminMenu :flag="flag" :routes="adminRoutes" :bag="bagMenu" @select="handleRouteSelect" />
@@ -22,7 +22,7 @@
             <el-row style="padding: 10px 20px 20px 20px;">
                 <el-row>
                     <p style="font-size: 12px;padding: 3px 0;margin-bottom: 10px;">
-                        <span class="modelName">*头像</span>
+                        <span class="modelName">*Profile Picture</span>
                     </p>
                     <el-upload class="avatar-uploader"
                         action="http://localhost:21090/api/food-share-sys/v1.0/file/upload" :show-file-list="false"
@@ -33,23 +33,23 @@
                 </el-row>
                 <el-row>
                     <p style="font-size: 12px;padding: 3px 0;">
-                        <span class="modelName">*用户名</span>
+                        <span class="modelName">*User Name</span>
                     </p>
                     <input class="input-title" v-model="userInfo.name" placeholder="用户名">
                 </el-row>
                 <el-row>
                     <p style="font-size: 12px;padding: 3px 0;">
-                        <span class="modelName">*用户邮箱</span>
+                        <span class="modelName">*Email</span>
                     </p>
                     <input class="input-title" v-model="userInfo.email" placeholder="用户邮箱">
                 </el-row>
             </el-row>
             <span slot="footer" class="dialog-footer">
                 <span class="channel-button" @click="dialogOperaion = false">
-                    取消操作
+                    Cancle
                 </span>
                 <span class="edit-button" @click="updateUserInfo()">
-                    确定修改
+                    Confirm
                 </span>
             </span>
         </el-dialog>
@@ -81,7 +81,7 @@ export default {
                 email: ''
             },
             flag: false,
-            tag: '可视化',
+            tag: 'Visualization',
             bag: 'rgb(255 255 255)',
             colorLogo: 'rgb(51,51,51)',
             bagMenu: 'rgb(248,248,248)',
@@ -109,7 +109,7 @@ export default {
                     this.dialogOperaion = false;
                     this.tokenCheckLoad();
                     this.$swal.fire({
-                        title: '修改个人信息',
+                        title: 'Edit Profile',
                         text: data.msg,
                         icon: 'success',
                         showConfirmButton: false,
@@ -119,21 +119,21 @@ export default {
             } catch (e) {
                 this.dialogOperaion = false;
                 this.$swal.fire({
-                    title: '修改个人信息异常',
+                    title: 'Error',
                     text: e,
                     icon: 'error',
                     showConfirmButton: false,
                     timer: 2000,
                 });
-                console.error(`修改个人信息异常:${e}`);
+                console.error(`Error:${e}`);
             }
         },
         handleAvatarSuccess(res, file) {
             if (res.code !== 200) {
-                this.$message.error(`头像上传异常`);
+                this.$message.error(`Error`);
                 return;
             }
-            this.$message.success(`头像上传成功`);
+            this.$message.success(`Successful`);
             this.userInfo.url = res.data;
         },
         eventListener(event) {
@@ -148,14 +148,14 @@ export default {
         },
         async loginOut() {
             const confirmed = await this.$swalConfirm({
-                title: '退出登录？',
-                text: `推出后需重新登录？`,
+                title: 'Log out？',
+                text: `Log in again？`,
                 icon: 'warning',
             });
             if (confirmed) {
                 this.$swal.fire({
-                    title: '退出登录成功',
-                    text: '1s 后返回登录页面',
+                    title: 'Susccessful',
+                    text: 'Back to Log In in 1s',
                     icon: 'success',
                     showConfirmButton: false,
                     timer: 1000,
@@ -199,11 +199,11 @@ export default {
                 if (targetMenu) {
                     this.routers = targetMenu.children;
                 } else {
-                    console.warn(`未找到与角色对应的路由：${rolePath}`);
+                    console.warn(`Wrong router：${rolePath}`);
                 }
             } catch (error) {
-                console.error('获取用户认证信息时发生错误:', error);
-                this.$message.error('认证信息加载失败，请重试！');
+                console.error('Error:', error);
+                this.$message.error('Error, please try later!');
             }
         },
     }
