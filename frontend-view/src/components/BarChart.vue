@@ -1,122 +1,132 @@
 <template>
-  <div class="line-main">
-    <div>
-      <span class="tag">{{ tag }}</span>
+    <div class="bar-main">
+        <div v-if="tag" class="chart-header">
+            <span class="tag">{{ tag }}</span>
+        </div>
+        <div ref="chart" :style="{ width: '100%', height: height }"></div>
     </div>
-    <div ref="chart" :style="{ width: '100%', height: height }"></div>
-  </div>
 </template>
+
 <script>
-// 柱状图组件
 import * as echarts from 'echarts'
 export default {
-  name: 'BarChart',
-  props: {
-    height: {
-      type: String,
-      default: '300px'
+    name: 'BarChart',
+    props: {
+        height: { type: String, default: '300px' },
+        tag:    { type: String, default: '' },
+        values: { type: Array, required: true },
+        date:   { type: Array, required: true }
     },
-    tag: {
-      type: String,
-      default: '柱状图'
+    data() {
+        return { chart: null }
     },
-    values: {
-      type: Array,
-      required: true
+    mounted() {
+        this.init();
+        this._ro = new ResizeObserver(() => { this.chart && this.chart.resize(); });
+        this._ro.observe(this.$refs.chart);
     },
-    date: {
-      type: Array,
-      required: true
-    }
-  },
-  data() {
-    return {
-      chart: null,
-    }
-  },
-  mounted() {
-    this.init();
-  },
-  methods: {
-    // 柱状图加载
-    init() {
-      this.chart = echarts.init(this.$refs.chart)
-      let option = {
-        grid: {
-          left: 30,
-          right: 5,
-          top: 10,
-          borderWidth: 5,
-        },
-        title: { text: '' },
-        tooltip: {},
-        xAxis: {
-          data: this.date,
-          axisLine: { show: false },
-          axisTick: { show: false },
-          axisLabel: { // 添加这一部分来设置X轴文字颜色
-            color: 'rgb(102, 102, 102)',
-            interval: 1, // 显示所有标签
-            rotate: 0, // 旋转45度，防止标签重叠
-          },
-        },
-        yAxis: {
-          axisLine: { show: false },
-          axisTick: { show: false },
-          axisLabel: {
-            color: 'rgb(102, 102, 102)',
-            fontSize: '12'
-          },
-        },
-        series: [{
-          name: '',
-          type: 'bar',
-          data: this.values,
-          axisLine: { show: false },
-          axisTick: { show: false },
-          axisLabel: { // 添加这一部分来设置y轴文字颜色
-            color: 'rgb(102, 102, 102)',
-          },
-          itemStyle: {
-            normal: {
-              color: function (params) {
-                const colorList = [
-                  '#e2e1e4',
-                  '#bc84a8',
-                  '#5e616d',
-                  '#57c3c2',
-                  '#87CEEB',
-                  '#ADD8E6'
-                ];
-                return colorList[params.dataIndex % colorList.length];
-              }
+    watch: {
+        values() { this.init(); }
+    },
+    methods: {
+        init() {
+            if (!this.chart) {
+                this.chart = echarts.init(this.$refs.chart);
             }
-          },
-        }]
-      }
-      this.chart.setOption(option)
+
+            // Warm red-toned palette matching the site
+            const palette = [
+                '#c8392b',   // primary red
+                '#e8825a',   // warm orange-red
+                '#d4a574',   // warm tan
+                '#b5855a',   // medium brown
+                '#8a7d6e',   // warm grey-brown
+                '#e8c4a0',   // pale peach
+            ];
+
+            this.chart.setOption({
+                grid: { left: 36, right: 12, top: 16, bottom: 32 },
+                tooltip: {
+                    trigger: 'axis',
+                    backgroundColor: 'rgba(253,250,245,0.96)',
+                    borderColor: '#e8ddd0',
+                    borderWidth: 1,
+                    textStyle: { color: '#3a3028', fontFamily: 'DM Sans, sans-serif', fontSize: 13 },
+                    extraCssText: 'border-radius:4px; box-shadow:0 2px 8px rgba(0,0,0,0.08);'
+                },
+                xAxis: {
+                    data: this.date,
+                    axisLine:  { show: false },
+                    axisTick:  { show: false },
+                    splitLine: { show: false },
+                    axisLabel: {
+                        color: '#9a8d7e',
+                        fontSize: 12,
+                        fontFamily: 'DM Sans, sans-serif',
+                        interval: 0,
+                    },
+                },
+                yAxis: {
+                    axisLine:  { show: false },
+                    axisTick:  { show: false },
+                    splitLine: {
+                        show: true,
+                        lineStyle: { color: '#f0ebe0', width: 1 }
+                    },
+                    axisLabel: {
+                        color: '#9a8d7e',
+                        fontSize: 12,
+                        fontFamily: 'DM Sans, sans-serif',
+                    },
+                },
+                series: [{
+                    type: 'bar',
+                    data: this.values,
+                    barMaxWidth: 40,
+                    itemStyle: {
+                        color: (params) => palette[params.dataIndex % palette.length],
+                        borderRadius: [3, 3, 0, 0],
+                    },
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 8,
+                            shadowColor: 'rgba(200,57,43,0.25)',
+                        }
+                    },
+                    label: {
+                        show: true,
+                        position: 'top',
+                        color: '#8a7d6e',
+                        fontSize: 11,
+                        fontFamily: 'DM Sans, sans-serif',
+                    },
+                }]
+            });
+        }
+    },
+    beforeDestroy() {
+        this._ro && this._ro.disconnect();
+        this.chart && this.chart.dispose();
     }
-  },
-  beforeDestroy() {
-    if (!this.chart) {
-      return
-    }
-    this.chart.dispose()
-  }
 }
 </script>
+
 <style scoped lang="scss">
-.line-main {
-  margin-bottom: 5px;
-  border-radius: 3px;
+@import url('https://fonts.googleapis.com/css2?family=Klee+One:wght@600&family=DM+Sans:wght@400;500&display=swap');
 
-  .tag {
-    font-size: 16px;
-    padding: 15px 6px;
+.bar-main {
+    width: 100%;
+}
+
+.chart-header {
+    margin-bottom: 10px;
+}
+
+.tag {
+    font-family: 'Klee One', cursive;
+    font-size: 15px;
+    font-weight: 600;
+    color: #3a3028;
     display: inline-block;
-    color: #333;
-    font-weight: bold;
-  }
-
 }
 </style>

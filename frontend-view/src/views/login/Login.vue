@@ -1,30 +1,29 @@
 <template>
     <div class="login-container">
-        <div style="display: flex;justify-content: left;margin: 20px 0;">
-            <Logo :bag="colorLogo"  sysName="Food Note" />
+
+        <div class="logo-icon">
+            <el-image style="width: 52px; height: 52px" src="/logo.png" fit="fill" />
         </div>
-        <div class="login-panel">
-            <div style="width: 300px;padding: 40px;display: flex;justify-content: center;align-items: center;">
-                <img src="/bag.png" style="width: 200px;" />
+
+        <h1 class="site-title">Food Note</h1>
+
+        <div class="login-form">
+            <div class="field">
+                <label>Username</label>
+                <input v-model="act" class="act" placeholder="Enter your username" />
             </div>
-            <div class="right-login">
-                <div>
-                    <h2>Log In</h2>
-                </div>
-                <div class="text">
-                    <input v-model="act" class="act" placeholder="Input username" />
-                </div>
-                <div class="text">
-                    <input v-model="pwd" class="pwd" type="password" placeholder="输入密码" />
-                </div>
-                <div>
-                    <span class="login-btn" @click="login">log in</span>
-                </div>
-                <div class="tip">
-                    <p>No Account？<span class="no-act" @click="toDoRegister">Register</span></p>
-                </div>
+            <div class="field">
+                <label>Password</label>
+                <input v-model="pwd" class="pwd" type="password" placeholder="Enter your password" />
+            </div>
+
+            <span class="login-btn" @click="login">Log In</span>
+
+            <div class="tip">
+                <p>Don't have an account? <span class="no-act" @click="toDoRegister">Register Now</span></p>
             </div>
         </div>
+
     </div>
 </template>
 
@@ -45,7 +44,6 @@ export default {
         }
     },
     methods: {
-        // 跳转注册页面
         toDoRegister() {
             this.$router.push('/register');
         },
@@ -75,15 +73,14 @@ export default {
                     return;
                 }
                 setToken(data.data.token);
-                // 根据角色延迟跳转
                 setTimeout(() => {
                     const { role } = data.data;
                     sessionStorage.setItem('role', role);
                     this.navigateToRole(role);
                 }, DELAY_TIME);
             } catch (error) {
-                console.error('登录请求错误:', error);
-                this.$message.error('登录请求出错，请重试！');
+                console.error('Error:', error);
+                this.$message.error('Error, please try again！');
             }
         },
         navigateToRole(role) {
@@ -92,10 +89,10 @@ export default {
                     this.$router.push('/admin');
                     break;
                 case 2:
-                    this.$router.push('/user');
+                    this.$router.push('/gourmet');
                     break;
                 default:
-                    console.warn('未知的角色类型:', role);
+                    console.warn('Unknown role:', role);
                     break;
             }
         },
@@ -104,124 +101,157 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Klee+One:wght@600&display=swap');
+
 * {
     user-select: none;
+    box-sizing: border-box;
 }
 
 .login-container {
     width: 100%;
     min-height: 100vh;
-    //background-color: rgb(255, 156, 0);
+    background-color: #f5f0e8;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px 40px;
+    font-family: 'Klee One', cursive;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
+}
+
+/* ─── Logo ───────────────────────────────────────────── */
+.logo-icon {
+    margin-bottom: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background-color: rgba(200, 57, 43, 0.08);
+}
+
+/* ─── Title — 1.35× bigger, generous gap below ──────── */
+.site-title {
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    font-size: 88px;     /* was 64px → ×1.375 */
+    color: #c8392b;
+    margin: 0 0 64px 0;  /* was 44px → larger gap to form */
+    text-align: center;
+    line-height: 1;
+    letter-spacing: 1px;
+    transform: rotate(-1.2deg);
+}
+
+/* ─── Form ───────────────────────────────────────────── */
+.login-form {
+    width: 100%;
+    max-width: 320px;
+    display: flex;
     flex-direction: column;
+    align-items: stretch;
+}
 
-    .login-panel {
-        display: flex;
-        border-top-left-radius: 10px;
-        padding: 4px;
-        justify-content: space-between;
-        height: auto;
-        border-radius: 6px;
-        border-top-left-radius: 100px;
-        border-bottom-left-radius: 20px;
-        // background-color: rgb(100, 119, 224);
-        background: linear-gradient(to right, rgb(100, 119, 224), rgb(195, 210, 217));
-        //box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
+.field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 18px;
 
-        .right-login {
-            width: 283px;
-            background-color: rgb(253, 253, 253);
-            padding: 20px;
-            border-radius: 5px;
-            // border-top-left-radius: 150px;
-            // border-bottom-left-radius: 5px;
-            // border-top-right-radius: 5px;
-            // border-bottom-right-radius: 5px;
-        }
+    label {
+        font-family: 'Klee One', cursive;
+        font-size: 16px;
+        font-weight: 600;
+        color: #3a3028;
+        margin-bottom: 7px;
+        padding-left: 2px;
+    }
+}
 
-        .logo {
-            margin: 10px 0 30px 0;
-        }
+/* ─── Inputs — warm off-white, no blue ──────────────── */
+.act,
+.pwd {
+    height: 46px;
+    width: 100%;
+    font-size: 14px;
+    font-family: 'Klee One', cursive;
+    font-weight: 600;
+    padding: 0 16px;
+    background-color: #fdf9f4;   /* warm off-white */
+    border: 1.5px solid #d6c9b8;
+    border-radius: 23px;
+    color: #2a2018;
+    transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
 
-        .act,
-        .pwd {
-            margin: 8px 0;
-            height: 53px;
-            line-height: 53px;
-            width: 100%;
-            font-size: 16px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-weight: 800;
-            padding: 0 8px;
-            background-color: rgb(248, 248, 248);
-            box-sizing: border-box;
-            border: 2px solid rgb(248, 248, 248);
-            border-radius: 6px;
-            padding: 0 15px;
-            margin-top: 13px;
-        }
-
-        .act:focus,
-        .pwd:focus {
-            outline: none;
-            //border: 2px solid rgb(16, 170, 209);
-            transition: 1.2s;
-            background-color: rgb(244, 244, 244);
-        }
-
-        .role {
-            display: inline-block;
-            color: rgb(30, 102, 147);
-            font-size: 14px;
-            padding-right: 10px;
-        }
+    &::placeholder {
+        color: #c0b09e;
+        font-family: 'Klee One', cursive;
+        font-weight: 600;
     }
 
-    .login-btn {
-        display: inline-block;
-        text-align: center;
-        border-radius: 3px;
-        margin-top: 20px;
-        height: 43px;
-        line-height: 43px;
-        width: 100%;
-        background-color: rgb(158, 199, 156);
-        font-size: 14px !important;
-        border: none;
-        color: white;
-        padding: 0 !important;
+    &:focus {
+        outline: none;
+        border-color: #c8392b;
+        background-color: #ffffff;
+        box-shadow: 0 0 0 3px rgba(200, 57, 43, 0.08);
+    }
+}
+
+/* ─── Button ─────────────────────────────────────────── */
+.login-btn {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    height: 46px;
+    line-height: 46px;
+    width: 100%;
+    background-color: #c8392b;
+    color: #fdf8f2;
+    font-family: 'Klee One', cursive;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 23px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+    letter-spacing: 0.5px;
+
+    &:hover {
+        background-color: #b03226;
+        box-shadow: 0 4px 16px rgba(200, 57, 43, 0.25);
+    }
+
+    &:active {
+        transform: translateY(1px);
+    }
+}
+
+/* ─── Tip ────────────────────────────────────────────── */
+.tip {
+    margin-top: 22px;
+    text-align: center;
+
+    p {
+        font-family: 'Klee One', cursive;
+        font-size: 14px;
+        font-weight: 600;
+        color: #8a7d6e;
+        margin: 0;
+    }
+
+    .no-act {
+        color: #c8392b;
         cursor: pointer;
-        user-select: none;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+
+        &:hover { color: #a52f24; }
     }
+}
 
-    .tip {
-        margin: 20px 0;
-
-        p {
-            padding: 3px 0;
-            margin: 0;
-            font-size: 14px;
-            color: #647897;
-
-            i {
-                margin-right: 3px;
-            }
-
-            span {
-                color: #3b3c3e;
-                border-radius: 2px;
-                margin: 0 6px;
-            }
-
-            .no-act:hover {
-                color: #3e77c2;
-                cursor: pointer;
-            }
-
-        }
-    }
-
+@media (max-width: 400px) {
+    .site-title { font-size: 66px; }
+    .login-form { max-width: 290px; }
 }
 </style>

@@ -1,28 +1,37 @@
 <template>
-    <div class="register-containel">
-        <div class="register-panel">
-            <div class="logo">
-                <Logo sysName="立即注册"/>
+    <div class="register-container">
+
+        <div class="logo-icon">
+            <el-image style="width: 52px; height: 52px" src="/logo.png" fit="fill" />
+        </div>
+
+        <h1 class="site-title">Food Note</h1>
+
+        <div class="register-form">
+            <div class="field">
+                <label>Account</label>
+                <input v-model="act" class="act" placeholder="Enter your account" />
             </div>
-            <div class="text">
-                <input v-model="act" class="act" placeholder="注册账号" />
+            <div class="field">
+                <label>Username</label>
+                <input v-model="name" class="act" placeholder="Enter your username" />
             </div>
-            <div class="text">
-                <input v-model="name" class="act" placeholder="用户名" />
+            <div class="field">
+                <label>Password</label>
+                <input v-model="pwd" class="pwd" type="password" placeholder="Enter your password" />
             </div>
-            <div class="text">
-                <input v-model="pwd" class="pwd" type="password" placeholder="输入密码" />
+            <div class="field">
+                <label>Confirm Password</label>
+                <input v-model="pwdConfirm" class="pwd" type="password" placeholder="Confirm your password" />
             </div>
-            <div class="text">
-                <input v-model="pwdConfirm" class="pwd" type="password" placeholder="输入密码" />
-            </div>
-            <div>
-                <span class="register-btn" @click="registerFunc">立即注册</span>
-            </div>
+
+            <span class="register-btn" @click="registerFunc">Register</span>
+
             <div class="tip">
-                <p>已有账户？<span class="no-act" @click="toDoLogin">返回登录</span></p>
+                <p>Already have an account? <span class="no-act" @click="toDoLogin">Log In</span></p>
             </div>
         </div>
+
     </div>
 </template>
 
@@ -36,19 +45,18 @@ export default {
     components: { Logo },
     data() {
         return {
-            act: '', // 账号
-            pwd: '', // 密码
-            pwdConfirm: '', // 确认密码
-            name: '' // 用户名
+            act: '',
+            pwd: '',
+            pwdConfirm: '',
+            name: ''
         }
     },
     methods: {
-        // 返回登录页面
         toDoLogin() {
             this.$router.push('/login');
         },
         async registerFunc() {
-            if (!this.act || !this.pwd || !this.pwdConfirm || !this.name ) {
+            if (!this.act || !this.pwd || !this.pwdConfirm || !this.name) {
                 this.$swal.fire({
                     title: '填写校验',
                     text: '账号或密码或用户名不能为空',
@@ -82,7 +90,6 @@ export default {
                     });
                     return;
                 }
-                // 使用Swal通知注册成功，延迟后跳转
                 this.$swal.fire({
                     title: '注册成功',
                     text: '即将返回登录页...',
@@ -90,7 +97,6 @@ export default {
                     showConfirmButton: false,
                     timer: DELAY_TIME,
                 });
-                // 根据角色延迟跳转
                 setTimeout(() => {
                     this.$router.push('/login');
                 }, DELAY_TIME);
@@ -103,112 +109,156 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Klee+One:wght@600&display=swap');
+
 * {
     user-select: none;
+    box-sizing: border-box;
 }
 
-.register-containel {
-    // background-image: url('/bag.png');
+.register-container {
     width: 100%;
     min-height: 100vh;
-   // background-color: rgb(207, 192, 109);
+    background-color: #f5f0e8;
     display: flex;
-    /* 启用Flexbox布局 */
-    justify-content: center;
-    /* 水平居中 */
-    align-items: center;
-    /* 垂直居中 */
     flex-direction: column;
-    /* 如果需要垂直居中，确保子元素也是这样排列 */
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px 40px;
+    font-family: 'Klee One', cursive;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
+}
 
-    .register-panel {
-        margin: 0 auto;
-        width: 293px;
-        height: auto;
-        padding: 40px 30px 16px 30px;
-        border-radius: 10px;
-        background-color: rgb(255,255,255);
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
+/* ─── Logo ───────────────────────────────────────────── */
+.logo-icon {
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background-color: rgba(200, 57, 43, 0.08);
+}
 
-        .logo {
-            margin: 10px 0 30px 0;
-        }
+/* ─── Title ──────────────────────────────────────────── */
+.site-title {
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    font-size: 88px;
+    color: #c8392b;
+    margin: 0 0 64px 0;
+    text-align: center;
+    line-height: 1;
+    letter-spacing: 1px;
+    transform: rotate(-1.2deg);
+}
 
-        .act,
-        .pwd {
-            margin: 8px 0;
-            height: 53px;
-            line-height: 53px;
-            width: 100%;
-            padding: 0 8px;
-            background-color: rgb(251,251,251);
-            box-sizing: border-box;
-            border: 1px solid rgb(251,251,251);
-            border-radius: 5px;
-            font-weight: 800;
-            font-size: 18px;
-            padding: 0 15px;
-            margin-top: 13px;
-        }
+/* ─── Form ───────────────────────────────────────────── */
+.register-form {
+    width: 100%;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
 
-        .act:focus,
-        .pwd:focus {
-            outline: none;
-            background-color: rgb(242,243,244);
-            transition: 1.2s;
-        }
+.field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 18px;
 
-        .role {
-            display: inline-block;
-            color: rgb(30, 102, 147);
-            font-size: 14px;
-            padding-right: 10px;
-        }
+    label {
+        font-family: 'Klee One', cursive;
+        font-size: 16px;
+        font-weight: 600;
+        color: #3a3028;
+        margin-bottom: 7px;
+        padding-left: 2px;
+    }
+}
+
+.act,
+.pwd {
+    height: 46px;
+    width: 100%;
+    font-size: 14px;
+    font-family: 'Klee One', cursive;
+    font-weight: 600;
+    padding: 0 16px;
+    background-color: #fdf9f4;
+    border: 1.5px solid #d6c9b8;
+    border-radius: 23px;
+    color: #2a2018;
+    transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
+
+    &::placeholder {
+        color: #c0b09e;
+        font-family: 'Klee One', cursive;
+        font-weight: 600;
     }
 
-    .register-btn {
-        display: inline-block;
-        text-align: center;
-        border-radius: 3px;
-        margin-top: 20px;
-        height: 43px;
-        line-height: 43px;
-        width: 100%;
-        background-color: rgb(64, 160, 112);
-        font-size: 14px !important;
-        border: none;
-        color: rgb(250,250,250);
-        padding: 0 !important;
+    &:focus {
+        outline: none;
+        border-color: #c8392b;
+        background-color: #ffffff;
+        box-shadow: 0 0 0 3px rgba(200, 57, 43, 0.08);
+    }
+}
+
+/* ─── Button ─────────────────────────────────────────── */
+.register-btn {
+    display: block;
+    text-align: center;
+    margin-top: 4px;
+    height: 46px;
+    line-height: 46px;
+    width: 100%;
+    background-color: #c8392b;
+    color: #fdf8f2;
+    font-family: 'Klee One', cursive;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 23px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+    letter-spacing: 0.5px;
+
+    &:hover {
+        background-color: #b03226;
+        box-shadow: 0 4px 16px rgba(200, 57, 43, 0.25);
+    }
+
+    &:active {
+        transform: translateY(1px);
+    }
+}
+
+/* ─── Tip ────────────────────────────────────────────── */
+.tip {
+    margin-top: 22px;
+    text-align: center;
+
+    p {
+        font-family: 'Klee One', cursive;
+        font-size: 14px;
+        font-weight: 600;
+        color: #8a7d6e;
+        margin: 0;
+    }
+
+    .no-act {
+        color: #c8392b;
         cursor: pointer;
-        user-select: none;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+
+        &:hover { color: #a52f24; }
     }
+}
 
-    .tip {
-        margin: 20px 0;
-
-        p {
-            padding: 3px 0;
-            font-size: 14px;
-            margin: 0;
-            color: #647897;
-
-            i {
-                margin-right: 3px;
-            }
-
-            span {
-                color: #3b3c3e;
-                border-radius: 2px;
-                margin: 0 6px;
-            }
-
-            .no-act:hover {
-                color: #568ed7;
-                cursor: pointer;
-            }
-
-        }
-    }
-
+@media (max-width: 400px) {
+    .site-title { font-size: 66px; }
+    .register-form { max-width: 290px; }
 }
 </style>
