@@ -1,31 +1,36 @@
 <template>
-    <div class="main">
-        <span>
-            <span class="operation-span" @click="operation">
-                <i v-if="!showFlag" class="el-icon-s-fold i-folder"></i>
-                <i v-else class="el-icon-s-unfold i-folder"></i>
-            </span>
+    <div class="level-header">
+
+        <!-- ── Sidebar toggle ── -->
+        <span class="toggle-btn" @click="operation">
+            <i :class="showFlag ? 'el-icon-s-unfold' : 'el-icon-s-fold'"></i>
         </span>
-        <span>
-            <span class="operation-span-tag">
-                Administration&nbsp;&nbsp;/&nbsp;&nbsp;{{ tag == '' ? '元数据' : tag }}
-            </span>
+
+        <!-- ── Breadcrumb ── -->
+        <span class="breadcrumb">
+            <span class="breadcrumb-root">Administration</span>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-current">{{ tag === '' ? 'Dashboard' : tag }}</span>
         </span>
-        <span class="user-block">
+
+        <!-- ── User dropdown ── -->
+        <div class="user-block">
             <el-dropdown class="user-dropdown">
-                <span class="el-dropdown-link" style="display: flex; align-items: center;">
-                    <el-avatar :size="35" :src="userInfo.url" style="margin-top: 0;"></el-avatar>
-                    <span class="userName" style="margin-left: 5px;font-size: 16px;">{{ userInfo.name }}</span>
-                    <i class="el-icon-arrow-down el-icon--right" style="margin-left: 5px;"></i>
+                <span class="user-trigger">
+                    <el-avatar :size="28" :src="userInfo.url" />
+                    <span class="user-name">{{ userInfo.name }}</span>
+                    <i class="el-icon-arrow-down"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item icon="el-icon-user-solid" @click.native="userCenterPanel">个人资料</el-dropdown-item>
-                    <el-dropdown-item icon="el-icon-s-fold" @click.native="loginOut">退出登录</el-dropdown-item>
+                    <el-dropdown-item icon="el-icon-user-solid" @click.native="userCenterPanel">My Profile</el-dropdown-item>
+                    <el-dropdown-item icon="el-icon-switch-button" @click.native="loginOut">Log Out</el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown>
-        </span>
+        </div>
+
     </div>
 </template>
+
 <script>
 export default {
     name: "LevelHeader",
@@ -35,30 +40,13 @@ export default {
         };
     },
     props: {
-        tag: {
-            type: String,
-            required: true,
-            default: ''
-        },
-        userInfo: {
-            type: Object,
-            required: true,
-            default: {}
-        },
-        bag: {
-            type: String,
-            default: ''
-        },
+        tag:      { type: String, required: true, default: '' },
+        userInfo: { type: Object, required: true, default: () => ({}) },
+        bag:      { type: String, default: '' },
     },
     methods: {
-        // 个人中心，传回父组件处理
-        userCenterPanel() {
-            this.$emit('eventListener', 'center');
-        },
-        // 退出登录，传回父组件处理
-        loginOut() {
-            this.$emit('eventListener', 'loginOut');
-        },
+        userCenterPanel() { this.$emit('eventListener', 'center'); },
+        loginOut()        { this.$emit('eventListener', 'loginOut'); },
         operation() {
             this.showFlag = !this.showFlag;
             sessionStorage.setItem('flag', this.showFlag);
@@ -67,57 +55,123 @@ export default {
     }
 };
 </script>
+
 <style scoped lang="scss">
-.main {
-    padding: 15px 26px 15px 0;
+@import url('https://fonts.googleapis.com/css2?family=Klee+One:wght@600&family=DM+Sans:wght@400;500&display=swap');
+
+* { box-sizing: border-box; }
+
+/* ─── Header bar ─────────────────────────────────────── */
+.level-header {
+    width: 100%;
+    height: 52px;
+    padding: 0 24px;
+    background-color: #ffffff;
+    border-bottom: 1.5px solid #e8ddd0;
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
-    width: 100%;
+    gap: 14px;
     position: relative;
-    background-color: rgb(255, 255, 255);
-    color: #666;
+}
 
-    .operation-span-tag {
-        padding: 9px 10px;
-        border-radius: 3px;
-        font-size: 16px;
-        user-select: none;
-        margin-top: 15px;
+/* ─── Sidebar toggle ─────────────────────────────────── */
+.toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #5a5045;
+    font-size: 18px;
+    flex-shrink: 0;
+    transition: background-color 0.15s, color 0.15s;
+    user-select: none;
+
+    &:hover {
+        background-color: #f5f0e8;
+        color: #c8392b;
     }
+}
 
-    .operation-span:hover {
-        background-color: rgb(246, 246, 246);
-    }
+/* ─── Breadcrumb ─────────────────────────────────────── */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+}
 
-    .operation-span {
-        margin-top: 20px;
-        padding: 6px;
-        margin-left: 10px;
-        border-radius: 3px;
-        user-select: none;
+.breadcrumb-root {
+    color: #b0a898;
+    font-weight: 400;
+}
 
-        i {
-            margin: 5px;
-            font-size: 20px;
-            color: #333;
-        }
-    }
+.breadcrumb-sep {
+    color: #d6c9b8;
+    font-size: 12px;
+}
 
-    span {
-        color: #333;
-    }
+.breadcrumb-current {
+    font-family: 'Klee One', cursive;
+    font-size: 14px;
+    font-weight: 600;
+    color: #3a3028;
+}
 
-    .user-block {
-        position: absolute;
-        right: 35px;
+/* ─── User block ─────────────────────────────────────── */
+.user-block {
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+}
 
-        .userName {
-            display: inline-block;
-            vertical-align: middle;
-            font-size: 14px;
-            cursor: pointer;
-            user-select: none;
+.user-trigger {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+    padding: 4px 10px;
+    border-radius: 20px;
+    transition: background-color 0.15s;
+    user-select: none;
+
+    &:hover { background-color: #f5f0e8; }
+}
+
+.user-name {
+    font-family: 'Klee One', cursive;
+    font-size: 13px;
+    font-weight: 600;
+    color: #3a3028;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.user-trigger i {
+    color: #9a8d7e;
+    font-size: 12px;
+}
+
+/* Override Element dropdown */
+::v-deep .el-dropdown-menu {
+    border: 1.5px solid #e8ddd0 !important;
+    border-radius: 4px !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08) !important;
+
+    .el-dropdown-menu__item {
+        font-family: 'Klee One', cursive;
+        font-size: 13px;
+        color: #3a3028;
+
+        &:hover {
+            background-color: #fdf8f2 !important;
+            color: #c8392b !important;
         }
     }
 }

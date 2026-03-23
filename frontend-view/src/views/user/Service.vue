@@ -1,140 +1,167 @@
 <template>
-    <!-- Dashboard Page -->
-    <div>
-        <el-row style="background-color: rgb(255,255,255); padding: 20px">
-            <el-col :span="24">
-                <div class="info">
-                    <div>
-                        <img :src="info.userAvatar" alt="">
+    <div class="service-container">
+
+        <!-- ── User profile card ── -->
+        <div class="profile-card">
+            <img :src="info.userAvatar" class="profile-avatar" />
+            <div class="profile-info">
+                <div class="profile-name">{{ info.userName }}</div>
+                <div class="profile-stats">
+                    <span><i class="el-icon-view"></i> {{ info.viewCount }}</span>
+                    <span><i class="el-icon-thumb"></i> {{ info.upvoteCount }}</span>
+                    <span><i class="el-icon-collection"></i> {{ info.saveCount }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Custom tabs ── -->
+        <div class="tab-bar">
+            <span class="tab-item" :class="{ active: activeName === 'first' }"  @click="activeName = 'first'">Gourmet</span>
+            <span class="tab-item" :class="{ active: activeName === 'second' }" @click="activeName = 'second'">Cookbook</span>
+            <span class="tab-item" :class="{ active: activeName === 'third' }"  @click="activeName = 'third'">Content Sharing</span>
+            <span class="tab-item" :class="{ active: activeName === 'fourth' }" @click="activeName = 'fourth'">Statistics</span>
+        </div>
+        <div class="tab-divider"></div>
+
+        <!-- ── Tab: Gourmet ── -->
+        <div v-show="activeName === 'first'" class="tab-content">
+            <div v-if="!gourmetList || gourmetList.length === 0" class="empty-wrap">
+                <el-empty description="No gourmet posts yet"></el-empty>
+            </div>
+            <div v-else>
+                <div class="item-gourmet" v-for="(gourmet, index) in gourmetList" :key="index">
+                    <div class="left">
+                        <img :src="gourmet.cover" />
                     </div>
-                    <div>
-                        <div class="title">{{ info.userName }}</div>
-                        <div class="point-info">
-                            <span>Views: {{ info.viewCount }}</span>
-                            <span>Likes: {{ info.upvoteCount }}</span>
-                            <span>Saves: {{ info.saveCount }}</span>
+                    <div class="right">
+                        <div class="g-info">
+                            <img :src="gourmet.userAvatar" class="g-avatar" />
+                            <span class="g-username">{{ gourmet.userName }}</span>
+                        </div>
+                        <div class="g-title" @click="readGourmet(gourmet)">{{ gourmet.title }}</div>
+                        <div class="g-desc">{{ gourmet.detail }}</div>
+                        <div class="g-meta">
+                            <span>{{ gourmet.createTime }}</span>
+                            <span><i class="el-icon-view"></i> {{ gourmet.viewCount }}</span>
+                            <span><i class="el-icon-thumb"></i> {{ gourmet.upvoteCount }}</span>
+                            <span><i class="el-icon-collection"></i> {{ gourmet.saveCount }}</span>
+                            <span><i class="el-icon-star-off"></i> {{ gourmet.rating }}</span>
+                        </div>
+                        <div class="g-actions">
+                            <span class="action-btn share" @click="share(gourmet)">
+                                <i class="el-icon-share"></i> Share
+                            </span>
+                            <span class="action-btn edit" @click="edit(gourmet)">
+                                <i class="el-icon-edit"></i> Edit
+                            </span>
+                            <span class="action-btn delete" @click="del(gourmet)">
+                                <i class="el-icon-delete"></i> Delete
+                            </span>
                         </div>
                     </div>
                 </div>
-                <div style="margin-inline: 20px;">
-                    <el-tabs v-model="activeName" @tab-click="handleClick">
-                        <el-tab-pane label="Gourmet" name="first">
-                            <div class="item-gourmet" v-for="(gourmet, index) in gourmetList" :key="index">
-                                <div class="left">
-                                    <img :src="gourmet.cover">
-                                </div>
-                                <div class="right">
-                                    <div class="info">
-                                        <img style="width: 25px; height: 25px; border-radius: 50%;"
-                                            :src="gourmet.userAvatar">
-                                        <span>{{ gourmet.userName }}</span>
-                                    </div>
-                                    <div class="title" @click="readGourmet(gourmet)">
-                                        {{ gourmet.title }}
-                                    </div>
-                                    <div class="detail">
-                                        {{ gourmet.detail }}
-                                    </div>
-                                    <div class="detail">
-                                        <span> {{ gourmet.createTime }}</span>
-                                        <span> Views({{ gourmet.viewCount }})</span>
-                                        <span> Likes({{ gourmet.upvoteCount }})</span>
-                                        <span> Saves({{ gourmet.saveCount }})</span>
-                                        <span> Rating({{ gourmet.rating }})</span>
-                                        <span style="color: rgb(0,200,95)" @click="share(gourmet)"> Share </span>
-                                        <span style="color: rgb(0,95,200)" @click="edit(gourmet)"> Edit </span>
-                                        <span style="color: rgb(250,95,0)" @click="del(gourmet)"> Delete </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </el-tab-pane>
-                        <el-tab-pane label="Cookbook" name="second">
-                            <div v-if="cookbookList.length === 0">
-                                <el-empty description="No data"></el-empty>
-                            </div>
-                            <div v-else>
-                                <el-row>
-                                    <el-col class="cookbook-item" style="margin-bottom: 10px" :span="6"
-                                        v-for="(cookbook, index) in cookbookList" :key="index">
-                                        <div style="padding: 10px">
-                                            <div>
-                                                <img style="width: 100%; height: 150px; border-radius: 5px;"
-                                                    :src="cookbook.cover" alt="">
-                                            </div>
-                                            <div @click="readCookbookDetail(cookbook)"
-                                                style="cursor: pointer; font-size: 20px; font-weight: 900;">
-                                                {{ cookbook.title }}
-                                            </div>
-                                            <div style="font-size: 16px;">{{ cookbook.createTime }}</div>
-                                        </div>
-                                    </el-col>
-                                </el-row>
-                            </div>
-                        </el-tab-pane>
-                         <el-tab-pane label="Content Sharring" name="third">
-                            <MyContentNet/>
-                         </el-tab-pane>
-                         <el-tab-pane label="Statistics" name="fourth">
-                            <Statistics/>
-                         </el-tab-pane>
-                    </el-tabs>
-                </div>
-            </el-col>
-            <!-- 操作面板 -->
-            <el-dialog :visible.sync="dialogShareOperaion" width="25%">
-                <div style="padding:16px 20px; text-align:left;">
-                    <div v-if="url !== ''">
-                        <el-result icon="success" title="success">
-                            <template slot="extra">
-                                <span>{{ url }}</span>
-                            </template>
-                        </el-result>
+            </div>
+        </div>
+
+        <!-- ── Tab: Cookbook ── -->
+        <div v-show="activeName === 'second'" class="tab-content">
+            <div v-if="cookbookList.length === 0" class="empty-wrap">
+                <el-empty description="No cookbooks yet"></el-empty>
+            </div>
+            <div v-else class="cookbook-grid">
+                <div
+                    class="cookbook-card"
+                    v-for="(cookbook, index) in cookbookList"
+                    :key="index"
+                    @click="readCookbookDetail(cookbook)"
+                >
+                    <div class="card-cover">
+                        <img :src="cookbook.cover" alt="" />
                     </div>
-                    <div v-else>
-                        <div>
-                            <p>Valid Days:</p>
-                            <el-radio-group size="mini" v-model="contentNet.validDay">
-                                <el-radio-button label="3 Days"></el-radio-button>
-                                <el-radio-button label="7 Days"></el-radio-button>
-                                <el-radio-button label="30 Days"></el-radio-button>
-                                <el-radio-button label="Always"></el-radio-button>
-                            </el-radio-group>
-                        </div>
-                        <div>
-                            <p>Password Authtification:</p>
-                            <el-switch v-model="contentNet.passwordAuth" active-color="#13ce66"
-                                inactive-color="#ff4949"></el-switch>
-                        </div>
-                        <div v-if="contentNet.passwordAuth">
-                            <p>Set Password:</p>
-                            <input class="dialog-input" type="password" v-model="contentNet.accessPassword"
-                                placeholder="password" />
+                    <div class="card-body">
+                        <div class="card-title">{{ cookbook.title }}</div>
+                        <div class="card-time">{{ cookbook.createTime }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Tab: Content Sharing ── -->
+        <div v-show="activeName === 'third'" class="tab-content">
+            <MyContentNet />
+        </div>
+
+        <!-- ── Tab: Statistics ── -->
+        <div v-show="activeName === 'fourth'" class="tab-content">
+            <Statistics />
+        </div>
+
+        <!-- ── Share dialog ── -->
+        <el-dialog
+            :visible.sync="dialogShareOperaion"
+            :show-close="false"
+            width="38%"
+            custom-class="food-dialog"
+        >
+            <div class="dialog-body">
+                <!-- Success state -->
+                <div v-if="url !== ''" class="share-success">
+                    <i class="el-icon-circle-check success-icon"></i>
+                    <h3 class="dialog-title">Sharing Link Ready</h3>
+                    <div class="share-url">{{ url }}</div>
+                </div>
+
+                <!-- Form state -->
+                <div v-else>
+                    <h3 class="dialog-title">Share Gourmet</h3>
+
+                    <div class="dialog-section">
+                        <label class="dialog-label">Valid Days</label>
+                        <div class="radio-group">
+                            <span
+                                v-for="opt in validDayOptions"
+                                :key="opt"
+                                class="radio-btn"
+                                :class="{ active: contentNet.validDay === opt }"
+                                @click="contentNet.validDay = opt"
+                            >{{ opt }}</span>
                         </div>
                     </div>
 
+                    <div class="dialog-section">
+                        <label class="dialog-label">Password Authentication</label>
+                        <div class="toggle-wrap">
+                            <el-switch
+                                v-model="contentNet.passwordAuth"
+                                active-color="#c8392b"
+                                inactive-color="#d6c9b8"
+                            />
+                            <span class="toggle-label">{{ contentNet.passwordAuth ? 'Enabled' : 'Disabled' }}</span>
+                        </div>
+                    </div>
+
+                    <div class="dialog-section" v-if="contentNet.passwordAuth">
+                        <label class="dialog-label">Set Password</label>
+                        <input class="dialog-input" type="password" v-model="contentNet.accessPassword" placeholder="Enter password" />
+                    </div>
                 </div>
-                <span slot="footer" class="dialog-footer" style="margin-top: 10px;">
-                    <div>
-                        <span class="channel-button" @click="cannel()">
-                            cancle
-                        </span>
-                    </div>
-                    <div v-if="url === ''">
-                        <span class="edit-button" @click="shareOperation()">
-                            confirm
-                        </span>
-                    </div>
-                </span>
-            </el-dialog>
-        </el-row>
+            </div>
+
+            <span slot="footer" class="dialog-footer">
+                <span class="cancel-btn" @click="cannel()">Close</span>
+                <span v-if="url === ''" class="confirm-btn" @click="shareOperation()">Generate Link</span>
+            </span>
+        </el-dialog>
+
     </div>
 </template>
+
 <script>
 import MyContentNet from "@/views/user/MyContentNet.vue";
 import Statistics from "@/views/user/Statistics.vue";
 
 export default {
-    components: {MyContentNet,Statistics},
+    components: { MyContentNet, Statistics },
     name: "Service",
     data() {
         return {
@@ -143,10 +170,10 @@ export default {
             gourmet: {},
             info: {},
             activeName: 'first',
-            gourmetList: {},
+            gourmetList: [],
             dialogShareOperaion: false,
-            resultContentNet: {},
-            url: '',//return sharing link
+            url: '',
+            validDayOptions: ['3 Days', '7 Days', '30 Days', 'Always'],
         }
     },
     created() {
@@ -160,215 +187,459 @@ export default {
             this.$router.push('/cookbookDetail');
         },
         fetchMyCookbook() {
-            this.$axios.post("/cookbook/queryUser", {
-                current: 1,
-                size: 100
-            }).then(res => {
-                const { data } = res;
-                if (data.code === 200) {
-                    this.cookbookList = data.data;
-                }
-            }).catch(error => {
-                console.log("Error", error);
-            });
+            this.$axios.post('/cookbook/queryUser', { current: 1, size: 100 }).then(res => {
+                if (res.data.code === 200) this.cookbookList = res.data.data;
+            }).catch(error => { console.log('Error', error); });
         },
-        cannel() {
-            this.dialogShareOperaion = false;
-            this.url = '';
-            this.contentNet = {};
-        },
+        cannel() { this.dialogShareOperaion = false; this.url = ''; this.contentNet = {}; },
         shareOperation() {
             const dayList = [this.contentNet.validDay];
-            const validDayList = dayList.map(text => {
-                const match = text.match(/\d+/g);
-                return match ? match : [];
-            });
-            if (this.contentNet.passwordAuth) {
-                this.contentNet.accessPassword = this.$md5(this.contentNet.accessPassword);
-            }
+            const validDayList = dayList.map(text => { const match = text.match(/\d+/g); return match ? match : []; });
+            if (this.contentNet.passwordAuth) this.contentNet.accessPassword = this.$md5(this.contentNet.accessPassword);
             const saveEntity = {
                 gourmetId: this.gourmet.id,
                 validDay: validDayList[0].length === 0 ? -1 : validDayList[0][0],
                 passwordAuth: this.contentNet.passwordAuth,
                 accessPassword: this.contentNet.accessPassword
-            }
-            this.$axios.post("/contentNet/save", saveEntity).then(res => {
-                const { data } = res;
-                if (data.code === 200) {
-
-                    this.$notify({
-                        duration: 1000,
-                        title: 'Share Operation',
-                        message: 'success',
-                        type: 'success'
-                    });
-                    this.url = data.msg;
+            };
+            this.$axios.post('/contentNet/save', saveEntity).then(res => {
+                if (res.data.code === 200) {
+                    this.$notify({ duration: 1000, title: 'Share', message: 'Link generated successfully', type: 'success' });
+                    this.url = res.data.msg;
                 }
-            }).catch(error => {
-                console.log("Error", error);
-            });
+            }).catch(error => { console.log('Error', error); });
         },
-        // 分享gourmet
-        share(gourmet) {
-            this.gourmet = gourmet;
-            this.dialogShareOperaion = true;
-        },
-        // 修改gourmet
-        edit(gourmet) {
-            sessionStorage.setItem('gourmetId', gourmet.id);
-            this.$router.push('/editGourmet');
-        },
-        // 删除gourmet
+        share(gourmet) { this.gourmet = gourmet; this.dialogShareOperaion = true; },
+        edit(gourmet) { sessionStorage.setItem('gourmetId', gourmet.id); this.$router.push('/editGourmet'); },
         async del(gourmet) {
-            const confirmed = await this.$swalConfirm({
-                title: 'delete confirmation',
-                text: `operation unrecoverable, continue？`,
-                icon: 'warning',
-            });
+            const confirmed = await this.$swalConfirm({ title: 'Delete Confirmation', text: 'Operation unrecoverable, continue?', icon: 'warning' });
             if (confirmed) {
                 try {
-                    let ids = [gourmet.id];
-                    const response = await this.$axios.post(`/gourmet/batchDelete`, ids);
+                    const response = await this.$axios.post('/gourmet/batchDelete', [gourmet.id]);
                     if (response.data.code === 200) {
-                        this.$notify({
-                            duration: 1000,
-                            title: 'Delete Operation',
-                            message: 'success',
-                            type: 'success'
-                        });
+                        this.$notify({ duration: 1000, title: 'Delete', message: 'Deleted successfully', type: 'success' });
                         this.fetchMyGourmet();
-                        return;
                     }
-                } catch (error) {
-                    this.$notify.error({
-                        duration: 1000,
-                        title: 'Error',
-                        message: error
-                    });
-                    console.error(`Error：`, error);
-                }
+                } catch (error) { console.error('Error:', error); }
             }
         },
-        readGourmet(gourmet) {
-            sessionStorage.setItem('gourmetId', gourmet.id);
-            this.$router.push('/gourmetDetail'); // 跳转到美食做法详情页
-        },
-        handleClick(tab, event) {
-            console.log(tab, event);
-        },
+        readGourmet(gourmet) { sessionStorage.setItem('gourmetId', gourmet.id); this.$router.push('/gourmetDetail'); },
+        handleClick(tab, event) { console.log(tab, event); },
         fetchMyGourmet() {
-            this.$axios.get("/gourmet/queryUser").then(res => {
-                const { data } = res;
-                if (data.code === 200) {
-                    this.gourmetList = data.data;
-                }
-            }).catch(error => {
-                console.log("Error", error);
-            });
+            this.$axios.get('/gourmet/queryUser').then(res => {
+                if (res.data.code === 200) this.gourmetList = res.data.data;
+            }).catch(error => { console.log('Error', error); });
         },
         fetchCenter() {
-            this.$axios.get("/user/center").then(res => {
-                const { data } = res;
-                if (data.code === 200) {
-                    this.info = data.data;
-                }
-            }).catch(error => {
-                console.log("Error", error);
-            });
+            this.$axios.get('/user/center').then(res => {
+                if (res.data.code === 200) this.info = res.data.data;
+            }).catch(error => { console.log('Error', error); });
         }
     }
 };
 </script>
 
 <style scoped lang="scss">
-.cookbook-item:hover {
-    background-color: rgb(248, 248, 248);
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Klee+One:wght@600&family=DM+Sans:wght@400;500&display=swap');
+
+* { box-sizing: border-box; }
+
+.service-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 28px 24px 48px;
+    font-family: 'DM Sans', sans-serif;
 }
 
-.info {
+/* ─── Profile card ───────────────────────────────────── */
+.profile-card {
     display: flex;
-    justify-content: left;
-    padding: 20px;
+    align-items: center;
     gap: 20px;
+    padding: 20px 24px;
+    background-color: rgba(255,255,255,0.6);
+    border: 1.5px solid #e8ddd0;
+    border-radius: 4px;
+    margin-bottom: 28px;
+}
 
-    img {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-    }
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 2px solid #e8ddd0;
+}
 
-    .title {
-        font-size: 24px;
-        font-weight: bold;
-        text-align: left;
+.profile-name {
+    font-family: 'Klee One', cursive;
+    font-size: 22px;
+    font-weight: 600;
+    color: #2a2018;
+    margin-bottom: 8px;
+}
 
-    }
+.profile-stats {
+    display: flex;
+    gap: 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: #8a7d6e;
 
-    .point-info {
-        margin-top: 10px;
-        font-size: 16px;
-        color: #666;
-        justify-content: left;
+    span { display: flex; align-items: center; gap: 5px; }
+    i { font-size: 15px; }
+}
 
-        span {
-            margin-right: 20px;
-        }
+/* ─── Custom tabs ────────────────────────────────────── */
+.tab-bar {
+    display: flex;
+    gap: 4px;
+}
+
+.tab-item {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 20px;
+    font-family: 'Klee One', cursive;
+    font-size: 14px;
+    font-weight: 600;
+    color: #8a7d6e;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    transition: color 0.15s, background-color 0.15s;
+
+    &:hover { color: #c8392b; background-color: rgba(255,255,255,0.5); }
+
+    &.active {
+        color: #c8392b;
+        background-color: rgba(255,255,255,0.75);
+        border-color: #e8ddd0;
+        position: relative;
+        bottom: -1.5px;
+        z-index: 1;
     }
 }
 
-.item-gourmet:hover {
-    background-color: rgb(245, 245, 245);
+.tab-divider {
+    height: 1.5px;
+    background-color: #e8ddd0;
+    margin-bottom: 24px;
 }
 
+.tab-content { }
+
+.empty-wrap { margin-top: 40px; }
+
+/* ─── Gourmet list ───────────────────────────────────── */
 .item-gourmet {
     display: flex;
-    justify-content: left;
-    gap: 10px;
-    padding: 10px;
-    border-radius: 5px;
+    gap: 16px;
+    padding: 16px 10px;
+    border-bottom: 1px solid #e8ddd0;
+    transition: background-color 0.15s;
+
+    &:hover { background-color: rgba(255,255,255,0.55); }
+    &:last-child { border-bottom: none; }
+}
+
+.left img {
+    width: 240px;
+    height: 165px;
+    object-fit: cover;
+    border-radius: 4px;
+    display: block;
+    flex-shrink: 0;
+}
+
+.right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.g-info {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.g-avatar {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.g-username {
+    font-family: 'Klee One', cursive;
+    font-size: 13px;
+    color: #8a7d6e;
+}
+
+.g-title {
+    font-family: 'Klee One', cursive;
+    font-size: 20px;
+    font-weight: 600;
+    color: #2a2018;
+    line-height: 1.3;
     cursor: pointer;
+    transition: color 0.15s;
 
-    .left {
-        img {
-            width: 220px;
-            border-radius: 5px;
-            height: 150px;
-        }
+    &:hover { color: #c8392b; text-decoration: underline; text-underline-offset: 3px; }
+}
 
+.g-desc {
+    font-size: 14px;
+    color: #5a5045;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.5;
+}
+
+.g-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 13px;
+    color: #9a8d7e;
+    align-items: center;
+}
+
+.g-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-family: 'Klee One', cursive;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: background-color 0.15s, border-color 0.15s;
+
+    &.share {
+        color: #2e86ab;
+        border-color: rgba(46,134,171,0.25);
+        &:hover { background-color: rgba(46,134,171,0.08); }
     }
 
-    .right {
-        text-align: left;
-
-        .title:hover {
-            text-decoration: underline;
-        }
-
-        .title {
-            padding: 4px 6px;
-            font-size: 20px;
-            font-weight: bold;
-
-        }
-
-        .detail {
-            margin-top: 10px;
-            padding: 4px 6px;
-            font-size: 15px;
-            color: #333232;
-            display: flex;
-            justify-content: left;
-            gap: 10px;
-        }
-
-        .info {
-            padding: 4px 6px;
-            display: flex;
-            justify-content: left;
-            align-items: center;
-            gap: 5px;
-            font-size: 15px;
-        }
+    &.edit {
+        color: #c8392b;
+        border-color: rgba(200,57,43,0.25);
+        &:hover { background-color: rgba(200,57,43,0.08); }
     }
+
+    &.delete {
+        color: #8a7d6e;
+        border-color: #e8ddd0;
+        &:hover { background-color: rgba(90,80,69,0.08); color: #5a5045; }
+    }
+}
+
+/* ─── Cookbook grid ──────────────────────────────────── */
+.cookbook-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 18px;
+}
+
+.cookbook-card {
+    cursor: pointer;
+    border-radius: 4px;
+    border: 1.5px solid #e8ddd0;
+    background-color: rgba(255,255,255,0.55);
+    overflow: hidden;
+    transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+
+    &:hover {
+        border-color: #c8392b;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(200,57,43,0.1);
+    }
+}
+
+.card-cover {
+    width: 100%;
+    aspect-ratio: 4/3;
+    overflow: hidden;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.3s;
+    }
+}
+
+.cookbook-card:hover .card-cover img { transform: scale(1.04); }
+
+.card-body { padding: 10px 12px 12px; }
+
+.card-title {
+    font-family: 'Klee One', cursive;
+    font-size: 16px;
+    font-weight: 600;
+    color: #2a2018;
+    line-height: 1.3;
+    margin-bottom: 4px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.cookbook-card:hover .card-title { color: #c8392b; }
+
+.card-time {
+    font-size: 12px;
+    color: #9a8d7e;
+}
+
+/* ─── Dialog ─────────────────────────────────────────── */
+::v-deep .food-dialog {
+    border-radius: 4px;
+    border: 1.5px solid #e8ddd0;
+
+    .el-dialog__header { display: none; }
+    .el-dialog__body { padding: 0; }
+    .el-dialog__footer { border-top: 1.5px solid #e8ddd0; padding: 14px 20px; }
+}
+
+.dialog-body {
+    padding: 24px 24px 8px;
+    background-color: #fdfaf5;
+}
+
+.dialog-title {
+    font-family: 'Klee One', cursive;
+    font-size: 20px;
+    font-weight: 600;
+    color: #c8392b;
+    margin: 0 0 20px 0;
+}
+
+.dialog-section { margin-bottom: 18px; }
+
+.dialog-label {
+    display: block;
+    font-family: 'Klee One', cursive;
+    font-size: 13px;
+    font-weight: 600;
+    color: #5a5045;
+    margin-bottom: 8px;
+}
+
+.radio-group { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.radio-btn {
+    display: inline-block;
+    padding: 5px 14px;
+    border: 1.5px solid #d6c9b8;
+    border-radius: 4px;
+    font-family: 'Klee One', cursive;
+    font-size: 13px;
+    font-weight: 600;
+    color: #5a5045;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background-color 0.15s;
+
+    &:hover { border-color: #c8392b; color: #c8392b; }
+    &.active { background-color: #c8392b; border-color: #c8392b; color: #fdf8f2; }
+}
+
+.toggle-wrap { display: flex; align-items: center; gap: 10px; }
+
+.toggle-label {
+    font-family: 'Klee One', cursive;
+    font-size: 14px;
+    font-weight: 600;
+    color: #5a5045;
+}
+
+.dialog-input {
+    width: 100%;
+    height: 40px;
+    padding: 0 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: #2a2018;
+    background-color: #ffffff;
+    border: 1.5px solid #d6c9b8;
+    border-radius: 4px;
+    transition: border-color 0.2s;
+
+    &::placeholder { color: #c0b09e; }
+    &:focus { outline: none; border-color: #c8392b; }
+}
+
+/* Share success state */
+.share-success {
+    text-align: center;
+    padding: 8px 0 4px;
+}
+
+.success-icon {
+    font-size: 48px;
+    color: #27ae60;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.share-url {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background-color: #f5f0e8;
+    border: 1.5px solid #e8ddd0;
+    border-radius: 4px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: #3a3028;
+    word-break: break-all;
+    text-align: left;
+}
+
+.dialog-footer { display: flex; justify-content: flex-end; gap: 10px; }
+
+.cancel-btn {
+    display: inline-block;
+    padding: 7px 18px;
+    font-family: 'Klee One', cursive;
+    font-size: 13px;
+    font-weight: 600;
+    color: #8a7d6e;
+    border: 1.5px solid #d6c9b8;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.15s;
+    &:hover { background-color: #f5f0e8; }
+}
+
+.confirm-btn {
+    display: inline-block;
+    padding: 7px 18px;
+    font-family: 'Klee One', cursive;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fdf8f2;
+    background-color: #c8392b;
+    border: 1.5px solid #c8392b;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.15s;
+    &:hover { background-color: #b03226; }
 }
 </style>
