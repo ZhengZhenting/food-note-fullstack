@@ -2,28 +2,26 @@
     <el-row style="background-color: #FFFFFF;padding: 5px 0;border-radius: 5px;">
         <el-row style="padding: 10px;margin-left: 5px;">
             <el-row style="display: flex;justify-content: left;gap: 6px;">
-                <span class="edit-button" @click="add()">
-                    新增用户
-                </span>
+                <span class="edit-button" @click="add()">New User</span>
                 <el-select style="width: 100px;" @change="fetchFreshData" size="small" v-model="userQueryDto.isLogin"
-                    placeholder="登录状态">
+                    placeholder="Status">
                     <el-option v-for="item in loginStatuList" :key="item.value" :label="item.label" :value="item.value">
                     </el-option>
                 </el-select>
                 <el-select style="width: 100px;" @change="fetchFreshData" size="small" v-model="userQueryDto.isWord"
-                    placeholder="禁言状态">
+                    placeholder="Banned">
                     <el-option v-for="item in wordStatuList" :key="item.value" :label="item.label" :value="item.value">
                     </el-option>
                 </el-select>
                 <el-select style="width: 100px;" @change="fetchFreshData" size="small" v-model="userQueryDto.role"
-                    placeholder="用户角色">
+                    placeholder="Role">
                     <el-option v-for="item in rolesList" :key="item.value" :label="item.label" :value="item.value">
                     </el-option>
                 </el-select>
                 <el-date-picker style="width: 216px;" @change="fetchFreshData" size="small" v-model="searchTime"
-                    type="daterange" range-separator="至" start-placeholder="注册开始" end-placeholder="注册结束">
+                    type="daterange" range-separator="to" start-placeholder="Registured start" end-placeholder="Registured end">
                 </el-date-picker>
-                <el-input size="small" style="width: 166px;" v-model="userQueryDto.userName" placeholder="用户名" clearable
+                <el-input size="small" style="width: 166px;" v-model="userQueryDto.userName" placeholder="User Name" clearable
                     @clear="handleFilterClear">
                     <el-button slot="append" @click="handleFilter" icon="el-icon-search"></el-button>
                 </el-input>
@@ -31,47 +29,47 @@
         </el-row>
         <el-row style="margin: 0 22px;border-top: 1px solid rgb(245,245,245);">
             <el-table :stripe="true" :data="tableData" style="width: 100%">
-                <el-table-column prop="userAvatar" width="68" label="头像">
+                <el-table-column prop="userAvatar" width="68" label="Avatar">
                     <template slot-scope="scope">
                         <el-avatar :size="25" :src="scope.row.userAvatar" style="margin-top: 10px;"></el-avatar>
                     </template>
                 </el-table-column>
-                <el-table-column prop="userName" label="名称"></el-table-column>
-                <el-table-column prop="userAccount" width="128" label="账号"></el-table-column>
-                <el-table-column prop="userEmail" width="168" label="邮箱"></el-table-column>
-                <el-table-column prop="userRole" width="68" label="角色">
+                <el-table-column prop="userName" label="Name"></el-table-column>
+                <el-table-column prop="userAccount" width="128" label="Account"></el-table-column>
+                <el-table-column prop="userEmail" width="168" label="Email"></el-table-column>
+                <el-table-column prop="userRole" width="68" label="Role">
                     <template slot-scope="scope">
                         <span>{{ scope.row.userRole === 1 ? '管理员' : '用户' }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="isLogin" width="108" label="封号">
+                <el-table-column prop="isLogin" width="108" label="Account suspended">
                     <template slot-scope="scope">
                         <i v-if="scope.row.isLogin" style="margin-right: 5px;" class="el-icon-warning"></i>
                         <i v-else style="margin-right: 5px;color: rgb(253, 199, 50);" class="el-icon-success"></i>
                         <el-tooltip v-if="scope.row.isLogin" class="item" effect="dark"
                             content="账号一经封号，不可登录系统。经由管理员解禁后，方可登录" placement="bottom-end">
-                            <span style="text-decoration: underline;text-decoration-style: dashed;">已封号</span>
+                            <span style="text-decoration: underline;text-decoration-style: dashed;">Account suspended</span>
                         </el-tooltip>
-                        <span v-else>正常</span>
+                        <span v-else>Normal</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="isWord" width="108" label="禁言">
+                <el-table-column prop="isWord" width="108" label="Banned">
                     <template slot-scope="scope">
                         <i v-if="scope.row.isWord" style="margin-right: 5px;" class="el-icon-warning"></i>
                         <i v-else style="margin-right: 5px;color: rgb(253, 199, 50);" class="el-icon-success"></i>
                         <el-tooltip v-if="scope.row.isWord" class="item" effect="dark"
                             content="账号一经禁言，不可评论互动。经由管理员解禁后，方可评论" placement="bottom-end">
-                            <span style="text-decoration: underline;text-decoration-style: dashed;">已禁言</span>
+                            <span style="text-decoration: underline;text-decoration-style: dashed;">Banned</span>
                         </el-tooltip>
-                        <span v-else>正常</span>
+                        <span v-else>Normal</span>
                     </template>
                 </el-table-column>
-                <el-table-column :sortable="true" prop="createTime" width="168" label="注册于"></el-table-column>
-                <el-table-column label="操作" width="170">
+                <el-table-column :sortable="true" prop="createTime" width="168" label="Registured at"></el-table-column>
+                <el-table-column label="Operation" width="170">
                     <template slot-scope="scope">
-                        <span class="text-button" @click="handleStatus(scope.row)">账号状态</span>
-                        <span class="text-button" @click="handleEdit(scope.row)">编辑</span>
-                        <span class="text-button" @click="handleDelete(scope.row)">删除</span>
+                        <span class="text-button" @click="handleStatus(scope.row)">Status</span>
+                        <span class="text-button" @click="handleEdit(scope.row)">Edit</span>
+                        <span class="text-button" @click="handleDelete(scope.row)">Cancle</span>
                     </template>
                 </el-table-column>
             </el-table>
@@ -93,25 +91,25 @@
                     </el-upload>
                 </el-row>
                 <el-row>
-                    <span class="dialog-hover">用户名</span>
-                    <input class="dialog-input" v-model="data.userName" placeholder="用户名" />
-                    <span class="dialog-hover">账号</span>
-                    <input class="dialog-input" v-model="data.userAccount" placeholder="账号" />
-                    <span class="dialog-hover">邮箱</span>
-                    <input class="dialog-input" v-model="data.userEmail" placeholder="邮箱" />
-                    <span class="dialog-hover">密码</span>
-                    <input class="dialog-input" v-model="userPwd" type="password" placeholder="密码" />
+                    <span class="dialog-hover">User Name</span>
+                    <input class="dialog-input" v-model="data.userName" placeholder="User Name" />
+                    <span class="dialog-hover">Account</span>
+                    <input class="dialog-input" v-model="data.userAccount" placeholder="Account" />
+                    <span class="dialog-hover">Email</span>
+                    <input class="dialog-input" v-model="data.userEmail" placeholder="Email" />
+                    <span class="dialog-hover">Password</span>
+                    <input class="dialog-input" v-model="userPwd" type="password" placeholder="Password" />
                 </el-row>
             </div>
             <span slot="footer" class="dialog-footer" style="margin-top: 10px;">
                 <span class="channel-button" @click="cannel()">
-                    取消操作
+                    Cancle
                 </span>
                 <span v-if="!isOperation" class="edit-button" @click="addOperation()">
-                    确定新增
+                    Confirm
                 </span>
                 <span v-else class="edit-button" @click="updateOperation()">
-                    确定修改
+                    Modify
                 </span>
             </span>
         </el-dialog>
@@ -119,35 +117,35 @@
             <div slot="title"
                 style="background-color: rgba(34, 165, 241);border-top-left-radius: 5px;border-top-right-radius: 5px;">
                 <p class="dialog-title" style="color: #FFFFFF;font-size: 14px;font-weight: 800;">
-                    账号状态
+                    Status
                 </p>
             </div>
             <div style="padding:10px 20px;">
                 <el-row>
-                    <p>*禁言状态</p>
+                    <p>*Banned Status</p>
                     <el-switch inactive-color="rgb(193, 193, 193)" v-model="data.isLogin" active-text="封号"
-                        inactive-text="正常状态">
+                        inactive-text="normal">
                     </el-switch>
                 </el-row>
                 <el-row style="margin: 20px 0;">
-                    <p>*禁言状态</p>
+                    <p>*Banned</p>
                     <el-switch inactive-color="rgb(193, 193, 193)" v-model="data.isWord" active-text="禁言"
-                        inactive-text="正常状态">
+                        inactive-text="normal">
                     </el-switch>
                 </el-row>
                 <el-row style="margin: 20px 0;">
-                    <p>*是否设置为管理员</p>
-                    <el-switch inactive-color="rgb(193, 193, 193)" v-model="isAdmin" active-text="管理员"
-                        inactive-text="普通用户">
+                    <p>*as Administrator</p>
+                    <el-switch inactive-color="rgb(193, 193, 193)" v-model="isAdmin" active-text="Administrator"
+                        inactive-text="User">
                     </el-switch>
                 </el-row>
             </div>
             <span slot="footer" class="dialog-footer">
                 <el-button size="small"
                     style="background-color: rgb(34, 165, 241);color: rgb(247,248,249);border: none;" class="customer"
-                    type="info" @click="comfirmStatus">确认</el-button>
+                    type="info" @click="comfirmStatus">Confirm</el-button>
                 <el-button class="customer" size="small" style="background-color: rgb(246,246,246);border: none;"
-                    @click="cannel">取消</el-button>
+                    @click="cannel">Cancle</el-button>
             </span>
         </el-dialog>
     </el-row>
@@ -338,8 +336,8 @@ export default {
                 this.tableData = data.data;
                 this.totalItems = data.total;
             } catch (error) {
-                this.$message.error("查询用户信息异常:", error);
-                console.error('查询用户信息异常:', error);
+                this.$message.error("Error:", error);
+                console.error('Error:', error);
             }
         },
         add() {

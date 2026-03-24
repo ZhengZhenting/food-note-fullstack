@@ -1,93 +1,149 @@
 <template>
-    <el-row style="background-color: #FFFFFF;padding: 5px 0;border-radius: 5px;">
-        <el-row style="padding: 10px;margin-left: 5px;">
-            <el-row style="display: flex;justify-content: left;gap: 6px;">
-                <el-select style="width: 100px;" @change="fetchFreshData" size="small" v-model="gourmetQueryDto.categoryId"
-                    placeholder="category" clearable>
-                    <el-option v-for="item in categories" :key="item.id" :label="item.name" :value="item.id">
-                    </el-option>
-                </el-select>
-                <el-input size="small" style="width: 186px;" v-model="gourmetQueryDto.title" placeholder="search for title" clearable
-                    @clear="handleFilterClear">
-                    <el-button slot="append" @click="handleFilter" icon="el-icon-search"></el-button>
-                </el-input>
-                <el-select style="width: 150px;" @change="fetchFreshData" size="small" v-model="gourmetQueryDto.isAudit"
-                    placeholder="Audit Status" clearable>
-                    <el-option v-for="item in auditStatuList" :key="item.value" :label="item.label" :value="item.value">
-                    </el-option>
-                </el-select>
-                <el-select style="width: 150px;" @change="fetchFreshData" size="small" v-model="gourmetQueryDto.isPublish"
-                    placeholder="Publish Status" clearable>
-                    <el-option v-for="item in publishStatuList" :key="item.value" :label="item.label" :value="item.value">
-                    </el-option>
-                </el-select>
-                <el-date-picker style="width: 216px;" @change="fetchFreshData" size="small" v-model="searchTime"
-                    type="daterange" range-separator="to" start-placeholder="Start Time" end-placeholder="End Time">
-                </el-date-picker>
-            </el-row>
-        </el-row>
-        <el-row style="margin: 0 22px;border-top: 1px solid rgb(245,245,245);">
-            <el-table :stripe="true" :data="tableData" style="width: 100%" :fit="true">
-                <el-table-column prop="cover" label="Cover" min-width="70">
-                    <template slot-scope="scope">
-                        <img :src="scope.row.cover"  style="width: 50px; height: 50px;"/>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="title" label="Title" min-width="155"></el-table-column>
-                <el-table-column prop="categoryId" label="Category ID" :sortable ="true" min-width="118"></el-table-column>
-                <el-table-column prop="categoryName" label="Category" min-width="118"></el-table-column>
-                <el-table-column prop="userId" label="User ID" :sortable ="true" min-width="98"></el-table-column>
-                <el-table-column prop="userName" label="User" min-width="118"></el-table-column>
-                <el-table-column prop="createTime" sortable="true" label="Create Time" min-width="168"></el-table-column>
-                <el-table-column prop="isAudit" label="Audit Status" min-width="98">
-                    <template slot-scope="scope">
-                        <i v-if="!scope.row.isAudit" style="margin-right: 5px;" class="el-icon-warning"></i>
-                        <i v-else style="margin-right: 5px;color: rgb(253, 199, 50);" class="el-icon-success"></i>
-                        <el-tooltip v-if="!scope.row.isAudit" class="item" effect="dark"
-                            content="Contact Admin for free pass" placement="bottom-end">
-                            <span style="text-decoration: underline;text-decoration-style: dashed;">No</span>
-                        </el-tooltip>
-                        <span v-else>Yes</span>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="isPublish" label="Publish Status" min-width="118">
-                    <template slot-scope="scope">
-                        <i v-if="!scope.row.isPublish" style="margin-right: 5px;" class="el-icon-warning"></i>
-                        <i v-else style="margin-right: 5px;color: rgb(253, 199, 50);" class="el-icon-success"></i>
-                        <el-tooltip v-if="!scope.row.isPublish" class="item" effect="dark"
-                            content="Unpublished content is not accessible to public" placement="bottom-end">
-                            <span style="text-decoration: underline;text-decoration-style: dashed;">No</span>
-                        </el-tooltip>
-                        <span v-else>Yes</span>
-                    </template>
-                </el-table-column>
-                <el-table-column label="Operation" width="120">
-                    <template slot-scope="scope">
-                        <span class="text-button" v-if="!scope.row.isAudit" @click="handleEdit(scope.row)">Audit</span>
-                        <span class="text-button" @click="handleDelete(scope.row)">Delete</span>
-                    </template>
-                </el-table-column>
-            </el-table>
-            <el-pagination style="margin:10px 0;float: right;" @size-change="handleSizeChange"
-                @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[20, 50]"
-                :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
-                :total="totalItems"></el-pagination>
-        </el-row>
-        <!-- 操作面板 -->
-        <el-dialog :show-close="false" :visible.sync="dialogGourmetOperaion" width="50%">
-            <div style="padding:16px 20px; max-height: 550px; overflow-y: auto;"> 
-                confirm to audit "{{ data.title }}"?
-            </div>
-            <span slot="footer" class="dialog-footer" style="margin-top: 10px;">
-                <span class="channel-button" @click="cannel()">
-                    cancle
-                </span>
-                <span  class="edit-button" @click="auditOperation()">
-                    confirm
-                </span>
+  <div class="cookbook-container">
+
+    <!-- ───────── HEADER ───────── -->
+    <div class="page-header">
+      <div class="header-left">
+        <h2 class="page-title">Gourmet</h2>
+        <p class="page-subtitle">{{ totalItems }} records found</p>
+      </div>
+
+      <div class="header-right">
+        <el-select
+          style="width: 120px;"
+          size="small"
+          v-model="gourmetQueryDto.categoryId"
+          placeholder="Category"
+          clearable
+          @change="fetchFreshData"
+        >
+          <el-option v-for="item in categories" :key="item.id" :label="item.name" :value="item.id" />
+        </el-select>
+
+        <el-input
+          size="small"
+          style="width: 180px;"
+          v-model="gourmetQueryDto.title"
+          placeholder="Search title…"
+          clearable
+          @clear="handleFilterClear"
+        >
+          <el-button slot="append" icon="el-icon-search" @click="handleFilter" />
+        </el-input>
+
+        <el-select
+          style="width: 140px;"
+          size="small"
+          v-model="gourmetQueryDto.isAudit"
+          placeholder="Audit"
+          clearable
+          @change="fetchFreshData"
+        >
+          <el-option v-for="item in auditStatuList" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
+
+        <el-select
+          style="width: 140px;"
+          size="small"
+          v-model="gourmetQueryDto.isPublish"
+          placeholder="Publish"
+          clearable
+          @change="fetchFreshData"
+        >
+          <el-option v-for="item in publishStatuList" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
+
+        <el-date-picker
+          style="width: 220px;"
+          size="small"
+          v-model="searchTime"
+          type="daterange"
+          range-separator="→"
+          start-placeholder="Start"
+          end-placeholder="End"
+          @change="fetchFreshData"
+        />
+      </div>
+    </div>
+
+    <!-- ───────── TABLE ───────── -->
+    <div class="table-wrap">
+      <el-table
+        :data="tableData"
+        style="width: 100%"
+        :header-cell-style="headerStyle"
+        :cell-style="cellStyle"
+      >
+        <el-table-column label="Cover" min-width="80">
+          <template slot-scope="scope">
+            <img :src="scope.row.cover" class="cover-img" />
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="title" label="Title" min-width="160" />
+        <el-table-column prop="categoryId" label="Category ID" min-width="120" sortable />
+        <el-table-column prop="categoryName" label="Category" min-width="120" />
+        <el-table-column prop="userId" label="User ID" min-width="100" sortable />
+        <el-table-column prop="userName" label="User" min-width="120" />
+        <el-table-column prop="createTime" label="Create Time" min-width="170" sortable />
+
+        <el-table-column label="Audit" min-width="110">
+          <template slot-scope="scope">
+            <span :class="scope.row.isAudit ? 'badge-yes' : 'badge-no'">
+              {{ scope.row.isAudit ? 'Yes' : 'No' }}
             </span>
-        </el-dialog>
-    </el-row>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="Publish" min-width="110">
+          <template slot-scope="scope">
+            <span :class="scope.row.isPublish ? 'badge-yes' : 'badge-no'">
+              {{ scope.row.isPublish ? 'Yes' : 'No' }}
+            </span>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="Actions" width="140">
+          <template slot-scope="scope">
+            <span
+              class="text-btn"
+              v-if="!scope.row.isAudit"
+              @click="handleEdit(scope.row)"
+            >
+              Audit
+            </span>
+            <span class="text-btn delete" @click="handleDelete(scope.row)">
+              Delete
+            </span>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <el-pagination
+        class="pagination"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-sizes="[20, 50]"
+        :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="totalItems"
+      />
+    </div>
+
+    <!-- ───────── DIALOG ───────── -->
+    <el-dialog :visible.sync="dialogGourmetOperaion" width="420px">
+      <div class="dialog-body">
+        Confirm to audit "{{ data.title }}" ?
+      </div>
+
+      <span slot="footer" class="dialog-footer">
+        <span class="text-btn" @click="cannel()">Cancel</span>
+        <span class="text-btn primary" @click="auditOperation()">Confirm</span>
+      </span>
+    </el-dialog>
+
+  </div>
 </template>
 
 <script>
@@ -263,4 +319,131 @@ export default {
     },
 };
 </script>
-<style scoped lang="scss"></style>
+
+<style scoped lang="scss">
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Klee+One:wght@600&family=DM+Sans:wght@400;500&display=swap');
+
+.cookbook-container {
+  padding: 28px;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* HEADER */
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.page-title {
+  font-family: 'Caveat', cursive;
+  font-size: 38px;
+  color: #c8392b;
+  margin: 0;
+  line-height: 1;
+}
+
+.page-subtitle {
+  font-size: 13px;
+  color: #b0a898;
+  margin: 0;
+}
+
+.header-right {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+
+  ::v-deep .el-input__inner {
+    border-color: #d6c9b8;
+  }
+
+  ::v-deep .el-input-group__append {
+    background: #c8392b;
+    color: white;
+  }
+
+  ::v-deep .el-range-editor {
+    border-color: #d6c9b8;
+  }
+}
+
+/* TABLE */
+.table-wrap {
+  background: rgba(255,255,255,0.7);
+  border: 1.5px solid #e8ddd0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* IMAGE */
+.cover-img {
+  width: 50px;
+  height: 50px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+/* TAG */
+.badge-yes {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-family: 'Klee One', cursive;
+  font-weight: 600;
+  background-color: rgba(200,57,43,0.08);
+  color: #c8392b;
+  border: 1px solid rgba(200,57,43,0.2);
+}
+
+.badge-no {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-family: 'Klee One', cursive;
+  font-weight: 600;
+  background-color: rgba(90,80,69,0.07);
+  color: #8a7d6e;
+  border: 1px solid #e8ddd0;
+}
+
+/* BUTTON */
+.text-btn {
+  font-family: 'Klee One', cursive;
+  font-size: 12px;
+  cursor: pointer;
+  margin-right: 8px;
+}
+
+.text-btn.delete {
+  color: #8a7d6e;
+}
+
+.text-btn.primary {
+  color: #c8392b;
+}
+
+/* DIALOG */
+.dialog-body {
+  padding: 20px;
+  font-size: 14px;
+}
+
+/* PAGINATION */
+.pagination {
+  padding: 10px;
+  text-align: right;
+}
+</style>
