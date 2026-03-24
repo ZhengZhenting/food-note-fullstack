@@ -39,14 +39,14 @@
                 :header-cell-style="headerStyle"
                 :cell-style="cellStyle"
             >
-                <el-table-column prop="gourmetTitle" label="Content" min-width="130" />
+                <el-table-column prop="gourmetTitle" label="Content" min-width="120" />
                 <el-table-column prop="gourmetId" sortable label="Gourmet ID" min-width="110" />
                 <el-table-column prop="userId" sortable label="User ID" min-width="90" />
-                <el-table-column prop="userName" label="User Name" min-width="100" />
-                <el-table-column prop="accessCode" label="Access Code" min-width="110" />
-                <el-table-column prop="accessPassword" label="Password" min-width="100" />
-                <el-table-column prop="validDay" sortable label="Valid Days" min-width="100" />
-                <el-table-column prop="passwordAuth" label="Pwd Auth" min-width="90">
+                <el-table-column prop="userName" label="User Name" min-width="110" />
+                <el-table-column prop="accessCode" label="Access Code" min-width="120" />
+                <el-table-column prop="accessPassword" label="Password" min-width="110" />
+                <el-table-column prop="validDay" sortable label="Valid Days" min-width="110" />
+                <el-table-column prop="passwordAuth" label="Pwd Auth" min-width="110">
                     <template slot-scope="scope">
                         <span :class="scope.row.passwordAuth ? 'badge-yes' : 'badge-no'">
                             {{ scope.row.passwordAuth ? 'Yes' : 'No' }}
@@ -54,7 +54,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="createTime" sortable label="Created At" min-width="130" />
-                <el-table-column label="Actions" width="90">
+                <el-table-column label="Actions" width="100">
                     <template slot-scope="scope">
                         <span class="text-btn delete" @click="handleDelete(scope.row)">Delete</span>
                     </template>

@@ -104,6 +104,27 @@ export default {
         this.fetchFreshData();
     },
     methods: {
+      headerStyle() {
+            return {
+                fontFamily: "'Klee One', cursive",
+                fontSize: '12px',
+                fontWeight: '600',
+                color: '#8a7d6e',
+                backgroundColor: '#f5f0e8',
+                borderBottom: '1.5px solid #e8ddd0',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+            };
+        },
+        cellStyle() {
+            return {
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: '14px',
+                color: '#3a3028',
+                backgroundColor: 'transparent',
+                borderBottom: '1px solid #f0ebe0',
+            };
+        },
         // 批量删除数据
         async batchDelete() {
             if (!this.delectedRows.length) {
