@@ -82,7 +82,7 @@ export default {
                 const { data } = await request.post(`user/register`, paramDTO);
                 if (data.code !== 200) {
                     this.$swal.fire({
-                        title: '注册失败',
+                        title: 'Registure failed',
                         text: data.msg,
                         icon: 'error',
                         showConfirmButton: false,
@@ -91,8 +91,8 @@ export default {
                     return;
                 }
                 this.$swal.fire({
-                    title: '注册成功',
-                    text: '即将返回登录页...',
+                    title: 'Registure succeed',
+                    text: 'Back to log in page...',
                     icon: 'success',
                     showConfirmButton: false,
                     timer: DELAY_TIME,
@@ -101,7 +101,7 @@ export default {
                     this.$router.push('/login');
                 }, DELAY_TIME);
             } catch (error) {
-                console.error('注册请求错误:', error);
+                console.error('Error:', error);
             }
         }
     }

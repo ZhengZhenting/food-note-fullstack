@@ -1,154 +1,83 @@
 <template>
-    <el-row style="background-color: #FFFFFF;padding: 5px 0;border-radius: 5px;">
-        <el-row style="padding: 10px;margin-left: 5px;">
-            <el-row style="display: flex;justify-content: left;gap: 6px;">
-                <span class="edit-button" @click="add()">New User</span>
-                <el-select style="width: 100px;" @change="fetchFreshData" size="small" v-model="userQueryDto.isLogin"
-                    placeholder="Status">
-                    <el-option v-for="item in loginStatuList" :key="item.value" :label="item.label" :value="item.value">
-                    </el-option>
-                </el-select>
-                <el-select style="width: 100px;" @change="fetchFreshData" size="small" v-model="userQueryDto.isWord"
-                    placeholder="Banned">
-                    <el-option v-for="item in wordStatuList" :key="item.value" :label="item.label" :value="item.value">
-                    </el-option>
-                </el-select>
-                <el-select style="width: 100px;" @change="fetchFreshData" size="small" v-model="userQueryDto.role"
-                    placeholder="Role">
-                    <el-option v-for="item in rolesList" :key="item.value" :label="item.label" :value="item.value">
-                    </el-option>
-                </el-select>
-                <el-date-picker style="width: 216px;" @change="fetchFreshData" size="small" v-model="searchTime"
-                    type="daterange" range-separator="to" start-placeholder="Registured start" end-placeholder="Registured end">
-                </el-date-picker>
-                <el-input size="small" style="width: 166px;" v-model="userQueryDto.userName" placeholder="User Name" clearable
-                    @clear="handleFilterClear">
-                    <el-button slot="append" @click="handleFilter" icon="el-icon-search"></el-button>
-                </el-input>
-            </el-row>
-        </el-row>
-        <el-row style="margin: 0 22px;border-top: 1px solid rgb(245,245,245);">
-            <el-table :stripe="true" :data="tableData" style="width: 100%">
-                <el-table-column prop="userAvatar" width="68" label="Avatar">
-                    <template slot-scope="scope">
-                        <el-avatar :size="25" :src="scope.row.userAvatar" style="margin-top: 10px;"></el-avatar>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="userName" label="Name"></el-table-column>
-                <el-table-column prop="userAccount" width="128" label="Account"></el-table-column>
-                <el-table-column prop="userEmail" width="168" label="Email"></el-table-column>
-                <el-table-column prop="userRole" width="68" label="Role">
-                    <template slot-scope="scope">
-                        <span>{{ scope.row.userRole === 1 ? '管理员' : '用户' }}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="isLogin" width="108" label="Account suspended">
-                    <template slot-scope="scope">
-                        <i v-if="scope.row.isLogin" style="margin-right: 5px;" class="el-icon-warning"></i>
-                        <i v-else style="margin-right: 5px;color: rgb(253, 199, 50);" class="el-icon-success"></i>
-                        <el-tooltip v-if="scope.row.isLogin" class="item" effect="dark"
-                            content="账号一经封号，不可登录系统。经由管理员解禁后，方可登录" placement="bottom-end">
-                            <span style="text-decoration: underline;text-decoration-style: dashed;">Account suspended</span>
-                        </el-tooltip>
-                        <span v-else>Normal</span>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="isWord" width="108" label="Banned">
-                    <template slot-scope="scope">
-                        <i v-if="scope.row.isWord" style="margin-right: 5px;" class="el-icon-warning"></i>
-                        <i v-else style="margin-right: 5px;color: rgb(253, 199, 50);" class="el-icon-success"></i>
-                        <el-tooltip v-if="scope.row.isWord" class="item" effect="dark"
-                            content="账号一经禁言，不可评论互动。经由管理员解禁后，方可评论" placement="bottom-end">
-                            <span style="text-decoration: underline;text-decoration-style: dashed;">Banned</span>
-                        </el-tooltip>
-                        <span v-else>Normal</span>
-                    </template>
-                </el-table-column>
-                <el-table-column :sortable="true" prop="createTime" width="168" label="Registured at"></el-table-column>
-                <el-table-column label="Operation" width="170">
-                    <template slot-scope="scope">
-                        <span class="text-button" @click="handleStatus(scope.row)">Status</span>
-                        <span class="text-button" @click="handleEdit(scope.row)">Edit</span>
-                        <span class="text-button" @click="handleDelete(scope.row)">Cancle</span>
-                    </template>
-                </el-table-column>
-            </el-table>
-            <el-pagination style="margin:10px 0;float: right;" @size-change="handleSizeChange"
-                @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[20, 50]"
-                :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
-                :total="totalItems"></el-pagination>
-        </el-row>
-        <!-- 操作面板 -->
-        <el-dialog :show-close="false" :visible.sync="dialogUserOperaion" width="25%">
-            <div style="padding:16px 20px;">
-                <el-row>
-                    <p>Profile Picture</p>
-                    <el-upload class="avatar-uploader"
-                        action="http://localhost:21090/api/food-share-sys/v1.0/file/upload" :show-file-list="false"
-                        :on-success="handleAvatarSuccess">
-                        <img v-if="userAvatar" :src="userAvatar" class="dialog-avatar">
-                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                    </el-upload>
-                </el-row>
-                <el-row>
-                    <span class="dialog-hover">User Name</span>
-                    <input class="dialog-input" v-model="data.userName" placeholder="User Name" />
-                    <span class="dialog-hover">Account</span>
-                    <input class="dialog-input" v-model="data.userAccount" placeholder="Account" />
-                    <span class="dialog-hover">Email</span>
-                    <input class="dialog-input" v-model="data.userEmail" placeholder="Email" />
-                    <span class="dialog-hover">Password</span>
-                    <input class="dialog-input" v-model="userPwd" type="password" placeholder="Password" />
-                </el-row>
-            </div>
-            <span slot="footer" class="dialog-footer" style="margin-top: 10px;">
-                <span class="channel-button" @click="cannel()">
-                    Cancle
-                </span>
-                <span v-if="!isOperation" class="edit-button" @click="addOperation()">
-                    Confirm
-                </span>
-                <span v-else class="edit-button" @click="updateOperation()">
-                    Modify
-                </span>
+  <div class="contentnet-container">
+    <!-- ── Page header ── -->
+    <div class="page-header">
+      <div class="header-left">
+        <h2 class="page-title">User Management</h2>
+        <p class="page-subtitle">{{ totalItems }} records found</p>
+      </div>
+      <div class="header-right">
+        <span class="edit-button" @click="add()">New User</span>
+        <el-select style="width: 100px;" @change="fetchFreshData" size="small" v-model="userQueryDto.isLogin"
+          placeholder="Status">
+          <el-option v-for="item in loginStatuList" :key="item.value" :label="item.label" :value="item.value">
+          </el-option>
+        </el-select>
+        <el-select style="width: 100px;" @change="fetchFreshData" size="small" v-model="userQueryDto.isWord"
+          placeholder="Banned">
+          <el-option v-for="item in wordStatuList" :key="item.value" :label="item.label" :value="item.value">
+          </el-option>
+        </el-select>
+        <el-select style="width: 100px;" @change="fetchFreshData" size="small" v-model="userQueryDto.role"
+          placeholder="Role">
+          <el-option v-for="item in rolesList" :key="item.value" :label="item.label" :value="item.value">
+          </el-option>
+        </el-select>
+        <el-date-picker style="width: 216px;" @change="fetchFreshData" size="small" v-model="searchTime"
+          type="daterange" range-separator="→" start-placeholder="Registered start" end-placeholder="Registered end">
+        </el-date-picker>
+        <el-input size="small" style="width: 166px;" v-model="userQueryDto.userName" placeholder="User Name" clearable
+          @clear="handleFilterClear">
+          <el-button slot="append" @click="handleFilter" icon="el-icon-search" />
+        </el-input>
+      </div>
+    </div>
+
+    <!-- ── Table ── -->
+    <div class="table-wrap">
+      <el-table :data="tableData" style="width: 100%;" :header-cell-style="headerStyle" :cell-style="cellStyle" stripe>
+        <el-table-column prop="userAvatar" width="68" label="Avatar">
+          <template slot-scope="scope">
+            <el-avatar :size="25" :src="scope.row.userAvatar" style="margin-top: 10px;" />
+          </template>
+        </el-table-column>
+        <el-table-column prop="userName" label="Name" min-width="70" />
+        <el-table-column prop="userAccount" width="128" label="Account" />
+        <el-table-column prop="userEmail" width="168" label="Email" />
+        <el-table-column prop="userRole" width="68" label="Role">
+          <template slot-scope="scope">
+            <span>{{ scope.row.userRole === 1 ? 'Admin' : 'User' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="isLogin" width="150" label="Account suspended">
+          <template slot-scope="scope">
+            <span :class="scope.row.isLogin ? 'badge-no' : 'badge-yes'">
+              {{ scope.row.isLogin ? 'Suspended' : 'Normal' }}
             </span>
-        </el-dialog>
-        <el-dialog :show-close="false" :visible.sync="dialogStatusOperation" width="18%">
-            <div slot="title"
-                style="background-color: rgba(34, 165, 241);border-top-left-radius: 5px;border-top-right-radius: 5px;">
-                <p class="dialog-title" style="color: #FFFFFF;font-size: 14px;font-weight: 800;">
-                    Status
-                </p>
-            </div>
-            <div style="padding:10px 20px;">
-                <el-row>
-                    <p>*Banned Status</p>
-                    <el-switch inactive-color="rgb(193, 193, 193)" v-model="data.isLogin" active-text="封号"
-                        inactive-text="normal">
-                    </el-switch>
-                </el-row>
-                <el-row style="margin: 20px 0;">
-                    <p>*Banned</p>
-                    <el-switch inactive-color="rgb(193, 193, 193)" v-model="data.isWord" active-text="禁言"
-                        inactive-text="normal">
-                    </el-switch>
-                </el-row>
-                <el-row style="margin: 20px 0;">
-                    <p>*as Administrator</p>
-                    <el-switch inactive-color="rgb(193, 193, 193)" v-model="isAdmin" active-text="Administrator"
-                        inactive-text="User">
-                    </el-switch>
-                </el-row>
-            </div>
-            <span slot="footer" class="dialog-footer">
-                <el-button size="small"
-                    style="background-color: rgb(34, 165, 241);color: rgb(247,248,249);border: none;" class="customer"
-                    type="info" @click="comfirmStatus">Confirm</el-button>
-                <el-button class="customer" size="small" style="background-color: rgb(246,246,246);border: none;"
-                    @click="cannel">Cancle</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column prop="isWord" width="108" label="Banned">
+          <template slot-scope="scope">
+            <span :class="scope.row.isWord ? 'badge-no' : 'badge-yes'">
+              {{ scope.row.isWord ? 'Muted' : 'Normal' }}
             </span>
-        </el-dialog>
-    </el-row>
+          </template>
+        </el-table-column>
+        <el-table-column prop="createTime" width="168" label="Registered at" sortable />
+        <el-table-column label="Operation" width="170">
+          <template slot-scope="scope">
+            <span class="text-btn" @click="handleStatus(scope.row)">Status</span>
+            <span class="text-btn" @click="handleEdit(scope.row)">Edit</span>
+            <span class="text-btn delete" @click="handleDelete(scope.row)">Cancel</span>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <el-pagination class="pagination" @size-change="handleSizeChange" @current-change="handleCurrentChange"
+        :current-page="currentPage" :page-sizes="[20, 50]" :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper" :total="totalItems" />
+    </div>
+  </div>
 </template>
 
 <script>
@@ -180,6 +109,27 @@ export default {
         this.fetchFreshData();
     },
     methods: {
+        headerStyle() {
+            return {
+                fontFamily: "'Klee One', cursive",
+                fontSize: '12px',
+                fontWeight: '600',
+                color: '#8a7d6e',
+                backgroundColor: '#f5f0e8',
+                borderBottom: '1.5px solid #e8ddd0',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+            };
+        },
+        cellStyle() {
+            return {
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: '14px',
+                color: '#3a3028',
+                backgroundColor: 'transparent',
+                borderBottom: '1px solid #f0ebe0',
+            };
+        },
         cannel() {
             this.data = {};
             this.userAvatar = '';
@@ -374,4 +324,158 @@ export default {
     },
 };
 </script>
-<style scoped lang="scss"></style>
+
+
+<style scoped lang="scss">
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Klee+One:wght@600&family=DM+Sans:wght@400;500&display=swap');
+
+.contentnet-container {
+  padding: 28px 28px 48px;
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100%;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.header-left { display: flex; flex-direction: column; gap: 2px; }
+
+.page-title {
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  font-size: 38px;
+  color: #c8392b;
+  margin: 0;
+  line-height: 1;
+  transform: rotate(-0.5deg);
+  display: inline-block;
+}
+
+.page-subtitle {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: #b0a898;
+  margin: 0;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+
+  ::v-deep .el-input__inner {
+    border-color: #d6c9b8;
+    border-radius: 4px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: #3a3028;
+    background-color: rgba(255, 255, 255, 0.8);
+
+    &::placeholder { color: #c0b09e; }
+    &:focus { border-color: #c8392b; }
+  }
+
+  ::v-deep .el-input-group__append {
+    background-color: #c8392b;
+    border-color: #c8392b;
+    color: #fdf8f2;
+    transition: background-color 0.15s;
+    &:hover { background-color: #b03226; }
+  }
+
+  ::v-deep .el-range-editor {
+    border-color: #d6c9b8 !important;
+    border-radius: 4px !important;
+    background-color: rgba(255, 255, 255, 0.8);
+  }
+
+  ::v-deep .el-range-separator { color: #8a7d6e; }
+
+  ::v-deep .el-range-input {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: #3a3028;
+    background: transparent;
+    &::placeholder { color: #c0b09e; }
+  }
+}
+
+.table-wrap {
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1.5px solid #e8ddd0;
+  border-radius: 4px;
+  overflow: hidden;
+
+  ::v-deep .el-table {
+    background-color: transparent;
+    tr:hover > td { background-color: rgba(200, 57, 43, 0.03) !important; }
+    .el-table__row { background-color: transparent; }
+  }
+}
+
+.badge-yes {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-family: 'Klee One', cursive;
+  font-weight: 600;
+  background-color: rgba(200,57,43,0.08);
+  color: #c8392b;
+  border: 1px solid rgba(200,57,43,0.2);
+}
+
+.badge-no {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-family: 'Klee One', cursive;
+  font-weight: 600;
+  background-color: rgba(90,80,69,0.07);
+  color: #8a7d6e;
+  border: 1px solid #e8ddd0;
+}
+
+.text-btn {
+  font-family: 'Klee One', cursive;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 3px 8px;
+  border-radius: 3px;
+  transition: background-color 0.15s;
+
+  &.delete {
+    color: #8a7d6e;
+    &:hover { background-color: rgba(90, 80, 69, 0.08); color: #5a5045; }
+  }
+}
+
+.edit-button {
+  background-color: #c8392b;
+  color: #fdf8f2;
+  padding: 3px 12px;
+  border-radius: 4px;
+  font-family: 'Klee One', cursive;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  &:hover { background-color: #b03226; }
+}
+
+.pagination {
+  padding: 10px 14px;
+  text-align: right;
+
+  ::v-deep .el-pager li.active { color: #c8392b; }
+  ::v-deep .el-pager li:hover { color: #c8392b; }
+}
+</style>

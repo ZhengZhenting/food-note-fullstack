@@ -81,13 +81,13 @@
         </el-table-column>
 
         <el-table-column prop="title" label="Title" min-width="160" />
-        <el-table-column prop="categoryId" label="Category ID" min-width="120" sortable />
+        <el-table-column prop="categoryId" label="Category ID" min-width="150" sortable />
         <el-table-column prop="categoryName" label="Category" min-width="120" />
-        <el-table-column prop="userId" label="User ID" min-width="100" sortable />
-        <el-table-column prop="userName" label="User" min-width="120" />
+        <el-table-column prop="userId" label="User ID" min-width="110" sortable />
+        <el-table-column prop="userName" label="User" min-width="90" />
         <el-table-column prop="createTime" label="Create Time" min-width="170" sortable />
 
-        <el-table-column label="Audit" min-width="110">
+        <el-table-column label="Audit" min-width="90">
           <template slot-scope="scope">
             <span :class="scope.row.isAudit ? 'badge-yes' : 'badge-no'">
               {{ scope.row.isAudit ? 'Yes' : 'No' }}
@@ -95,7 +95,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="Publish" min-width="110">
+        <el-table-column label="Publish" min-width="100">
           <template slot-scope="scope">
             <span :class="scope.row.isPublish ? 'badge-yes' : 'badge-no'">
               {{ scope.row.isPublish ? 'Yes' : 'No' }}
@@ -103,7 +103,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="Actions" width="140">
+        <el-table-column label="Actions" width="100">
           <template slot-scope="scope">
             <span
               class="text-btn"
@@ -172,6 +172,27 @@ export default {
         this.fetchFreshCategory();
     },
     methods: {
+      headerStyle() {
+            return {
+                fontFamily: "'Klee One', cursive",
+                fontSize: '12px',
+                fontWeight: '600',
+                color: '#8a7d6e',
+                backgroundColor: '#f5f0e8',
+                borderBottom: '1.5px solid #e8ddd0',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+            };
+        },
+        cellStyle() {
+            return {
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: '14px',
+                color: '#3a3028',
+                backgroundColor: 'transparent',
+                borderBottom: '1px solid #f0ebe0',
+            };
+        },
         // 查询分类信息
         fetchFreshCategory() {
             this.$axios.post('/category/query', {}).then(response => {
