@@ -13,13 +13,13 @@ const swalPlugin = {
   install(Vue) {
     Vue.prototype.$swalConfirm = async function(options = {}) {
       const defaultOptions = {
-        title: '提示',
+        title: 'Notice',
         text: '',
         icon: 'info',
         reverseButtons: true,
         showCancelButton: true,
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
+        confirmButtonText: 'Confirm',
+        cancelButtonText: 'Cancle',
         customClass: {
           confirmButton: 'sweet-btn-primary',
         },

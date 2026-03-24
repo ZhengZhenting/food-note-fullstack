@@ -1,102 +1,163 @@
 <template>
-    <el-row style="background-color: #FFFFFF;padding: 5px 0;border-radius: 5px;">
-        <el-row style="padding: 10px;margin-left: 5px;">
-            <el-row style="display: flex;justify-content: left;gap: 6px;">
-                <span class="edit-button" @click="add()">
-                    New Cookbook
-                </span>
-                <el-select style="width: 100px;" @change="fetchFreshData" size="small"
-                    v-model="cookbookQueryDto.categoryId" placeholder="category" clearable>
-                    <el-option v-for="item in categories" :key="item.id" :label="item.name" :value="item.id">
-                    </el-option>
+    <div class="cookbook-container">
+
+        <!-- ── Page header ── -->
+        <div class="page-header">
+            <div class="header-left">
+                <h2 class="page-title">Cookbook</h2>
+                <p class="page-subtitle">{{ totalItems }} cookbooks found</p>
+            </div>
+            <div class="header-right">
+                <el-select
+                    style="width: 120px;"
+                    @change="fetchFreshData"
+                    size="small"
+                    v-model="cookbookQueryDto.categoryId"
+                    placeholder="Category"
+                    clearable
+                >
+                    <el-option v-for="item in categories" :key="item.id" :label="item.name" :value="item.id" />
                 </el-select>
-                <el-select style="width: 100px;" @change="fetchFreshData" size="small"
-                    v-model="cookbookQueryDto.isPublish" placeholder="publish Status" clearable>
-                    <el-option v-for="item in publishStatuList" :key="item.value" :label="item.label"
-                        :value="item.value">
-                    </el-option>
+
+                <el-select
+                    style="width: 120px;"
+                    @change="fetchFreshData"
+                    size="small"
+                    v-model="cookbookQueryDto.isPublish"
+                    placeholder="Visibility"
+                    clearable
+                >
+                    <el-option v-for="item in publishStatuList" :key="item.value" :label="item.label" :value="item.value" />
                 </el-select>
-                <el-date-picker style="width: 216px;" @change="fetchFreshData" size="small" v-model="searchTime"
-                    type="daterange" range-separator="to" start-placeholder="Start Time" end-placeholder="End Time">
-                </el-date-picker>
-                <el-input size="small" style="width: 226px;" v-model="cookbookQueryDto.title" placeholder="title"
-                    clearable @clear="handleFilterClear">
-                    <el-button slot="append" @click="handleFilter" icon="el-icon-search"></el-button>
+
+                <el-date-picker
+                    style="width: 220px;"
+                    @change="fetchFreshData"
+                    size="small"
+                    v-model="searchTime"
+                    type="daterange"
+                    range-separator="→"
+                    start-placeholder="Start"
+                    end-placeholder="End"
+                />
+
+                <el-input
+                    size="small"
+                    style="width: 180px;"
+                    v-model="cookbookQueryDto.title"
+                    placeholder="Search title…"
+                    clearable
+                    @clear="handleFilterClear"
+                >
+                    <el-button slot="append" @click="handleFilter" icon="el-icon-search" />
                 </el-input>
-            </el-row>
-        </el-row>
-        <el-row style="margin: 0 22px;border-top: 1px solid rgb(245,245,245);">
-            <el-table :stripe="true" :data="tableData" style="width: 100%">
-                <el-table-column prop="userAvatar" width="68" label="Avatar">
+
+                <span class="add-btn" @click="add()">
+                    <i class="el-icon-plus"></i> New Cookbook
+                </span>
+            </div>
+        </div>
+
+        <!-- ── Table ── -->
+        <div class="table-wrap">
+            <el-table
+                :data="tableData"
+                style="width: 100%;"
+                :header-cell-style="headerStyle"
+                :cell-style="cellStyle"
+            >
+                <el-table-column prop="userAvatar" label="Avatar" min-width="70">
                     <template slot-scope="scope">
-                        <el-avatar :size="25" :src="scope.row.userAvatar" style="margin-top: 10px;"></el-avatar>
+                        <el-avatar :size="26" :src="scope.row.userAvatar" />
                     </template>
                 </el-table-column>
-                <el-table-column prop="userId" :sortable="true" label="User ID" min-width="88"></el-table-column>
-                <el-table-column prop="userName" label="User Name" min-width="98"></el-table-column>
-                <el-table-column prop="title" label="Cookbook Name" mind-width="118"></el-table-column>
-                <el-table-column prop="id" :sortable="true" label="Cookbook ID" min-width="108"></el-table-column>
-                <el-table-column prop="categoryName" label="Category" min-width="98"></el-table-column>
-                <el-table-column prop="isPublish" label="publish" min-width="98">
+                <el-table-column prop="userId" sortable label="User ID" min-width="80" />
+                <el-table-column prop="userName" label="User Name" min-width="100" />
+                <el-table-column prop="title" label="Cookbook Name" min-width="130" />
+                <el-table-column prop="id" sortable label="ID" min-width="50" />
+                <el-table-column prop="categoryName" label="Category" min-width="100" />
+                <el-table-column prop="isPublish" label="Visibility" min-width="90">
                     <template slot-scope="scope">
-                        <span>{{ scope.row.isPublish ? 'Public' : 'Private' }}</span>
+                        <span :class="scope.row.isPublish ? 'badge-public' : 'badge-private'">
+                            {{ scope.row.isPublish ? 'Public' : 'Private' }}
+                        </span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="createTime" label="Create Time" :sortable="true"
-                    min-width="128"></el-table-column>
-                <el-table-column label="Operation" width="110">
+                <el-table-column prop="createTime" sortable label="Created At" min-width="130" />
+                <el-table-column label="Actions" width="130">
                     <template slot-scope="scope">
-                        <span class="text-button" @click="handleEdit(scope.row)">Edit</span>
-                        <span class="text-button" @click="handleDelete(scope.row)">Delete</span>
+                        <span class="text-btn edit" @click="handleEdit(scope.row)">Edit</span>
+                        <span class="text-btn delete" @click="handleDelete(scope.row)">Delete</span>
                     </template>
                 </el-table-column>
             </el-table>
-            <el-pagination style="margin:10px 0;float: right;" @size-change="handleSizeChange"
-                @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[20, 50]"
-                :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
-                :total="totalItems"></el-pagination>
-        </el-row>
-        <el-dialog :show-close="false" :visible.sync="dialogCookbookOperaion" width="50%">
-            <div style="padding:16px 20px;  max-height: 550px; overflow-y: auto;">
-                <p> {{ isOperation ? 'edit cookbook' : 'add cookbook' }}</p>
-                <el-row>
-                    <p>cover</p>
-                    <el-upload class="avatar-uploader"
-                        action="http://localhost:21090/api/food-share-sys/v1.0/file/upload" :show-file-list="false"
-                        :on-success="handleCoverSuccess">
-                        <img v-if="cover" :src="cover" class="dialog-avatar">
-                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+
+            <el-pagination
+                class="pagination"
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="currentPage"
+                :page-sizes="[20, 50]"
+                :page-size="pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="totalItems"
+            />
+        </div>
+
+        <!-- ── Dialog ── -->
+        <el-dialog
+            :show-close="false"
+            :visible.sync="dialogCookbookOperaion"
+            width="52%"
+            custom-class="food-dialog"
+        >
+            <div class="dialog-body">
+                <h3 class="dialog-title">{{ isOperation ? 'Edit Cookbook' : 'New Cookbook' }}</h3>
+
+                <div class="dialog-section">
+                    <label class="dialog-label">Cover Image</label>
+                    <el-upload
+                        class="cover-uploader"
+                        action="http://localhost:21090/api/food-share-sys/v1.0/file/upload"
+                        :show-file-list="false"
+                        :on-success="handleCoverSuccess"
+                    >
+                        <img v-if="cover" :src="cover" class="cover-preview" />
+                        <div v-else class="cover-placeholder">
+                            <i class="el-icon-plus"></i>
+                            <span>Upload Cover</span>
+                        </div>
                     </el-upload>
-                </el-row>
-                <div>
-                    <input class="dialog-input" v-model="data.title" placeholder="Title" />
-                </div>
-                <div>
-                    <Editor :receiveContent="data.content" @on-receive="onReceive" />
-                </div>
-                <div style="margin-block: 10px">
-                    <span class="dialog-hober">Category</span>
-                    <el-select style="width: 100px;" @change="fetchFreshData" size="small" v-model="data.categoryId"
-                        placeholder="category" clearable>
-                        <el-option v-for="item in categories" :key="item.id" :label="item.name" :value="item.id">
-                        </el-option>
-                    </el-select>
                 </div>
 
+                <div class="dialog-section">
+                    <label class="dialog-label">Title</label>
+                    <input class="dialog-input" v-model="data.title" placeholder="Enter cookbook title" />
+                </div>
+
+                <div class="dialog-section">
+                    <label class="dialog-label">Content</label>
+                    <div class="editor-wrap">
+                        <Editor :receiveContent="data.content" @on-receive="onReceive" />
+                    </div>
+                </div>
+
+                <div class="dialog-section">
+                    <label class="dialog-label">Category</label>
+                    <el-select size="small" v-model="data.categoryId" placeholder="Select category" clearable style="width: 180px;">
+                        <el-option v-for="item in categories" :key="item.id" :label="item.name" :value="item.id" />
+                    </el-select>
+                </div>
             </div>
-            <span slot="footer" class="dialog-footer" style="margin-top: 10px;">
-                <span class="channel-button" @click="cannel()">
-                    cancle
-                </span>
-                <span v-if="!isOperation" class="edit-button" @click="addOperation()">
-                    yes
-                </span>
-                <span v-else class="edit-button" @click="updateOperation()">
-                    confirm
-                </span>
+
+            <span slot="footer" class="dialog-footer">
+                <span class="cancel-btn" @click="cannel()">Cancel</span>
+                <span v-if="!isOperation" class="confirm-btn" @click="addOperation()">Create</span>
+                <span v-else class="confirm-btn" @click="updateOperation()">Save Changes</span>
             </span>
         </el-dialog>
-    </el-row>
+
+    </div>
 </template>
 
 <script>
@@ -112,12 +173,16 @@ export default {
             totalItems: 0,
             tableData: [],
             delectedRows: [],
-            searchTime: [], // 搜索时间范围
-            categories: [], // 分类列表
-            dialogCookbookOperaion: false, // 弹窗
-            isOperation: false, // 默认新增
-            cookbookQueryDto: {}, // 搜索条件
-            publishStatuList: [{ value: null, label: 'All' }, { value: 0, label: 'Private' }, { value: 1, label: 'Public' }],
+            searchTime: [],
+            categories: [],
+            dialogCookbookOperaion: false,
+            isOperation: false,
+            cookbookQueryDto: {},
+            publishStatuList: [
+                { value: null, label: 'All' },
+                { value: 0, label: 'Private' },
+                { value: 1, label: 'Public' }
+            ],
             cover: null,
         };
     },
@@ -126,165 +191,402 @@ export default {
         this.fetchFreshCategories();
     },
     methods: {
-        handleCoverSuccess(res, file) {
-            this.$notify({
-                duration: 1500,
-                title: 'Cover Upload',
-                message: res.code === 200 ? 'Upload Success' : 'Upload Failed',
-                type: res.code === 200 ? 'success' : 'error'
-            });
-            // 上传成功则更新封面
-            if (res.code === 200) {
-                this.cover = res.data;
-            }
+        headerStyle() {
+            return {
+                fontFamily: "'Klee One', cursive",
+                fontSize: '12px',
+                fontWeight: '600',
+                color: '#8a7d6e',
+                backgroundColor: '#f5f0e8',
+                borderBottom: '1.5px solid #e8ddd0',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+            };
         },
-        cannel() {
-            this.data = {};
-            this.cover=this.cover;
-            this.dialogCookbookOperaion = false;
-            this.isOperation = false;
+        cellStyle() {
+            return {
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: '13px',
+                color: '#3a3028',
+                backgroundColor: 'transparent',
+                borderBottom: '1px solid #f0ebe0',
+            };
         },
+        handleCoverSuccess(res) {
+            this.$notify({ duration: 1500, title: 'Cover Upload', message: res.code === 200 ? 'Upload Success' : 'Upload Failed', type: res.code === 200 ? 'success' : 'error' });
+            if (res.code === 200) this.cover = res.data;
+        },
+        cannel() { this.data = {}; this.cover = this.cover; this.dialogCookbookOperaion = false; this.isOperation = false; },
         addOperation() {
-            this.data.cover=this.cover;
+            this.data.cover = this.cover;
             this.$axios.post('/cookbook/backSave', this.data).then(response => {
                 if (response.data.code === 200) {
-                    this.$notify({
-                        duration: 1000,
-                        title: 'add new cookbook',
-                        message: 'successful',
-                        type: 'success'
-                    });
-                    this.cannel();
-                    this.fetchFreshData();
+                    this.$notify({ duration: 1000, title: 'New Cookbook', message: 'Created successfully', type: 'success' });
+                    this.cannel(); this.fetchFreshData();
                 }
-            }).catch(error => {
-                console.log('Error:', error);
-            });
+            }).catch(error => { console.log('Error:', error); });
         },
         updateOperation() {
-            this.data.cover=this.cover;
+            this.data.cover = this.cover;
             this.$axios.put('/cookbook/update', this.data).then(response => {
                 if (response.data.code === 200) {
-                    this.$notify({
-                        duration: 1000,
-                        title: 'add new cookbook',
-                        message: 'successful',
-                        type: 'success'
-                    });
-                    this.cannel();
-                    this.fetchFreshData();
+                    this.$notify({ duration: 1000, title: 'Update Cookbook', message: 'Saved successfully', type: 'success' });
+                    this.cannel(); this.fetchFreshData();
                 }
-            }).catch(error => {
-                console.log('Error:', error);
-            });
+            }).catch(error => { console.log('Error:', error); });
         },
-        onReceive(content) {
-            // 接收 Editor 组件传递的内容
-            this.data.content = content;
-        },
-        add() {
-            this.dialogCookbookOperaion = true;
-        },
+        onReceive(content) { this.data.content = content; },
+        add() { this.dialogCookbookOperaion = true; },
         fetchFreshCategories() {
             this.$axios.post('/category/query', {}).then(response => {
                 if (response.data.code === 200) {
                     this.categories = response.data.data;
-                    this.categories.unshift({ id: null, name: 'All' })
+                    this.categories.unshift({ id: null, name: 'All' });
                 }
-            }).catch(error => {
-                console.log('Error:', error);
-            });
+            }).catch(error => { console.log('Error:', error); });
         },
-        // 批量删除数据
         async batchDelete() {
-            if (!this.delectedRows.length) {
-                this.$message(`未选中任何数据`);
-                return;
-            }
-            const confirmed = await this.$swalConfirm({
-                title: 'Detele Confirmation',
-                text: `Cotent unrecoverable, continue？`,
-                icon: 'warning',
-            });
+            if (!this.delectedRows.length) { this.$message('No data selected'); return; }
+            const confirmed = await this.$swalConfirm({ title: 'Delete Confirmation', text: 'Content unrecoverable, continue?', icon: 'warning' });
             if (confirmed) {
                 try {
-                    let ids = this.delectedRows.map(entity => entity.id);
-                    const response = await this.$axios.post(`/cookbook/batchDelete`, ids);
+                    const ids = this.delectedRows.map(e => e.id);
+                    const response = await this.$axios.post('/cookbook/batchDelete', ids);
                     if (response.data.code === 200) {
-                        this.$notify({
-                            duration: 1000,
-                            title: 'delete',
-                            message: 'Deleted successfully',
-                            type: 'success'
-                        });
+                        this.$notify({ duration: 1000, title: 'Delete', message: 'Deleted successfully', type: 'success' });
                         this.fetchFreshData();
-                        return;
                     }
-                } catch (error) {
-                    this.$message.error("Error：", error);
-                    console.error(`Error：`, error);
-                }
+                } catch (error) { console.error('Error:', error); }
             }
         },
-        // 信息查询
         async fetchFreshData() {
             try {
-                // 请求参数
                 this.tableData = [];
-                let startTime = null;
-                let endTime = null;
+                let startTime = null, endTime = null;
                 if (this.searchTime != null && this.searchTime.length === 2) {
                     const [startDate, endDate] = await Promise.all(this.searchTime.map(date => date.toISOString()));
                     startTime = `${startDate.split('T')[0]}T00:00:00`;
-                    endTime = `${endDate.split('T')[0]}T23:59:59`;
+                    endTime   = `${endDate.split('T')[0]}T23:59:59`;
                 }
-                // 请求参数
-                const params = {
-                    current: this.currentPage,
-                    size: this.pageSize,
-                    key: this.filterText,
-                    startTime: startTime,
-                    endTime: endTime,
-                    ...this.cookbookQueryDto
-                };
+                const params = { current: this.currentPage, size: this.pageSize, key: this.filterText, startTime, endTime, ...this.cookbookQueryDto };
                 const response = await this.$axios.post('/cookbook/query', params);
-                const { data } = response;
-                this.tableData = data.data;
-                this.totalItems = data.total;
-            } catch (error) {
-                this.$message.error("Error:", error);
-                console.error('Error:', error);
-            }
+                this.tableData  = response.data.data;
+                this.totalItems = response.data.total;
+            } catch (error) { console.error('Error:', error); }
         },
-        handleFilter() {
-            this.currentPage = 1;
-            this.fetchFreshData();
-        },
-        handleFilterClear() {
-            this.filterText = '';
-            this.handleFilter();
-        },
-        handleSizeChange(val) {
-            this.pageSize = val;
-            this.currentPage = 1;
-            this.fetchFreshData();
-        },
-        handleCurrentChange(val) {
-            this.currentPage = val;
-            this.fetchFreshData();
-        },
-        handleEdit(row) {
-            this.data = row;
-            this.cover=row.cover;
-            this.dialogCookbookOperaion = true;
-            this.isOperation = true;
-        },
-        // 修改按钮删除事件 
-        handleDelete(row) {
-            this.delectedRows.push(row);
-            this.batchDelete();
-        }
+        handleFilter()      { this.currentPage = 1; this.fetchFreshData(); },
+        handleFilterClear() { this.filterText = ''; this.handleFilter(); },
+        handleSizeChange(val)    { this.pageSize = val; this.currentPage = 1; this.fetchFreshData(); },
+        handleCurrentChange(val) { this.currentPage = val; this.fetchFreshData(); },
+        handleEdit(row)   { this.data = row; this.cover = row.cover; this.dialogCookbookOperaion = true; this.isOperation = true; },
+        handleDelete(row) { this.delectedRows.push(row); this.batchDelete(); }
     },
 };
 </script>
-<style scoped lang="scss"></style>
+
+<style scoped lang="scss">
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Klee+One:wght@600&family=DM+Sans:wght@400;500&display=swap');
+
+* { box-sizing: border-box; }
+
+.cookbook-container {
+    padding: 28px 28px 48px;
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100%;
+}
+
+/* ─── Page header ────────────────────────────────────── */
+.page-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.header-left { display: flex; flex-direction: column; gap: 2px; }
+
+.page-title {
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    font-size: 38px;
+    color: #c8392b;
+    margin: 0;
+    line-height: 1;
+    transform: rotate(-0.5deg);
+    display: inline-block;
+}
+
+.page-subtitle {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: #b0a898;
+    margin: 0;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+
+    ::v-deep .el-input__inner {
+        border-color: #d6c9b8;
+        border-radius: 4px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 13px;
+        color: #3a3028;
+        background-color: rgba(255,255,255,0.8);
+
+        &::placeholder { color: #c0b09e; }
+        &:focus { border-color: #c8392b; }
+    }
+
+    ::v-deep .el-input-group__append {
+        background-color: #c8392b;
+        border-color: #c8392b;
+        color: #fdf8f2;
+        transition: background-color 0.15s;
+        &:hover { background-color: #b03226; }
+    }
+
+    ::v-deep .el-select .el-input__inner { border-radius: 4px; }
+
+    ::v-deep .el-range-editor {
+        border-color: #d6c9b8 !important;
+        border-radius: 4px !important;
+        background-color: rgba(255,255,255,0.8);
+    }
+
+    ::v-deep .el-range-separator { color: #8a7d6e; }
+
+    ::v-deep .el-range-input {
+        font-family: 'DM Sans', sans-serif;
+        font-size: 13px;
+        color: #3a3028;
+        background: transparent;
+        &::placeholder { color: #c0b09e; }
+    }
+}
+
+.add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 16px;
+    background-color: #c8392b;
+    color: #fdf8f2;
+    font-family: 'Klee One', cursive;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.15s;
+
+    &:hover { background-color: #b03226; }
+}
+
+/* ─── Table ──────────────────────────────────────────── */
+.table-wrap {
+    background-color: rgba(255,255,255,0.7);
+    border: 1.5px solid #e8ddd0;
+    border-radius: 4px;
+    overflow: hidden;
+
+    ::v-deep .el-table {
+        background-color: transparent;
+        tr:hover > td { background-color: rgba(200,57,43,0.03) !important; }
+        .el-table__row { background-color: transparent; }
+    }
+}
+
+.badge-public {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-family: 'Klee One', cursive;
+    font-weight: 600;
+    background-color: rgba(200,57,43,0.08);
+    color: #c8392b;
+    border: 1px solid rgba(200,57,43,0.2);
+}
+
+.badge-private {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-family: 'Klee One', cursive;
+    font-weight: 600;
+    background-color: rgba(90,80,69,0.07);
+    color: #8a7d6e;
+    border: 1px solid #e8ddd0;
+}
+
+.text-btn {
+    font-family: 'Klee One', cursive;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 3px 8px;
+    border-radius: 3px;
+    margin-right: 4px;
+    transition: background-color 0.15s;
+
+    &.edit {
+        color: #c8392b;
+        &:hover { background-color: rgba(200,57,43,0.08); }
+    }
+
+    &.delete {
+        color: #8a7d6e;
+        &:hover { background-color: rgba(90,80,69,0.08); color: #5a5045; }
+    }
+}
+
+.pagination {
+    padding: 10px 14px;
+    text-align: right;
+
+    ::v-deep .el-pager li.active { color: #c8392b; }
+    ::v-deep .el-pager li:hover  { color: #c8392b; }
+}
+
+/* ─── Dialog ─────────────────────────────────────────── */
+::v-deep .food-dialog {
+    border-radius: 4px;
+    border: 1.5px solid #e8ddd0;
+
+    .el-dialog__header { display: none; }
+    .el-dialog__body   { padding: 0; }
+    .el-dialog__footer { border-top: 1.5px solid #e8ddd0; padding: 14px 20px; }
+}
+
+.dialog-body {
+    padding: 24px 24px 8px;
+    max-height: 560px;
+    overflow-y: auto;
+    background-color: #fdfaf5;
+}
+
+.dialog-title {
+    font-family: 'Klee One', cursive;
+    font-size: 20px;
+    font-weight: 600;
+    color: #c8392b;
+    margin: 0 0 20px 0;
+}
+
+.dialog-section { margin-bottom: 18px; }
+
+.dialog-label {
+    display: block;
+    font-family: 'Klee One', cursive;
+    font-size: 13px;
+    font-weight: 600;
+    color: #5a5045;
+    margin-bottom: 7px;
+}
+
+.dialog-input {
+    width: 100%;
+    height: 40px;
+    padding: 0 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: #2a2018;
+    background-color: #ffffff;
+    border: 1.5px solid #d6c9b8;
+    border-radius: 4px;
+    transition: border-color 0.2s;
+
+    &::placeholder { color: #c0b09e; }
+    &:focus { outline: none; border-color: #c8392b; }
+}
+
+.cover-uploader {
+    ::v-deep .el-upload {
+        border: 1.5px dashed #d6c9b8;
+        border-radius: 4px;
+        cursor: pointer;
+        overflow: hidden;
+        transition: border-color 0.15s;
+        display: block;
+        &:hover { border-color: #c8392b; }
+    }
+}
+
+.cover-preview {
+    width: 200px;
+    height: 148px;
+    object-fit: cover;
+    display: block;
+}
+
+.cover-placeholder {
+    width: 200px;
+    height: 148px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #b0a898;
+    font-family: 'Klee One', cursive;
+    font-size: 13px;
+
+    i { font-size: 26px; }
+}
+
+.editor-wrap {
+    border: 1.5px solid #e8ddd0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.dialog-section {
+    ::v-deep .el-input__inner {
+        border-color: #d6c9b8;
+        border-radius: 4px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 13px;
+        color: #3a3028;
+        background-color: #ffffff;
+        &:focus { border-color: #c8392b; }
+    }
+}
+
+.dialog-footer { display: flex; justify-content: flex-end; gap: 10px; }
+
+.cancel-btn {
+    display: inline-block;
+    padding: 7px 18px;
+    font-family: 'Klee One', cursive;
+    font-size: 13px;
+    font-weight: 600;
+    color: #8a7d6e;
+    border: 1.5px solid #d6c9b8;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.15s;
+    &:hover { background-color: #f5f0e8; }
+}
+
+.confirm-btn {
+    display: inline-block;
+    padding: 7px 18px;
+    font-family: 'Klee One', cursive;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fdf8f2;
+    background-color: #c8392b;
+    border: 1.5px solid #c8392b;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.15s;
+    &:hover { background-color: #b03226; }
+}
+</style>

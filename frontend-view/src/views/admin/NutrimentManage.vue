@@ -1,52 +1,100 @@
 <template>
-    <el-row style="background-color: #FFFFFF;padding: 5px 0;border-radius: 5px;">
-        <el-row style="padding: 10px;margin-left: 5px;">
-            <el-row style="display: flex;justify-content: left;gap: 6px;">
-                <el-select style="width: 100px;" @change="fetchFreshData" size="small" v-model="nutrimentQueryDto.isPublish"
-                    placeholder="publish Status" clearable>
-                    <el-option v-for="item in publishStatuList" :key="item.value" :label="item.label" :value="item.value">
-                    </el-option>
-                </el-select>
-                <el-date-picker style="width: 216px;" @change="fetchFreshData" size="small" v-model="searchTime"
-                    type="daterange" range-separator="to" start-placeholder="Start Time" end-placeholder="End Time">
-                </el-date-picker>
-                 <el-input size="small" style="width: 226px;" v-model="nutrimentQueryDto.name" placeholder="nutriment" clearable
-                    @clear="handleFilterClear">
-                    <el-button slot="append" @click="handleFilter" icon="el-icon-search"></el-button>
-                </el-input>
-            </el-row>
-        </el-row>
-        <el-row style="margin: 0 22px;border-top: 1px solid rgb(245,245,245);">
-            <el-table :stripe="true" :data="tableData" style="width: 100%">
-                <el-table-column prop="userAvatar" width="68" label="Avatar">
-                    <template slot-scope="scope">
-                        <el-avatar :size="25" :src="scope.row.userAvatar" style="margin-top: 10px;"></el-avatar>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="userId" :sortable="true" label="User ID" min-width="68"></el-table-column>
-                <el-table-column prop="userName" label="User Name" min-width="68"></el-table-column>
-                <el-table-column prop="id" :sortable="true" label="Nutriment ID" min-width="68"></el-table-column>
-                <el-table-column prop="name" label="Nutriment Name" mind-width="118"></el-table-column>
-                <el-table-column prop="detail" label="Detail" mind-width="228"></el-table-column>
-                <el-table-column prop="unit" label="Unit" mind-width="68"></el-table-column>               
-                <el-table-column prop="isPublish" label="publish" min-width="48">
-                    <template slot-scope="scope">
-                        <span>{{ scope.row.isPublish ? 'Public' : 'Private' }}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="createTime" label="Create Time" :sortable="true"  min-width="108"></el-table-column>
-                <el-table-column label="Operation" width="110">
-                    <template slot-scope="scope">
-                        <span class="text-button" @click="handleDelete(scope.row)">Delete</span>
-                    </template>
-                </el-table-column>
-            </el-table>
-            <el-pagination style="margin:10px 0;float: right;" @size-change="handleSizeChange"
-                @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[20, 50]"
-                :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
-                :total="totalItems"></el-pagination>
-        </el-row>
-    </el-row>
+  <div class="cookbook-container">
+
+    <!-- HEADER -->
+    <div class="page-header">
+      <div class="header-left">
+        <h2 class="page-title">Nutriment</h2>
+        <p class="page-subtitle">{{ totalItems }} records found</p>
+      </div>
+
+      <div class="header-right">
+        <el-select
+          style="width: 140px;"
+          size="small"
+          v-model="nutrimentQueryDto.isPublish"
+          placeholder="Publish"
+          clearable
+          @change="fetchFreshData"
+        >
+          <el-option v-for="item in publishStatuList" :key="item.value" :label="item.label" :value="item.value"/>
+        </el-select>
+
+        <el-date-picker
+          style="width: 220px;"
+          size="small"
+          v-model="searchTime"
+          type="daterange"
+          range-separator="→"
+          start-placeholder="Start"
+          end-placeholder="End"
+          @change="fetchFreshData"
+        />
+
+        <el-input
+          size="small"
+          style="width: 180px;"
+          v-model="nutrimentQueryDto.name"
+          placeholder="Search nutriment…"
+          clearable
+          @clear="handleFilterClear"
+        >
+          <el-button slot="append" icon="el-icon-search" @click="handleFilter"/>
+        </el-input>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+      <el-table
+        :data="tableData"
+        style="width: 100%"
+        :header-cell-style="headerStyle"
+        :cell-style="cellStyle"
+      >
+        <el-table-column label="Avatar" width="90">
+          <template slot-scope="scope">
+            <el-avatar :size="28" :src="scope.row.userAvatar"/>
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="userId" label="User ID" sortable min-width="90"/>
+        <el-table-column prop="userName" label="User" min-width="120"/>
+        <el-table-column prop="id" label="ID" sortable min-width="90"/>
+        <el-table-column prop="name" label="Name" min-width="150"/>
+        <el-table-column prop="detail" label="Detail" min-width="200"/>
+        <el-table-column prop="unit" label="Unit" min-width="75"/>
+
+        <el-table-column label="Publish" min-width="100">
+          <template slot-scope="scope">
+            <span :class="scope.row.isPublish ? 'badge-yes' : 'badge-no'">
+              {{ scope.row.isPublish ? 'Public' : 'Private' }}
+            </span>
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="createTime" label="Time" sortable min-width="170"/>
+
+        <el-table-column label="Actions" width="110">
+          <template slot-scope="scope">
+            <span class="text-btn delete" @click="handleDelete(scope.row)">Delete</span>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <el-pagination
+        class="pagination"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-sizes="[20,50]"
+        :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="totalItems"
+      />
+    </div>
+
+  </div>
 </template>
 
 <script>
@@ -155,4 +203,112 @@ export default {
     },
 };
 </script>
-<style scoped lang="scss"></style>
+
+<style scoped lang="scss">
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Klee+One:wght@600&family=DM+Sans:wght@400;500&display=swap');
+
+.cookbook-container {
+  padding: 28px;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* HEADER */
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.page-title {
+  font-family: 'Caveat', cursive;
+  font-size: 38px;
+  color: #c8392b;
+  margin: 0;
+  line-height: 1;
+}
+
+.page-subtitle {
+  font-size: 13px;
+  color: #b0a898;
+  margin: 0;
+}
+
+.header-right {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+
+  ::v-deep .el-input__inner {
+    border-color: #d6c9b8;
+  }
+
+  ::v-deep .el-input-group__append {
+    background: #c8392b;
+    color: white;
+  }
+
+  ::v-deep .el-range-editor {
+    border-color: #d6c9b8;
+  }
+}
+
+/* TABLE */
+.table-wrap {
+  background: rgba(255,255,255,0.7);
+  border: 1.5px solid #e8ddd0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* TAG */
+.badge-yes {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-family: 'Klee One', cursive;
+  font-weight: 600;
+  background-color: rgba(200,57,43,0.08);
+  color: #c8392b;
+  border: 1px solid rgba(200,57,43,0.2);
+}
+
+.badge-no {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-family: 'Klee One', cursive;
+  font-weight: 600;
+  background-color: rgba(90,80,69,0.07);
+  color: #8a7d6e;
+  border: 1px solid #e8ddd0;
+}
+
+/* BUTTON */
+.text-btn {
+  font-family: 'Klee One', cursive;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.text-btn.delete {
+  color: #8a7d6e;
+}
+
+/* PAGINATION */
+.pagination {
+  padding: 10px;
+  text-align: right;
+}
+</style>
