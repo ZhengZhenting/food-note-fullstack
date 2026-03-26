@@ -93,6 +93,20 @@ public class DietHistoryServiceImpl implements DietHistoryService {
     }
 
     /**
+     * searching dietHistory for user
+     *
+     * @param dietHistoryQueryDto 查询参数
+     * @return Result<List < DietHistoryVO>> 响应结果
+     */
+    @Override
+    public Result<List<DietHistoryVO>> queryUserDiet(DietHistoryQueryDto dietHistoryQueryDto) {
+        dietHistoryQueryDto.setUserId(LocalThreadHolder.getUserId()); //get user ID
+        List<DietHistoryVO> dietHistoryVOS = dietHistoryMapper.queryUserDiet(dietHistoryQueryDto);
+        Integer totalCount = dietHistoryVOS.size();
+        return ApiResult.success(dietHistoryVOS, totalCount);
+    }
+
+    /**
      * searching nutriment
      *
      * @param dietQueryDto 查询参数

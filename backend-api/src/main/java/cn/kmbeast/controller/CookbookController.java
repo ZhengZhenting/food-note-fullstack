@@ -152,15 +152,16 @@ public class CookbookController {
 
 
     /**
-     * searching for public cookbook
+     * searching for public cookbook and user's own cookbook
      *
+     * @param cookbookQueryDto
      * @return Result<List < SelectedVO>> 响应结果
      */
-    @PostMapping(value = "/queryPublish")
+    @Pager
+    @PostMapping(value = "/queryVisible")
     @ResponseBody
-    public Result<List<CookbookVO>> queryPublish(@RequestBody CookbookQueryDto cookbookQueryDto) {
-        cookbookQueryDto.setIsPublish(PublishEnum.OK_AUDIT.getFlag());
-        return cookbookService.query(cookbookQueryDto);
+    public Result<List<CookbookVO>> queryVisible(@RequestBody CookbookQueryDto cookbookQueryDto) {
+        return cookbookService.queryVisible(cookbookQueryDto);
     }
 
 }

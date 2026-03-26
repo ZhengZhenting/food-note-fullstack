@@ -27,4 +27,6 @@ public interface DietHistoryService {
     Result<List<DietHistoryVO>> queryUser( DietHistoryQueryDto dietHistoryQueryDto);
 
     Result<List<DietNutrimentVO>> queryDietNutrimentInfo(DietQueryDto dietQueryDto);
+
+    Result<List<DietHistoryVO>> queryUserDiet(DietHistoryQueryDto dietHistoryQueryDto);
 }

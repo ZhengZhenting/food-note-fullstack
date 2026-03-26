@@ -22,4 +22,6 @@ public interface CookbookMapper {
 
 //    searching for the amount of data (paging)
     Integer queryCount(CookbookQueryDto cookbookQueryDto);
+
+    List<CookbookVO> queryVisible(CookbookQueryDto cookbookQueryDto);
 }

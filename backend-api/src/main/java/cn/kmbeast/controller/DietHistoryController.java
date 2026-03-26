@@ -84,6 +84,19 @@ public class DietHistoryController {
     }
 
     /**
+     * searching dietHistory for user
+     *
+     * @param dietHistoryQueryDto 查询参数
+     * @return Result<List < DietHistoryVO>> 响应结果
+     */
+    @Pager
+    @PostMapping(value = "/queryUserDiet")
+    @ResponseBody
+    public Result<List<DietHistoryVO>> queryUserDiet(@RequestBody DietHistoryQueryDto dietHistoryQueryDto) {
+        return dietHistoryService.queryUserDiet(dietHistoryQueryDto);
+    }
+
+    /**
      * searching nutriment
      *
      * @param dietQueryDto 查询参数
