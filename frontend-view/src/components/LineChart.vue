@@ -20,19 +20,20 @@ export default {
     props: {
         tag: { type: String, default: 'Chart' },
         values: { type: Array, required: true },
-        date:   { type: Array, required: true },
+        date: { type: Array, required: true },
+        nutriments: { type: Array, default: () => [] },
         height: { type: String, default: '220px' },
-        width:  { type: String, default: '100%' },
+        width: { type: String, default: '100%' },
     },
     watch: {
         selectedValue(v) { this.$emit('on-selected', v); },
-        values()         { this.initChart(); }
+        values() { this.initChart(); }
     },
     data() {
         return {
             chart: null,
             options: [
-                { num: 7,  name: '7 days' },
+                { num: 7, name: '7 days' },
                 { num: 30, name: '30 days' },
                 { num: 60, name: '60 days' },
             ],
@@ -46,7 +47,14 @@ export default {
                 grid: { left: 36, right: 16, top: 24, bottom: 32 },
                 tooltip: {
                     trigger: 'axis',
-                    formatter: '{b}：{c}',
+                    formatter: (params) => {
+                        const idx = params[0].dataIndex;
+                        const date = params[0].axisValue;
+                        const val = params[0].data;
+                        const name = this.nutriments[idx];
+                        // 有 nutrimentName 就显示，没有就只显示日期和数值
+                        return name ? `${date}<br/>${name}：${val}` : `${date}：${val}`;
+                    },
                     backgroundColor: 'rgba(253,250,245,0.96)',
                     borderColor: '#e8ddd0',
                     borderWidth: 1,
@@ -55,8 +63,8 @@ export default {
                 },
                 xAxis: {
                     data: this.date,
-                    axisLine:  { show: false },
-                    axisTick:  { show: false },
+                    axisLine: { show: false },
+                    axisTick: { show: false },
                     splitLine: { show: false },
                     axisLabel: {
                         color: '#9a8d7e',
@@ -65,8 +73,8 @@ export default {
                     },
                 },
                 yAxis: {
-                    axisLine:  { show: false },
-                    axisTick:  { show: false },
+                    axisLine: { show: false },
+                    axisTick: { show: false },
                     splitLine: {
                         show: true,
                         lineStyle: { color: '#f0ebe0', width: 1 }
@@ -83,8 +91,8 @@ export default {
                     data: this.values,
                     areaStyle: {
                         color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                            { offset: 0,   color: 'rgba(200, 57, 43, 0.18)' },
-                            { offset: 1,   color: 'rgba(200, 57, 43, 0.02)' },
+                            { offset: 0, color: 'rgba(200, 57, 43, 0.18)' },
+                            { offset: 1, color: 'rgba(200, 57, 43, 0.02)' },
                         ])
                     },
                     lineStyle: { color: '#c8392b', width: 2.5 },
@@ -130,7 +138,9 @@ export default {
 <style scoped lang="scss">
 @import url('https://fonts.googleapis.com/css2?family=Klee+One:wght@600&family=DM+Sans:wght@400;500&display=swap');
 
-* { box-sizing: border-box; }
+* {
+    box-sizing: border-box;
+}
 
 .line-main {
     width: 100%;
@@ -177,12 +187,14 @@ export default {
         font-family: 'DM Sans', sans-serif;
         font-size: 12px;
         color: #3a3028;
-        background-color: rgba(255,255,255,0.7);
+        background-color: rgba(255, 255, 255, 0.7);
         height: 26px;
         line-height: 26px;
         padding: 0 24px 0 10px;
 
-        &:focus { border-color: #c8392b; }
+        &:focus {
+            border-color: #c8392b;
+        }
     }
 
     ::v-deep .el-input__suffix {

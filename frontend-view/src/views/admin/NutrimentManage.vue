@@ -33,7 +33,7 @@
 
         <el-input
           size="small"
-          style="width: 180px;"
+          style="width: 250px;"
           v-model="nutrimentQueryDto.name"
           placeholder="Search nutriment…"
           clearable
@@ -73,7 +73,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="createTime" label="Time" sortable min-width="170"/>
+        <el-table-column prop="createTime" label="Time" sortable min-width="180"/>
 
         <el-table-column label="Actions" width="110">
           <template slot-scope="scope">

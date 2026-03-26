@@ -125,19 +125,21 @@ export default {
             }).catch(error => { console.log(error); });
         },
         fetchGourmetData() {
-            const queryDto = {
-                current: this.currentPage,
-                size: this.pageSize,
-                key: this.filterText,
-                ...this.cookbookQueryDto
-            };
-            this.$axios.post('/cookbook/queryPublish', queryDto).then(res => {
-                const { data } = res;
-                if (data.code === 200) {
-                    this.cookbookList = data.data;
-                    this.totalItems = data.total;
-                }
-            }).catch(error => { console.log(error); });
+           const userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+    const queryDto = {
+        current: this.currentPage,
+        size: this.pageSize,
+        key: this.filterText,
+        userId: userInfo && userInfo.id, 
+        ...this.cookbookQueryDto
+    };
+    this.$axios.post('/cookbook/queryVisible', queryDto).then(res => {
+        const { data } = res;
+        if (data.code === 200) {
+            this.cookbookList = data.data;
+            this.totalItems = data.total;
+        }
+    }).catch(error => { console.log(error); });
         }
     }
 };

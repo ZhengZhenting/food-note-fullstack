@@ -105,7 +105,7 @@ export default {
             }).catch(error => { console.log('Error', error); });
         },
         fetchDietHistoryList() {
-            this.$axios.post('/dietHistory/queryUser', {}).then(res => {
+            this.$axios.post('/dietHistory/queryUserDiet', {}).then(res => {
                 if (res.data.code === 200) this.dietHistoryList = res.data.data;
             }).catch(error => { console.log('Error', error); });
         },
