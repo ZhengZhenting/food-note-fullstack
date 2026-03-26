@@ -5,6 +5,7 @@ import cn.kmbeast.pojo.dto.query.extend.CookbookQueryDto;
 import cn.kmbeast.pojo.entity.Cookbook;
 import cn.kmbeast.pojo.vo.CookbookVO;
 import cn.kmbeast.pojo.vo.SelectedVO;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -27,4 +28,5 @@ public interface CookbookService {
     Result<List<SelectedVO>> querySelectedItemsUser();
 
     Result<List<SelectedVO>> querySelectedItemsAll();
+    Result<List<CookbookVO>> queryVisible(CookbookQueryDto cookbookQueryDto);
 }

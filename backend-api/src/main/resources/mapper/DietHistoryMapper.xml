@@ -30,7 +30,6 @@
 
     <!--search-->
     <select id="query" resultMap="BaseResultMap" >
-
         SELECT DISTINCT dh.*,
                u.user_name,
                c.title AS cookbook_title,
@@ -64,6 +63,39 @@
         ORDER BY dh.id DESC
         <if test="current != null and size != null">
             LIMIT #{current},#{size}
+        </if>
+    </select>
+
+    <!--search-->
+    <select id="queryUserDiet" resultMap="BaseResultMap" >
+        SELECT
+        dh.*,
+        u.user_name,
+        c.title AS cookbook_title,
+        c.cover  AS cookbook_cover
+        FROM diet_history dh
+        LEFT JOIN user     u ON dh.user_id     = u.id
+        LEFT JOIN cookbook c ON dh.cookbook_id = c.id
+        <where>
+            <if test="id != null">
+                AND dh.id = #{id}
+            </if>
+            <if test="userId != null">
+                AND dh.user_id = #{userId}
+            </if>
+            <if test="cookbookId != null">
+                AND dh.cookbook_id = #{cookbookId}
+            </if>
+            <if test="startTime != null">
+                AND dh.create_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND dh.create_time &lt;= #{endTime}
+            </if>
+        </where>
+        ORDER BY dh.id DESC
+        <if test="current != null and size != null">
+            LIMIT #{current}, #{size}
         </if>
     </select>
 

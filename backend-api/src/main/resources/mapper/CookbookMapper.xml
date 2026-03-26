@@ -36,7 +36,6 @@
 
     <!--search-->
     <select id="query" resultMap="BaseResultMap" >
-
         SELECT c.*, u.user_name, u.user_avatar, ca.name AS category_name
         FROM cookbook c
         LEFT JOIN user u ON c.user_id=u.id
@@ -64,6 +63,40 @@
         ORDER BY c.id DESC
         <if test="current != null and size != null">
             LIMIT #{current},#{size}
+        </if>
+    </select>
+
+    <select id="queryVisible" resultType="cn.kmbeast.pojo.vo.CookbookVO">
+            SELECT c.id,
+        c.user_id,
+        c.title,
+        c.category_id,
+        c.content,
+        c.is_publish,
+        c.create_time,
+        c.cover,
+        u.user_name,
+        u.user_avatar,
+        ca.name AS category_name
+            FROM cookbook c
+            LEFT JOIN user u ON c.user_id = u.id
+            LEFT JOIN category ca ON c.category_id = ca.id
+        <where>
+            AND (
+            c.is_publish = 1
+            OR c.user_id = #{userId}
+            )
+            <if test="title != null and title != ''">
+                AND c.title LIKE CONCAT('%', #{title}, '%')
+            </if>
+
+            <if test="categoryId != null">
+                AND c.category_id = #{categoryId}
+            </if>
+        </where>
+        ORDER BY c.id DESC
+        <if test="current != null and size != null">
+            LIMIT #{current}, #{size}
         </if>
     </select>
 

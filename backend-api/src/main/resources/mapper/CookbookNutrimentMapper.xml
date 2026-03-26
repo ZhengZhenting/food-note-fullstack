@@ -28,7 +28,7 @@
         SELECT cn.*,
                c.title AS cookbook_name,
                n.name AS nutriment_name,
-               n.unit AS nutriment_unit,
+               n.unit AS nutriment_unit
         FROM cookbook_nutriment cn
         LEFT JOIN cookbook c ON cn.cookbook_id=c.id
         LEFT JOIN  nutriment n ON cn.nutriment_id=n.id

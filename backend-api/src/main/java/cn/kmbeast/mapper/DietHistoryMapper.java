@@ -22,4 +22,6 @@ public interface DietHistoryMapper {
 
 //    searching for the amount of data (paging)
     Integer queryCount(DietHistoryQueryDto dietHistoryQueryDto);
+
+    List<DietHistoryVO> queryUserDiet(DietHistoryQueryDto dietHistoryQueryDto);
 }

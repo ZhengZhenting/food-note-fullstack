@@ -71,6 +71,7 @@ public class CookbookServiceImpl implements CookbookService {
     public Result<List<CookbookVO>> query(CookbookQueryDto cookbookQueryDto) {
         List<CookbookVO> cookbookList = cookbookMapper.query(cookbookQueryDto);
         Integer totalCount = cookbookMapper.queryCount(cookbookQueryDto);
+        System.out.println("查询结果条数：" + cookbookList.size());
         return ApiResult.success(cookbookList, totalCount);
     }
 
@@ -133,5 +134,18 @@ public class CookbookServiceImpl implements CookbookService {
         selectedVOList.addAll(publishAll);
 
         return ApiResult.success(selectedVOList);
+    }
+
+    /**
+     * searching for public cookbook and user's own cookbook
+     *
+     * @param cookbookQueryDto
+     * @return Result<List < SelectedVO>> 响应结果
+     */
+    @Override
+    public Result<List<CookbookVO>> queryVisible(CookbookQueryDto cookbookQueryDto) {
+        List<CookbookVO> cookbookVOList = cookbookMapper.queryVisible(cookbookQueryDto);
+        Integer count = cookbookVOList.size();
+        return ApiResult.success(cookbookVOList,count);
     }
 }
