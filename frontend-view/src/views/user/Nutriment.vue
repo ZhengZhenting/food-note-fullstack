@@ -3,46 +3,38 @@
 
         <!-- ── Toolbar ── -->
         <div class="toolbar">
-            <el-date-picker
-                style="width: 220px;"
-                @change="fetchFreshData"
-                size="small"
-                v-model="searchTime"
-                type="daterange"
-                range-separator="→"
-                start-placeholder="Start"
-                end-placeholder="End"
-            />
-            <el-input
-                size="small"
-                style="width: 200px;"
-                v-model="dietHistoryQueryDto.cookbookId"
-                placeholder="Search by cookbook ID…"
-                clearable
-                @clear="handleFilterClear"
-            >
+            <el-date-picker style="width: 220px;" @change="fetchFreshData" size="small" v-model="searchTime"
+                type="daterange" range-separator="→" start-placeholder="Start" end-placeholder="End" />
+            <el-input size="small" style="width: 300px;" v-model="dietHistoryQueryDto.cookbookId"
+                placeholder="Search by cookbook ID…" clearable @clear="handleFilterClear">
                 <el-button slot="append" @click="handleFilter" icon="el-icon-search" />
             </el-input>
         </div>
 
         <!-- ── Table ── -->
         <div class="table-wrap">
-            <el-table
-                :data="tableData"
-                style="width: 100%;"
-                :header-cell-style="headerStyle"
-                :cell-style="cellStyle"
-            >
+            <el-table :data="tableData" style="width: 100%;" :header-cell-style="headerStyle" :cell-style="cellStyle">
                 <el-table-column prop="cookbookCover" width="88" label="Cover">
                     <template slot-scope="scope">
                         <img :src="scope.row.cookbookCover" class="cover-thumb" />
                     </template>
                 </el-table-column>
                 <el-table-column prop="cookbookTitle" label="Cookbook" min-width="140" />
+                <el-table-column prop="value" label="Amount / g" width="120" />
+                <el-table-column prop="nutrimentName" label="Nutriment" width="125" />
+                <el-table-column prop="g100Value" label="per 100g" width="120" />
+                <el-table-column label="Intake" width="120">
+                    <template slot-scope="scope">
+                        <span v-if="scope.row.g100Value != null && scope.row.value != null">
+                            {{ (scope.row.value * scope.row.g100Value / 100).toFixed(1) }}
+                            {{ scope.row.nutrimentUnit }}
+                        </span>
+                        <span v-else>-</span>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="detail" label="Notes" min-width="150" />
-                <el-table-column prop="value" label="Value / g" width="120" />
                 <el-table-column prop="createTime" label="Time" width="170" />
-                <el-table-column label="Actions" width="110">
+                <el-table-column label="Actions" width="150">
                     <template slot-scope="scope">
                         <span class="text-btn edit" @click="handleEdit(scope.row)">Edit</span>
                         <span class="text-btn delete" @click="handleDelete(scope.row)">Delete</span>
@@ -50,16 +42,9 @@
                 </el-table-column>
             </el-table>
 
-            <el-pagination
-                class="pagination"
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                :current-page="currentPage"
-                :page-sizes="[20, 50]"
-                :page-size="pageSize"
-                layout="total, sizes, prev, pager, next, jumper"
-                :total="totalItems"
-            />
+            <el-pagination class="pagination" @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                :current-page="currentPage" :page-sizes="[20, 50]" :page-size="pageSize"
+                layout="total, sizes, prev, pager, next, jumper" :total="totalItems" />
         </div>
 
         <!-- ── Nutriment chart section ── -->
@@ -68,36 +53,26 @@
                 <h3 class="chart-title">Nutriment Intake</h3>
                 <div class="chart-filter">
                     <label class="filter-label">Nutriment</label>
-                    <el-select
-                        style="width: 200px;"
-                        @change="loadNutrimentData"
-                        size="small"
-                        v-model="dietQueryDto.nutrimentId"
-                        placeholder="Select nutriment"
-                        clearable
-                    >
+                    <el-select style="width: 200px;" @change="loadNutrimentData" size="small"
+                        v-model="dietQueryDto.nutrimentId" placeholder="Select nutriment" clearable>
                         <el-option v-for="item in nutrimentItems" :key="item.id" :label="item.name" :value="item.id" />
                     </el-select>
                 </div>
             </div>
             <div class="chart-wrap">
-                <LineChart tag="Nutriment Intake" @on-selected="onSelected" :values="values" :date="dates" />
+                <LineChart tag="Nutriment Intake" @on-selected="onSelected" :values="values" :date="dates" :nutriments="nutriments"  />
             </div>
         </div>
 
         <!-- ── Edit dialog ── -->
-        <el-dialog
-            :show-close="false"
-            :visible.sync="dialogDietOperaion"
-            width="36%"
-            custom-class="food-dialog"
-        >
+        <el-dialog :show-close="false" :visible.sync="dialogDietOperaion" width="36%" custom-class="food-dialog">
             <div class="dialog-body">
                 <h3 class="dialog-title">Edit Diet Record</h3>
 
                 <div class="dialog-section">
                     <label class="dialog-label">Choose Cookbook</label>
-                    <el-select style="width: 100%;" size="small" v-model="data.cookbookId" placeholder="Select a cookbook">
+                    <el-select style="width: 100%;" size="small" v-model="data.cookbookId"
+                        placeholder="Select a cookbook">
                         <el-option v-for="item in cookbooks" :key="item.id" :label="item.name" :value="item.id" />
                     </el-select>
                 </div>
@@ -144,7 +119,8 @@ export default {
             nutrimentUseList: [],
             values: [],
             dates: [],
-            nutrimentItems: []
+            nutrimentItems: [],
+            nutriments: [],
         };
     },
     created() {
@@ -186,9 +162,12 @@ export default {
         loadNutrimentData() {
             this.$axios.post('/dietHistory/queryDietNutrimentInfo', this.dietQueryDto).then(res => {
                 if (res.data.code === 200) {
-                    this.nutrimentUseList = res.data.data;
+                    this.nutrimentUseList = res.data.data.sort((a, b) => 
+                new Date(a.time) - new Date(b.time)
+            );
                     this.dates = this.nutrimentUseList.map(e => e.time);
                     this.values = this.nutrimentUseList.map(e => e.value);
+                    this.nutriments = this.nutrimentUseList.map(e => e.nutrimentName || '');
                 }
             }).catch(error => { console.log('Error', error); });
         },
@@ -262,7 +241,9 @@ export default {
 <style scoped lang="scss">
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Klee+One:wght@600&family=DM+Sans:wght@400;500&display=swap');
 
-* { box-sizing: border-box; }
+* {
+    box-sizing: border-box;
+}
 
 .nutriment-page {
     font-family: 'DM Sans', sans-serif;
@@ -285,10 +266,15 @@ export default {
         font-family: 'DM Sans', sans-serif;
         font-size: 13px;
         color: #3a3028;
-        background-color: rgba(255,255,255,0.7);
+        background-color: rgba(255, 255, 255, 0.7);
 
-        &::placeholder { color: #c0b09e; }
-        &:focus { border-color: #c8392b; }
+        &::placeholder {
+            color: #c0b09e;
+        }
+
+        &:focus {
+            border-color: #c8392b;
+        }
     }
 
     ::v-deep .el-input-group__append {
@@ -296,23 +282,31 @@ export default {
         border-color: #c8392b;
         color: #fdf8f2;
         transition: background-color 0.15s;
-        &:hover { background-color: #b03226; }
+
+        &:hover {
+            background-color: #b03226;
+        }
     }
 
     ::v-deep .el-range-editor {
         border-color: #d6c9b8 !important;
         border-radius: 4px !important;
-        background-color: rgba(255,255,255,0.7);
+        background-color: rgba(255, 255, 255, 0.7);
     }
 
-    ::v-deep .el-range-separator { color: #8a7d6e; }
+    ::v-deep .el-range-separator {
+        color: #8a7d6e;
+    }
 
     ::v-deep .el-range-input {
         font-family: 'DM Sans', sans-serif;
         font-size: 13px;
         color: #3a3028;
         background: transparent;
-        &::placeholder { color: #c0b09e; }
+
+        &::placeholder {
+            color: #c0b09e;
+        }
     }
 }
 
@@ -321,12 +315,18 @@ export default {
     border: 1.5px solid #e8ddd0;
     border-radius: 4px;
     overflow: hidden;
-    background-color: rgba(255,255,255,0.55);
+    background-color: rgba(255, 255, 255, 0.55);
 
     ::v-deep .el-table {
         background-color: transparent;
-        tr:hover > td { background-color: rgba(200,57,43,0.03) !important; }
-        .el-table__row { background-color: transparent; }
+
+        tr:hover>td {
+            background-color: rgba(200, 57, 43, 0.03) !important;
+        }
+
+        .el-table__row {
+            background-color: transparent;
+        }
     }
 }
 
@@ -350,12 +350,19 @@ export default {
 
     &.edit {
         color: #c8392b;
-        &:hover { background-color: rgba(200,57,43,0.08); }
+
+        &:hover {
+            background-color: rgba(200, 57, 43, 0.08);
+        }
     }
 
     &.delete {
         color: #8a7d6e;
-        &:hover { background-color: rgba(90,80,69,0.08); color: #5a5045; }
+
+        &:hover {
+            background-color: rgba(90, 80, 69, 0.08);
+            color: #5a5045;
+        }
     }
 }
 
@@ -363,15 +370,20 @@ export default {
     padding: 10px 12px;
     text-align: right;
 
-    ::v-deep .el-pager li.active { color: #c8392b; }
-    ::v-deep .el-pager li:hover  { color: #c8392b; }
+    ::v-deep .el-pager li.active {
+        color: #c8392b;
+    }
+
+    ::v-deep .el-pager li:hover {
+        color: #c8392b;
+    }
 }
 
 /* ─── Chart section ──────────────────────────────────── */
 .chart-section {
     border: 1.5px solid #e8ddd0;
     border-radius: 4px;
-    background-color: rgba(255,255,255,0.55);
+    background-color: rgba(255, 255, 255, 0.55);
     padding: 20px 20px 16px;
 }
 
@@ -406,9 +418,11 @@ export default {
         font-family: 'DM Sans', sans-serif;
         font-size: 13px;
         color: #3a3028;
-        background-color: rgba(255,255,255,0.7);
+        background-color: rgba(255, 255, 255, 0.7);
 
-        &:focus { border-color: #c8392b; }
+        &:focus {
+            border-color: #c8392b;
+        }
     }
 }
 
@@ -429,8 +443,14 @@ export default {
     border-radius: 4px;
     border: 1.5px solid #e8ddd0;
 
-    .el-dialog__header { display: none; }
-    .el-dialog__body { padding: 0; }
+    .el-dialog__header {
+        display: none;
+    }
+
+    .el-dialog__body {
+        padding: 0;
+    }
+
     .el-dialog__footer {
         border-top: 1.5px solid #e8ddd0;
         padding: 14px 20px;
@@ -462,8 +482,14 @@ export default {
         color: #3a3028;
         background-color: #ffffff;
 
-        &::placeholder { color: #c0b09e; }
-        &:focus { border-color: #c8392b; outline: none; }
+        &::placeholder {
+            color: #c0b09e;
+        }
+
+        &:focus {
+            border-color: #c8392b;
+            outline: none;
+        }
     }
 }
 
@@ -488,8 +514,14 @@ export default {
     border-radius: 4px;
     transition: border-color 0.2s;
 
-    &::placeholder { color: #c0b09e; }
-    &:focus { outline: none; border-color: #c8392b; }
+    &::placeholder {
+        color: #c0b09e;
+    }
+
+    &:focus {
+        outline: none;
+        border-color: #c8392b;
+    }
 }
 
 .dialog-footer {
@@ -510,7 +542,9 @@ export default {
     cursor: pointer;
     transition: background-color 0.15s;
 
-    &:hover { background-color: #f5f0e8; }
+    &:hover {
+        background-color: #f5f0e8;
+    }
 }
 
 .confirm-btn {
@@ -526,6 +560,8 @@ export default {
     cursor: pointer;
     transition: background-color 0.15s;
 
-    &:hover { background-color: #b03226; }
+    &:hover {
+        background-color: #b03226;
+    }
 }
 </style>
