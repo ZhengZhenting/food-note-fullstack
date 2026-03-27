@@ -5,7 +5,7 @@
         <div class="page-header">
             <h2 class="page-title">Diet History</h2>
             <span class="add-btn" @click="recordGourmet">
-                <i class="el-icon-plus"></i> Add Cookbook
+                <i class="el-icon-plus"></i> Add New Diet
             </span>
         </div>
 

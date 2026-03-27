@@ -22,8 +22,8 @@
                 <el-table-column prop="cookbookTitle" label="Cookbook" min-width="140" />
                 <el-table-column prop="value" label="Amount / g" width="120" />
                 <el-table-column prop="nutrimentName" label="Nutriment" width="125" />
-                <el-table-column prop="g100Value" label="per 100g" width="120" />
-                <el-table-column label="Intake" width="120">
+                <el-table-column prop="g100Value" label="per 100g" width="110" />
+                <el-table-column label="Intake" width="90">
                     <template slot-scope="scope">
                         <span v-if="scope.row.g100Value != null && scope.row.value != null">
                             {{ (scope.row.value * scope.row.g100Value / 100).toFixed(1) }}
@@ -32,7 +32,7 @@
                         <span v-else>-</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="detail" label="Notes" min-width="150" />
+                <el-table-column prop="detail" label="Notes" min-width="100" />
                 <el-table-column prop="createTime" label="Time" width="170" />
                 <el-table-column label="Actions" width="150">
                     <template slot-scope="scope">
@@ -251,6 +251,8 @@ export default {
     display: flex;
     flex-direction: column;
     gap: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
 }
 
 /* ─── Toolbar ────────────────────────────────────────── */
@@ -259,6 +261,7 @@ export default {
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
+    margin-top: 16px;
 
     ::v-deep .el-input__inner {
         border-color: #d6c9b8;

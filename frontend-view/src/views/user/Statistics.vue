@@ -3,6 +3,7 @@
 
         <!-- ── Section title ── -->
         <h3 class="section-title">Statistics</h3>
+        <p class="section-sub">Interaction with readers</p>
 
         <!-- ── Type filter pills ── -->
         <div class="type-bar">
@@ -105,6 +106,13 @@ export default {
     line-height: 1;
     transform: rotate(-0.6deg);
     display: inline-block;
+}
+
+.section-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: #b0a898;
+    margin: -8px 0 16px 0;
 }
 
 /* ─── Type filter pills ──────────────────────────────── */

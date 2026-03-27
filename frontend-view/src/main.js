@@ -1,6 +1,8 @@
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
+import ElementUI from 'element-ui';                          
+import enLocale from 'element-ui/lib/locale/lang/en'; 
 import 'element-ui/lib/theme-chalk/index.css';  
 import { provinceAndCityData, regionData } from 'element-china-area-data';  
 import VueSweetalert2 from 'vue-sweetalert2';
@@ -15,6 +17,7 @@ import request from '@/utils/request'
 import md5 from 'js-md5';
 
 Vue.config.productionTip = false;
+Vue.use(ElementUI, { locale: enLocale }); 
 Vue.use(VueSweetalert2);
 Vue.prototype.$md5 = md5;
 Vue.prototype.$axios = request;

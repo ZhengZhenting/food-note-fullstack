@@ -3,11 +3,11 @@ export function timeAgo(dateString) {
     const date = new Date(dateString);
     const secondsPast = (now.getTime() - date.getTime()) / 1000;
     if (secondsPast < 60) {
-        return `${Math.floor(secondsPast)} 秒前`;
+        return `${Math.floor(secondsPast)} seconds ago`;
     } else if (secondsPast < 3600) {
-        return `${Math.floor(secondsPast / 60)} 分钟前`;
+        return `${Math.floor(secondsPast / 60)} minutes ago`;
     } else if (secondsPast <= 86400) {
-        return `${Math.floor(secondsPast / 3600)} 小时前`;
+        return `${Math.floor(secondsPast / 3600)} hours ago`;
     } else {
         const daysPast = Math.floor(secondsPast / 86400);
         if (daysPast === 1) {

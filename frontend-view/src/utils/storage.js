@@ -1,18 +1,18 @@
 const TOKEN_KEY = "token"
 /**
- * 获取Token
+ * get Token
  */
 export function getToken() {
     return sessionStorage.getItem(TOKEN_KEY);
 }
 /**
- * 设置Token
+ * set Token
  */
 export function setToken(token) {
     sessionStorage.setItem(TOKEN_KEY, token);
 }
 /**
- * 清除Token
+ * remove Token
  */
 export function clearToken() {
     sessionStorage.setItem(TOKEN_KEY, null);

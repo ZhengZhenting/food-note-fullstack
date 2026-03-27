@@ -51,13 +51,6 @@
                 :cell-style="cellStyle"
                 :stripe="false"
             >
-                <el-table-column prop="userAvatar" width="88" label="Avatar">
-                    <template slot-scope="scope">
-                        <el-avatar :size="26" :src="scope.row.userAvatar" />
-                    </template>
-                </el-table-column>
-                <el-table-column prop="userId" sortable label="User ID" min-width="80" />
-                <el-table-column prop="userName" label="User Name" min-width="100" />
                 <el-table-column prop="title" label="Cookbook Name" min-width="130" />
                 <el-table-column prop="id" sortable label="ID" min-width="68" />
                 <el-table-column prop="categoryName" label="Category" min-width="90" />
@@ -284,6 +277,8 @@ export default {
 .mycookbook-container {
     font-family: 'DM Sans', sans-serif;
     padding: 4px 0;
+    max-width: 1100px;
+    margin: 0 auto;
 }
 
 /* ─── Toolbar ────────────────────────────────────────── */
@@ -293,6 +288,7 @@ export default {
     gap: 12px;
     flex-wrap: wrap;
     margin-bottom: 16px;
+    margin-top: 16px;
 }
 
 .add-btn {

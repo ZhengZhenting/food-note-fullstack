@@ -41,6 +41,7 @@
                             <el-dropdown-menu slot="dropdown">
                                 <el-dropdown-item @click.native="route('/createGourmet')">Add Gourmet</el-dropdown-item>
                                 <el-dropdown-item @click.native="route('/myCookbook')">Add Cookbook</el-dropdown-item>
+                                <el-dropdown-item @click.native="route('/myCookbookNutriment')">Add Nutriment</el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
                     </li>
@@ -49,7 +50,6 @@
                 <!-- Right actions -->
                 <div class="nav-actions">
                     <span class="dashboard-btn" @click="route('/service')">Dashboard</span>
-
                     <el-dropdown :hide-on-click="false" class="user-dropdown">
                         <span class="user-trigger">
                             <el-avatar :size="28" :src="userInfo.userAvatar" />
