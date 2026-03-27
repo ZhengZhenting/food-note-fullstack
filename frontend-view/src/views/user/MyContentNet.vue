@@ -1,6 +1,9 @@
 <template>
     <div class="contentnet-container">
 
+        <!-- ── Section title ── -->
+        <h3 class="section-title">Content Sharing</h3>
+
         <!-- ── Toolbar ── -->
         <div class="toolbar">
             <el-date-picker
@@ -46,7 +49,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="createTime" sortable label="Created At" min-width="130" />
-                <el-table-column label="Actions" width="110">
+                <el-table-column label="Actions" width="130">
                     <template slot-scope="scope">
                         <span class="text-btn edit" @click="handleEdit(scope.row)">Edit</span>
                         <span class="text-btn delete" @click="handleDelete(scope.row)">Delete</span>
@@ -246,6 +249,18 @@ export default {
 .contentnet-container {
     font-family: 'DM Sans', sans-serif;
     padding: 4px 0;
+}
+
+/* ─── Section title ──────────────────────────────────── */
+.section-title {
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    font-size: 36px;
+    color: #c8392b;
+    margin: 0 0 18px 0;
+    line-height: 1;
+    transform: rotate(-0.6deg);
+    display: inline-block;
 }
 
 /* ─── Toolbar ────────────────────────────────────────── */

@@ -211,6 +211,8 @@ export default {
 .nutriment-container {
     font-family: 'DM Sans', sans-serif;
     padding: 4px 0;
+    max-width: 1100px;
+    margin: 0 auto;
 }
 
 /* ─── Toolbar ────────────────────────────────────────── */
@@ -218,6 +220,7 @@ export default {
     display: flex;
     align-items: center;
     margin-bottom: 16px;
+    margin-top: 16px;
 }
 
 .add-btn {

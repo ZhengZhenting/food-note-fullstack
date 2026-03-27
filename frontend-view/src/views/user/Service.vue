@@ -1,4 +1,5 @@
 <template>
+    <!-- ── Dashboard Page ── -->
     <div class="service-container">
 
         <!-- ── User profile card ── -->
@@ -6,103 +7,45 @@
             <img :src="info.userAvatar" class="profile-avatar" />
             <div class="profile-info">
                 <div class="profile-name">{{ info.userName }}</div>
+                <div class="stats-label">My Activity</div>
                 <div class="profile-stats">
-                    <span><i class="el-icon-view"></i> {{ info.viewCount }}</span>
-                    <span><i class="el-icon-thumb"></i> {{ info.upvoteCount }}</span>
-                    <span><i class="el-icon-collection"></i> {{ info.saveCount }}</span>
+                    <div class="stat-pill">
+                        <span class="stat-num">{{ info.viewCount }}</span>
+                        <span class="stat-desc">articles read</span>
+                    </div>
+                    <div class="stat-pill">
+                        <span class="stat-num">{{ info.upvoteCount }}</span>
+                        <span class="stat-desc">articles liked</span>
+                    </div>
+                    <div class="stat-pill">
+                        <span class="stat-num">{{ info.saveCount }}</span>
+                        <span class="stat-desc">articles saved</span>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- ── Custom tabs ── -->
         <div class="tab-bar">
-            <span class="tab-item" :class="{ active: activeName === 'first' }"  @click="activeName = 'first'">Gourmet</span>
-            <span class="tab-item" :class="{ active: activeName === 'second' }" @click="activeName = 'second'">Cookbook</span>
-            <span class="tab-item" :class="{ active: activeName === 'third' }"  @click="activeName = 'third'">Content Sharing</span>
-            <span class="tab-item" :class="{ active: activeName === 'fourth' }" @click="activeName = 'fourth'">Statistics</span>
+            <span class="tab-item" :class="{ active: activeName === 'first' }" @click="activeName = 'first'">Content
+                Sharing</span>
+            <span class="tab-item" :class="{ active: activeName === 'second' }"
+                @click="activeName = 'second'">Statistics</span>
         </div>
         <div class="tab-divider"></div>
 
-        <!-- ── Tab: Gourmet ── -->
-        <div v-show="activeName === 'first'" class="tab-content">
-            <div v-if="!gourmetList || gourmetList.length === 0" class="empty-wrap">
-                <el-empty description="No gourmet posts yet"></el-empty>
-            </div>
-            <div v-else>
-                <div class="item-gourmet" v-for="(gourmet, index) in gourmetList" :key="index">
-                    <div class="left">
-                        <img :src="gourmet.cover" />
-                    </div>
-                    <div class="right">
-                        <div class="g-info">
-                            <img :src="gourmet.userAvatar" class="g-avatar" />
-                            <span class="g-username">{{ gourmet.userName }}</span>
-                        </div>
-                        <div class="g-title" @click="readGourmet(gourmet)">{{ gourmet.title }}</div>
-                        <div class="g-desc">{{ gourmet.detail }}</div>
-                        <div class="g-meta">
-                            <span>{{ gourmet.createTime }}</span>
-                            <span><i class="el-icon-view"></i> {{ gourmet.viewCount }}</span>
-                            <span><i class="el-icon-thumb"></i> {{ gourmet.upvoteCount }}</span>
-                            <span><i class="el-icon-collection"></i> {{ gourmet.saveCount }}</span>
-                            <span><i class="el-icon-star-off"></i> {{ gourmet.rating }}</span>
-                        </div>
-                        <div class="g-actions">
-                            <span class="action-btn share" @click="share(gourmet)">
-                                <i class="el-icon-share"></i> Share
-                            </span>
-                            <span class="action-btn edit" @click="edit(gourmet)">
-                                <i class="el-icon-edit"></i> Edit
-                            </span>
-                            <span class="action-btn delete" @click="del(gourmet)">
-                                <i class="el-icon-delete"></i> Delete
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ── Tab: Cookbook ── -->
-        <div v-show="activeName === 'second'" class="tab-content">
-            <div v-if="cookbookList.length === 0" class="empty-wrap">
-                <el-empty description="No cookbooks yet"></el-empty>
-            </div>
-            <div v-else class="cookbook-grid">
-                <div
-                    class="cookbook-card"
-                    v-for="(cookbook, index) in cookbookList"
-                    :key="index"
-                    @click="readCookbookDetail(cookbook)"
-                >
-                    <div class="card-cover">
-                        <img :src="cookbook.cover" alt="" />
-                    </div>
-                    <div class="card-body">
-                        <div class="card-title">{{ cookbook.title }}</div>
-                        <div class="card-time">{{ cookbook.createTime }}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- ── Tab: Content Sharing ── -->
-        <div v-show="activeName === 'third'" class="tab-content">
+        <div v-show="activeName === 'first'" class="tab-content">
             <MyContentNet />
         </div>
 
         <!-- ── Tab: Statistics ── -->
-        <div v-show="activeName === 'fourth'" class="tab-content">
+        <div v-show="activeName === 'second'" class="tab-content">
             <Statistics />
         </div>
 
         <!-- ── Share dialog ── -->
-        <el-dialog
-            :visible.sync="dialogShareOperaion"
-            :show-close="false"
-            width="38%"
-            custom-class="food-dialog"
-        >
+        <el-dialog :visible.sync="dialogShareOperaion" :show-close="false" width="38%" custom-class="food-dialog">
             <div class="dialog-body">
                 <!-- Success state -->
                 <div v-if="url !== ''" class="share-success">
@@ -118,31 +61,25 @@
                     <div class="dialog-section">
                         <label class="dialog-label">Valid Days</label>
                         <div class="radio-group">
-                            <span
-                                v-for="opt in validDayOptions"
-                                :key="opt"
-                                class="radio-btn"
-                                :class="{ active: contentNet.validDay === opt }"
-                                @click="contentNet.validDay = opt"
-                            >{{ opt }}</span>
+                            <span v-for="opt in validDayOptions" :key="opt" class="radio-btn"
+                                :class="{ active: contentNet.validDay === opt }" @click="contentNet.validDay = opt">{{
+                                opt }}</span>
                         </div>
                     </div>
 
                     <div class="dialog-section">
                         <label class="dialog-label">Password Authentication</label>
                         <div class="toggle-wrap">
-                            <el-switch
-                                v-model="contentNet.passwordAuth"
-                                active-color="#c8392b"
-                                inactive-color="#d6c9b8"
-                            />
+                            <el-switch v-model="contentNet.passwordAuth" active-color="#c8392b"
+                                inactive-color="#d6c9b8" />
                             <span class="toggle-label">{{ contentNet.passwordAuth ? 'Enabled' : 'Disabled' }}</span>
                         </div>
                     </div>
 
                     <div class="dialog-section" v-if="contentNet.passwordAuth">
                         <label class="dialog-label">Set Password</label>
-                        <input class="dialog-input" type="password" v-model="contentNet.accessPassword" placeholder="Enter password" />
+                        <input class="dialog-input" type="password" v-model="contentNet.accessPassword"
+                            placeholder="Enter password" />
                     </div>
                 </div>
             </div>
@@ -242,7 +179,9 @@ export default {
 <style scoped lang="scss">
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Klee+One:wght@600&family=DM+Sans:wght@400;500&display=swap');
 
-* { box-sizing: border-box; }
+* {
+    box-sizing: border-box;
+}
 
 .service-container {
     max-width: 1100px;
@@ -257,7 +196,7 @@ export default {
     align-items: center;
     gap: 20px;
     padding: 20px 24px;
-    background-color: rgba(255,255,255,0.6);
+    background-color: rgba(255, 255, 255, 0.6);
     border: 1.5px solid #e8ddd0;
     border-radius: 4px;
     margin-bottom: 28px;
@@ -287,8 +226,52 @@ export default {
     font-size: 14px;
     color: #8a7d6e;
 
-    span { display: flex; align-items: center; gap: 5px; }
-    i { font-size: 15px; }
+    span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    i {
+        font-size: 15px;
+    }
+}
+
+.stat-pill {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 6px 16px;
+    border: 1.5px solid #e8ddd0;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.55);
+    min-width: 72px;
+}
+
+.stat-num {
+    font-family: 'Klee One', cursive;
+    font-size: 18px;
+    font-weight: 600;
+    color: #c8392b;
+    line-height: 1.2;
+}
+
+.stat-desc {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    color: #8a7d6e;
+    white-space: nowrap;
+}
+
+.stats-label {
+    font-family: 'Klee One', cursive;
+    font-size: 11px;
+    font-weight: 600;
+    color: #b0a898;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    margin-top: 10px;
 }
 
 /* ─── Custom tabs ────────────────────────────────────── */
@@ -311,11 +294,14 @@ export default {
     border-radius: 4px 4px 0 0;
     transition: color 0.15s, background-color 0.15s;
 
-    &:hover { color: #c8392b; background-color: rgba(255,255,255,0.5); }
+    &:hover {
+        color: #c8392b;
+        background-color: rgba(255, 255, 255, 0.5);
+    }
 
     &.active {
         color: #c8392b;
-        background-color: rgba(255,255,255,0.75);
+        background-color: rgba(255, 255, 255, 0.75);
         border-color: #e8ddd0;
         position: relative;
         bottom: -1.5px;
@@ -329,9 +315,11 @@ export default {
     margin-bottom: 24px;
 }
 
-.tab-content { }
+.tab-content {}
 
-.empty-wrap { margin-top: 40px; }
+.empty-wrap {
+    margin-top: 40px;
+}
 
 /* ─── Gourmet list ───────────────────────────────────── */
 .item-gourmet {
@@ -341,8 +329,13 @@ export default {
     border-bottom: 1px solid #e8ddd0;
     transition: background-color 0.15s;
 
-    &:hover { background-color: rgba(255,255,255,0.55); }
-    &:last-child { border-bottom: none; }
+    &:hover {
+        background-color: rgba(255, 255, 255, 0.55);
+    }
+
+    &:last-child {
+        border-bottom: none;
+    }
 }
 
 .left img {
@@ -389,7 +382,11 @@ export default {
     cursor: pointer;
     transition: color 0.15s;
 
-    &:hover { color: #c8392b; text-decoration: underline; text-underline-offset: 3px; }
+    &:hover {
+        color: #c8392b;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+    }
 }
 
 .g-desc {
@@ -432,20 +429,30 @@ export default {
 
     &.share {
         color: #2e86ab;
-        border-color: rgba(46,134,171,0.25);
-        &:hover { background-color: rgba(46,134,171,0.08); }
+        border-color: rgba(46, 134, 171, 0.25);
+
+        &:hover {
+            background-color: rgba(46, 134, 171, 0.08);
+        }
     }
 
     &.edit {
         color: #c8392b;
-        border-color: rgba(200,57,43,0.25);
-        &:hover { background-color: rgba(200,57,43,0.08); }
+        border-color: rgba(200, 57, 43, 0.25);
+
+        &:hover {
+            background-color: rgba(200, 57, 43, 0.08);
+        }
     }
 
     &.delete {
         color: #8a7d6e;
         border-color: #e8ddd0;
-        &:hover { background-color: rgba(90,80,69,0.08); color: #5a5045; }
+
+        &:hover {
+            background-color: rgba(90, 80, 69, 0.08);
+            color: #5a5045;
+        }
     }
 }
 
@@ -460,14 +467,14 @@ export default {
     cursor: pointer;
     border-radius: 4px;
     border: 1.5px solid #e8ddd0;
-    background-color: rgba(255,255,255,0.55);
+    background-color: rgba(255, 255, 255, 0.55);
     overflow: hidden;
     transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
 
     &:hover {
         border-color: #c8392b;
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(200,57,43,0.1);
+        box-shadow: 0 6px 20px rgba(200, 57, 43, 0.1);
     }
 }
 
@@ -485,9 +492,13 @@ export default {
     }
 }
 
-.cookbook-card:hover .card-cover img { transform: scale(1.04); }
+.cookbook-card:hover .card-cover img {
+    transform: scale(1.04);
+}
 
-.card-body { padding: 10px 12px 12px; }
+.card-body {
+    padding: 10px 12px 12px;
+}
 
 .card-title {
     font-family: 'Klee One', cursive;
@@ -502,7 +513,9 @@ export default {
     overflow: hidden;
 }
 
-.cookbook-card:hover .card-title { color: #c8392b; }
+.cookbook-card:hover .card-title {
+    color: #c8392b;
+}
 
 .card-time {
     font-size: 12px;
@@ -514,9 +527,18 @@ export default {
     border-radius: 4px;
     border: 1.5px solid #e8ddd0;
 
-    .el-dialog__header { display: none; }
-    .el-dialog__body { padding: 0; }
-    .el-dialog__footer { border-top: 1.5px solid #e8ddd0; padding: 14px 20px; }
+    .el-dialog__header {
+        display: none;
+    }
+
+    .el-dialog__body {
+        padding: 0;
+    }
+
+    .el-dialog__footer {
+        border-top: 1.5px solid #e8ddd0;
+        padding: 14px 20px;
+    }
 }
 
 .dialog-body {
@@ -532,7 +554,9 @@ export default {
     margin: 0 0 20px 0;
 }
 
-.dialog-section { margin-bottom: 18px; }
+.dialog-section {
+    margin-bottom: 18px;
+}
 
 .dialog-label {
     display: block;
@@ -543,7 +567,11 @@ export default {
     margin-bottom: 8px;
 }
 
-.radio-group { display: flex; gap: 8px; flex-wrap: wrap; }
+.radio-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
 
 .radio-btn {
     display: inline-block;
@@ -557,11 +585,23 @@ export default {
     cursor: pointer;
     transition: border-color 0.15s, color 0.15s, background-color 0.15s;
 
-    &:hover { border-color: #c8392b; color: #c8392b; }
-    &.active { background-color: #c8392b; border-color: #c8392b; color: #fdf8f2; }
+    &:hover {
+        border-color: #c8392b;
+        color: #c8392b;
+    }
+
+    &.active {
+        background-color: #c8392b;
+        border-color: #c8392b;
+        color: #fdf8f2;
+    }
 }
 
-.toggle-wrap { display: flex; align-items: center; gap: 10px; }
+.toggle-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
 .toggle-label {
     font-family: 'Klee One', cursive;
@@ -582,8 +622,14 @@ export default {
     border-radius: 4px;
     transition: border-color 0.2s;
 
-    &::placeholder { color: #c0b09e; }
-    &:focus { outline: none; border-color: #c8392b; }
+    &::placeholder {
+        color: #c0b09e;
+    }
+
+    &:focus {
+        outline: none;
+        border-color: #c8392b;
+    }
 }
 
 /* Share success state */
@@ -612,7 +658,11 @@ export default {
     text-align: left;
 }
 
-.dialog-footer { display: flex; justify-content: flex-end; gap: 10px; }
+.dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
 
 .cancel-btn {
     display: inline-block;
@@ -625,7 +675,10 @@ export default {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.15s;
-    &:hover { background-color: #f5f0e8; }
+
+    &:hover {
+        background-color: #f5f0e8;
+    }
 }
 
 .confirm-btn {
@@ -640,6 +693,9 @@ export default {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.15s;
-    &:hover { background-color: #b03226; }
+
+    &:hover {
+        background-color: #b03226;
+    }
 }
 </style>

@@ -1,11 +1,8 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import ElementUI from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
 import { getToken } from "@/utils/storage.js";
 import echarts from 'echarts';
 Vue.prototype.$echarts = echarts;
-Vue.use(ElementUI);
 Vue.use(VueRouter);
 
 const routes = [
@@ -189,7 +186,13 @@ const routes = [
       {
         path: "/myCookbook",
         name: 'Cookbook Operation',
-        component: () => import(`@/views/user/CookbookOperation.vue`),
+        component: () => import(`@/views/user/MyCookbook.vue`),
+        meta: { requireAuth: true },
+      },
+      {
+        path: "/myCookbookNutriment",
+        name: 'Cookbook Nutriment',
+        component: () => import(`@/views/user/MyCookbookNutriment.vue`),
         meta: { requireAuth: true },
       },
       {
