@@ -12,7 +12,7 @@
         <div class="table-wrap">
             <el-table :data="gourmetList" style="width: 100%;" :header-cell-style="headerStyle" :cell-style="cellStyle">
 
-                <el-table-column prop="title" label="Title" min-width="300" />
+                <el-table-column prop="title" label="Title" min-width="250" />
                 <el-table-column label="Stats" min-width="160">
                     <template slot-scope="scope">
                         <span class="stat-item"><i class="el-icon-view"></i> {{ scope.row.viewCount }}</span>
@@ -23,8 +23,15 @@
                 </el-table-column>
                 <el-table-column label="Public" min-width="80">
                     <template slot-scope="scope">
-                        <span :class="scope.row.isPublish ? 'badge-private' : 'badge-public'">
-                            {{ scope.row.isPublish ? 'Private' : 'Public' }}
+                        <span :class="scope.row.isPublish ? 'badge-public' : 'badge-private'">
+                            {{ scope.row.isPublish ? 'Public' : 'Private' }}
+                        </span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="Audit" min-width="80">
+                    <template slot-scope="scope">
+                        <span :class="scope.row.isAudit ? 'badge-public' : 'badge-private'">
+                            {{ scope.row.isAudit ? 'Yes' : 'No' }}
                         </span>
                     </template>
                 </el-table-column>
