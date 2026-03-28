@@ -51,4 +51,14 @@ public class GourmetVO extends Gourmet {
      * rating
      */
     private Double rating;
+
+    /**
+     * is audit
+     */
+    private Boolean isAudit;
+
+    /**
+     * is published
+     */
+    private Boolean isPublish;
 }

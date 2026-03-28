@@ -67,9 +67,21 @@ public class GourmetListVO {
      */
     private Double rating;
 
+
+
     /**
      * create time
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
+
+    /**
+     * is audit
+     */
+    private Boolean isAudit;
+
+    /**
+     * is published
+     */
+    private Boolean isPublish;
 }
