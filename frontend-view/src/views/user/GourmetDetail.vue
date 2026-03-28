@@ -13,7 +13,7 @@
                     <div class="article-meta">
                         <img :src="gourmet.userAvatar" class="meta-avatar" />
                         <span class="meta-author">{{ gourmet.userName }}</span>
-                        <span class="meta-sep">·</span>
+                        <span class="meta-sep">·</span> 
                         <span>{{ gourmet.createTime }}</span>
                         <span class="meta-sep">·</span>
                         <span><i class="el-icon-view"></i> {{ gourmet.viewCount }}</span>
@@ -121,7 +121,6 @@ export default {
     },
     created() {
         this.loadGourmetId();
-        this.fetchTopGourmet();
     },
     methods: {
         ratingEvent() {
@@ -174,15 +173,23 @@ export default {
             }).catch(error => { console.log("Error", error); });
         },
         readGourmet(gourmet) {
+            sessionStorage.setItem('gourmetId', gourmet.id);
+            this.gourmetId = gourmet.id;
             this.fetchGourmetById(gourmet.id);
+            this.viewOperation(gourmet.id);
+            this.fetchUpvoteOperation(gourmet.id);
+            this.fetchSaveOperation(gourmet.id);
+            this.fetchRatingOperation(gourmet.id);
+            this.fetchRecommendations(gourmet.id);
         },
         loadGourmetId() {
             this.gourmetId = sessionStorage.getItem('gourmetId');
             this.fetchGourmetById(this.gourmetId);
-            this.viewOeration(this.gourmetId);
+            this.viewOperation(this.gourmetId);
             this.fetchUpvoteOperation(this.gourmetId);
             this.fetchSaveOperation(this.gourmetId);
             this.fetchRatingOperation(this.gourmetId);
+             this.fetchRecommendations(this.gourmetId);
         },
         fetchGourmetById(gourmetId) {
             this.$axios.get(`/gourmet/${gourmetId}`).then(res => {
@@ -196,14 +203,14 @@ export default {
         dealRating(gourmet) {
             this.gourmet.rating = gourmet.rating === null ? 0 : gourmet.rating;
         },
-        viewOeration(contentId) {
+        viewOperation(contentId) {
             this.$axios.post(`/interaction/viewOperation/${contentId}`).then(res => {
                 const { data } = res;
                 if (data.code === 200) console.log("View operation recorded successfully");
             }).catch(error => { console.log("Error", error); });
         },
-        fetchTopGourmet() {
-            this.$axios.post(`/gourmet/queryList`, { size: 3, current: 1 }).then(res => {
+        fetchRecommendations(gourmetId) {
+            this.$axios.get(`/gourmet/${gourmetId}/recommend?topN=4`).then(res => {
                 const { data } = res;
                 if (data.code === 200) this.recommendGourmet = data.data;
             }).catch(error => { console.log("Error", error); });

@@ -87,14 +87,6 @@
                 />
             </div>
 
-            <!-- Sidebar -->
-            <div class="sidebar-col">
-                <div class="sidebar-card">
-                    <h3 class="sidebar-title">Recommendations</h3>
-                    <p class="sidebar-placeholder">Coming soon…</p>
-                </div>
-            </div>
-
         </div>
     </div>
 </template>
@@ -373,11 +365,6 @@ export default {
     ::v-deep .el-pager li:hover  { color: #c8392b; }
 }
 
-/* ─── Sidebar ────────────────────────────────────────── */
-.sidebar-col {
-    width: 240px;
-    flex-shrink: 0;
-}
 
 .sidebar-card {
     background-color: rgba(255,255,255,0.55);
@@ -403,7 +390,6 @@ export default {
 
 /* ─── Responsive ─────────────────────────────────────── */
 @media (max-width: 768px) {
-    .sidebar-col { display: none; }
     .left img { width: 160px; height: 110px; }
     .title { font-size: 16px; }
     .page-header { flex-direction: column; align-items: flex-start; gap: 12px; }
