@@ -205,7 +205,9 @@ public class InteractionServiceImpl implements InteractionService {
                         gourmetVO.getUpvoteCount(),
                         gourmetVO.getSaveCount(),
                         gourmetVO.getRating(),
-                        gourmetVO.getCreateTime()
+                        gourmetVO.getCreateTime(),
+                        gourmetVO.getIsAudit(),
+                        gourmetVO.getIsPublish()
                 )).collect(Collectors.toList());
         return ApiResult.success(gourmetListVOS);
     }

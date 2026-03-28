@@ -12,6 +12,7 @@ import cn.kmbeast.pojo.vo.ChartVO;
 import cn.kmbeast.pojo.vo.GourmetListVO;
 import cn.kmbeast.pojo.vo.GourmetVO;
 import cn.kmbeast.service.GourmetService;
+import cn.kmbeast.service.RecommendService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,9 @@ public class GourmetController {
 
     @Resource
     private GourmetService gourmetService;
+
+    @Resource
+    private RecommendService recommendService;
 
     /**
      * add new gourmet
@@ -135,7 +139,7 @@ public class GourmetController {
      * @return Result<List <GourmetVO>> 响应结果
      */
     @Pager //分页查询
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/{id}") // ← 加上 \\d+ 正则，只匹配纯数字，与下面的/{id}/recommend进行区分
     @ResponseBody
     public Result<List<GourmetVO>> queryById(@PathVariable Integer id) {
         return gourmetService.queryById(id);
@@ -154,5 +158,11 @@ public class GourmetController {
         return gourmetService.daysQuery(day);
     }
 
+
+    @GetMapping(value = "/{id}/recommend")
+    @ResponseBody
+    public Result<List<GourmetVO>> recommend(@PathVariable Integer id, @RequestParam(defaultValue = "4") int topN) {
+        return recommendService.getRecommendations(id, topN);
+    }
 }
 
