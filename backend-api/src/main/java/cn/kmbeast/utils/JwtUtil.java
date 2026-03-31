@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
- * jwt token 工具类 tools
+ * jwt token 工具类
  */
 public class JwtUtil {
 
