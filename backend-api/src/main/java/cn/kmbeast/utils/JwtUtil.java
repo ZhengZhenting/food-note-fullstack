@@ -16,8 +16,14 @@ public class JwtUtil {
     /**
      * 密钥（必须 >= 32 字节）
      */
-    private static final String privateKey =
-            "d8c986df851242b5906feeea9b3acf86d8c986df";
+    private static final String privateKey;
+
+    static {
+        privateKey = System.getenv("JWT_PRIVATE_KEY");
+        if (privateKey == null) {
+            throw new RuntimeException("JWT_PRIVATE_KEY not set in environment");
+        }
+    }
 
     /**
      * 生成安全 key 对象
