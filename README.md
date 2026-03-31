@@ -4,7 +4,7 @@
 **FoodNote** is a full stack food sharing platform that allows users to explore, share, and discover food experiences. The project demonstrates hands-on experience with Java backend development, RESTful API design, and modern front-end development with Vue.
 
 ## Demo Video
-[![Watch the Demo](C:\Users\zhent\Desktop\Project\foodnote_files\img_videos\cover.png)](https://youtu.be/yIlt_EJRIQU)
+[![Demo Video](https://img.youtube.com/vi/yIlt_EJRIQU/0.jpg)](https://youtu.be/yIlt_EJRIQU)
 
 ## Key Features
 - User registration and authentication
