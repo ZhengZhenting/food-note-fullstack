@@ -194,10 +194,3 @@ All endpoints follow RESTful conventions and return a unified response envelope:
 
 Paginated responses use a `PageResult` wrapper that includes total count and the current page of records. Protected routes require a valid JWT token passed in the request header.
 
----
-
-## Contact
-
-**Developer:** Zhenting Zheng  
-**GitHub:** [https://github.com/ZhengZhenting](https://github.com/ZhengZhenting/)  
-**Email:** zhentingzheng1992@gmail.com
