@@ -4,6 +4,9 @@
 
 **FoodNote** is a full-stack web application for exploring, sharing, and discovering food experiences. It provides users with tools to publish recipe posts, track dietary history, manage nutritional data, and engage with content through comments, likes, and views. The platform includes a dedicated admin panel for content moderation and data visualization.
 
+---
+
+## Demo
 [![Demo Video](https://img.youtube.com/vi/yIlt_EJRIQU/0.jpg)](https://youtu.be/yIlt_EJRIQU)
 
 ---
